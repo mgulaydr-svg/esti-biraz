@@ -57,7 +57,7 @@ function readingTime(text) {
 }
 
 // ── Kart Oluşturucu (Makale) ──
-function createArticleCard(article) {
+/*function createArticleCard(article) {
   return `
     <a href="#/makale/${article.slug}" class="card">
       <img src="${article.coverImage || 'assets/images/placeholder.jpg'}"
@@ -92,4 +92,4 @@ function createCourseCard(course) {
       </div>
     </a>
   `;
-}
+}*/
