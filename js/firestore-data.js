@@ -2,7 +2,7 @@
    ESTİ BİRAZ — Firestore Veri Çekme (firestore-data.js)
    ============================================ */
 
-const db = firebase.firestore();
+//const db = firebase.firestore();
 
 // ══════════════════════════════════════════════
 //  MAKALE FONKSİYONLARI
