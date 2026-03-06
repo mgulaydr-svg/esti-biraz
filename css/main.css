@@ -591,3 +591,144 @@ ul, ol { list-style: none; }
   transform: translateY(0);
   transition: opacity var(--transition-base), transform var(--transition-base);
 }
+/* ─── SAYFA HEADER ─── */
+.page-header {
+  text-align: center;
+  padding: var(--space-12) 0 var(--space-8);
+}
+.page-header__title {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+.page-header__desc {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ─── FİLTRE BAR ─── */
+.filter-bar {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: var(--space-8);
+}
+.filter-btn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+.filter-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.filter-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+/* ─── HAKKINDA SAYFA ─── */
+.about-content {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 800px;
+  margin: 0 auto;
+}
+.about-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+}
+.about-card h2 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-4);
+}
+.about-card p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  line-height: 1.7;
+}
+.about-list {
+  list-style: disc;
+  padding-left: var(--space-6);
+}
+.about-list li {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  line-height: 1.7;
+}
+
+/* ─── 404 SAYFA ─── */
+.error-page {
+  padding: var(--space-20) 0;
+}
+.error-page__icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: var(--space-4);
+}
+.error-page__title {
+  font-size: var(--font-size-5xl);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+.error-page__text {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+}
+
+/* ─── DAR CONTAINER ─── */
+.container--narrow {
+  max-width: 800px;
+}
+
+/* ─── YÜKLENİYOR ─── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--color-text-muted);
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: var(--space-4);
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.article-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-20) 0;
+  color: var(--color-text-muted);
+}
+
+/* ─── SAYFA GEÇİŞ ANİMASYONU ─── */
+.main {
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
