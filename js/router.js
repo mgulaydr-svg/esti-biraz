@@ -8,12 +8,15 @@ const routes = {
   '/magazin':  { title: 'Magazin',    render: renderMagazin },
   '/akademi':  { title: 'Akademi',    render: renderAkademi },
   '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
+  '/admin':     { title: 'Admin Panel',     render: renderAdmin },
+  '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
 };
 
 // Dinamik route'lar (parametre içerenler)
 const dynamicRoutes = [
   { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
   { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
+  { pattern: /^\/admin\/makale-duzenle\/(.+)$/, title: 'Makale Düzenle', render: renderMakaleDuzenle },
 ];
 
 // ── Ana Uygulama Alanı ──
@@ -261,6 +264,69 @@ function render404() {
       </div>
     </section>
   `;
+}
+
+// ── Admin Panel ──
+async function renderAdmin() {
+  const admin = await isAdminUser();
+  if (!admin) {
+    appContainer.innerHTML = `
+      <section class="section">
+        <div class="container text-center">
+          <div class="error-page">
+            <span class="error-page__icon">🔒</span>
+            <h1 class="error-page__title">Yetkisiz Erişim</h1>
+            <p class="error-page__text">Bu sayfayı görüntülemek için admin veya editör yetkisi gerekiyor.</p>
+            <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
+          </div>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  appContainer.innerHTML = `
+    <section class="section">
+      <div class="container">
+        <div class="page-header">
+          <h1 class="page-header__title">🛠️ Admin Panel</h1>
+          <p class="page-header__desc">İçerik yönetimi ve site ayarları.</p>
+        </div>
+
+        <div class="admin-grid">
+          <!-- Makale Yönetimi -->
+          <div class="admin-card">
+            <div class="admin-card__icon">📰</div>
+            <h3 class="admin-card__title">Makale Yönetimi</h3>
+            <p class="admin-card__desc">Makale ekle, düzenle veya sil.</p>
+            <div class="admin-card__actions">
+              <a href="#/admin/makale-ekle" class="btn btn--primary">+ Yeni Makale</a>
+            </div>
+            <div class="admin-card__list" id="adminArticleList">
+              <p class="loading-text">Makaleler yükleniyor...</p>
+            </div>
+          </div>
+
+          <!-- Kurs Yönetimi -->
+          <div class="admin-card">
+            <div class="admin-card__icon">🎓</div>
+            <h3 class="admin-card__title">Kurs Yönetimi</h3>
+            <p class="admin-card__desc">Kurs ekle, düzenle veya sil.</p>
+            <div class="admin-card__actions">
+              <button class="btn btn--outline" onclick="alert('Kurs ekleme Faz 2\'de gelecek!')">+ Yeni Kurs</button>
+            </div>
+            <div class="admin-card__list" id="adminCourseList">
+              <p class="loading-text">Kurslar yükleniyor...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // Admin listelerini yükle
+  loadAdminArticles();
+  loadAdminCourses();
 }
 
 // ══════════════════════════════════════════════
