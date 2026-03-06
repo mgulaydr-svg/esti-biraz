@@ -188,3 +188,22 @@ function handleAuthError(error) {
   // Basit bildirim (ileride toast/snackbar ile değiştirilebilir)
   alert(message);
 }
+
+/**
+ * Kullanıcının admin/editor olup olmadığını kontrol eder
+ * @returns {Promise<boolean>}
+ */
+async function isAdminUser() {
+  const user = firebase.auth().currentUser;
+  if (!user) return false;
+
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (!doc.exists) return false;
+    const role = doc.data().role;
+    return role === 'admin' || role === 'editor';
+  } catch (error) {
+    console.error('❌ Yetki kontrolü başarısız:', error);
+    return false;
+  }
+}
