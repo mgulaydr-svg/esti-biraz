@@ -74,54 +74,11 @@
        ANA İÇERİK ALANI (SPA Router buraya render eder)
   ═══════════════════════════════════════════ -->
   <main class="main" id="app">
-
-    <!-- HERO BÖLÜMÜ -->
-    <section class="hero">
-      <div class="container">
-        <h1 class="hero__title">Sağlık, Bilim ve<br>Eğitimin Buluşma Noktası</h1>
-        <p class="hero__subtitle">
-          Kanıta dayalı makaleler okuyun, interaktif kurslarla öğrenin,
-          sertifikanızı alın.
-        </p>
-        <div class="hero__actions">
-          <a href="#/magazin" class="btn btn--primary btn--lg">Makaleleri Keşfet</a>
-          <a href="#/akademi" class="btn btn--outline btn--lg">Kurslara Göz At</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SON MAKALELER -->
-    <section class="section">
-      <div class="container">
-        <div class="section__header">
-          <h2 class="section__title">📰 Son Makaleler</h2>
-          <a href="#/magazin" class="section__link">Tümünü gör →</a>
-        </div>
-        <div class="grid grid--3" id="latestArticles">
-          <!-- JS ile doldurulacak -->
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ÖNE ÇIKAN KURSLAR -->
-    <section class="section section--alt">
-      <div class="container">
-        <div class="section__header">
-          <h2 class="section__title">🎓 Öne Çıkan Kurslar</h2>
-          <a href="#/akademi" class="section__link">Tümünü gör →</a>
-        </div>
-        <div class="grid grid--3" id="featuredCourses">
-          <!-- JS ile doldurulacak -->
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
-      </div>
-    </section>
-
+    <!-- Router bu alanı otomatik dolduracak -->
+    <div class="loading-screen">
+      <div class="spinner"></div>
+      <p>Yükleniyor...</p>
+    </div>
   </main>
 
   <!-- ═══════════════════════════════════════════
@@ -162,7 +119,7 @@
   <!-- Uygulama Scriptleri -->
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
-  <!-- <script src="js/router.js"></script> -->
+  <script src="js/router.js"></script>
   <script src="js/shared/ui.js"></script>
 </body>
 </html>
