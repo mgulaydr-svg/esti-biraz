@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ESTİ BİRAZ — Sağlık, bilim ve eğitim platformu. Makaleler, kurslar ve daha fazlası.">
+  <meta name="theme-color" content="#2563EB">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ESTİ BİRAZ">
+  <meta property="og:description" content="Sağlık, bilim ve eğitim platformu">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/og-cover.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stil Dosyaları -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <title>ESTİ BİRAZ</title>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER / NAVİGASYON
+  ═══════════════════════════════════════════ -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <!-- Logo -->
+      <a href="#/" class="header__logo">
+        <span class="logo-icon">🚀</span>
+        <span class="logo-text">ESTİ BİRAZ</span>
+      </a>
+
+      <!-- Ana Menü -->
+      <nav class="header__nav" id="mainNav">
+        <a href="#/" class="nav-link active">Ana Sayfa</a>
+        <a href="#/magazin" class="nav-link">Magazin</a>
+        <a href="#/akademi" class="nav-link">Akademi</a>
+        <a href="#/hakkinda" class="nav-link">Hakkında</a>
+      </nav>
+
+      <!-- Sağ Taraf: Auth Butonları -->
+      <div class="header__actions">
+        <!-- Giriş yapmamış kullanıcı -->
+        <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">
+          Giriş Yap
+        </button>
+        <!-- Giriş yapmış kullanıcı (varsayılan gizli) -->
+        <div class="user-menu hidden" id="userMenu">
+          <img src="" alt="Profil" class="user-menu__avatar" id="userAvatar">
+          <span class="user-menu__name" id="userName"></span>
+          <button class="btn btn--ghost btn--sm" onclick="logout()">Çıkış</button>
+        </div>
+      </div>
+
+      <!-- Mobil Hamburger -->
+      <button class="header__hamburger" id="hamburger" aria-label="Menüyü aç">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       ANA İÇERİK ALANI (SPA Router buraya render eder)
+  ═══════════════════════════════════════════ -->
+  <main class="main" id="app">
+
+    <!-- HERO BÖLÜMÜ -->
+    <section class="hero">
+      <div class="container">
+        <h1 class="hero__title">Sağlık, Bilim ve<br>Eğitimin Buluşma Noktası</h1>
+        <p class="hero__subtitle">
+          Kanıta dayalı makaleler okuyun, interaktif kurslarla öğrenin,
+          sertifikanızı alın.
+        </p>
+        <div class="hero__actions">
+          <a href="#/magazin" class="btn btn--primary btn--lg">Makaleleri Keşfet</a>
+          <a href="#/akademi" class="btn btn--outline btn--lg">Kurslara Göz At</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SON MAKALELER -->
+    <section class="section">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">📰 Son Makaleler</h2>
+          <a href="#/magazin" class="section__link">Tümünü gör →</a>
+        </div>
+        <div class="grid grid--3" id="latestArticles">
+          <!-- JS ile doldurulacak -->
+          <div class="card card--skeleton"></div>
+          <div class="card card--skeleton"></div>
+          <div class="card card--skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÖNE ÇIKAN KURSLAR -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">🎓 Öne Çıkan Kurslar</h2>
+          <a href="#/akademi" class="section__link">Tümünü gör →</a>
+        </div>
+        <div class="grid grid--3" id="featuredCourses">
+          <!-- JS ile doldurulacak -->
+          <div class="card card--skeleton"></div>
+          <div class="card card--skeleton"></div>
+          <div class="card card--skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="logo-icon">🚀</span>
+        <span class="logo-text">ESTİ BİRAZ</span>
+        <p class="footer__tagline">Sağlık, bilim ve eğitim platformu.</p>
+      </div>
+      <div class="footer__links">
+        <div class="footer__col">
+          <h4>Platform</h4>
+          <a href="#/magazin">Magazin</a>
+          <a href="#/akademi">Akademi</a>
+          <a href="#/hakkinda">Hakkında</a>
+        </div>
+        <div class="footer__col">
+          <h4>Yasal</h4>
+          <a href="#/gizlilik">Gizlilik Politikası</a>
+          <a href="#/kullanim-sartlari">Kullanım Şartları</a>
+        </div>
+      </div>
+      <p class="footer__copy">© 2026 ESTİ BİRAZ. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       SCRİPTLER
+  ═══════════════════════════════════════════ -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Uygulama Scriptleri -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <!-- <script src="js/router.js"></script> -->
+  <script src="js/shared/ui.js"></script>
+</body>
+</html>
