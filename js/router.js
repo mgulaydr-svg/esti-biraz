@@ -106,9 +106,9 @@ function renderHome() {
     </section>
   `;
 
-  // Firestore'dan veri çekme (ileride aktif edilecek)
-  // loadLatestArticles();
-  // loadFeaturedCourses();
+  // Firestore'dan veri çekme
+  loadLatestArticles();
+  loadFeaturedCourses();
 }
 
 // ── Magazin Sayfası ──
@@ -145,6 +145,7 @@ function renderMagazin() {
 
   // Kategori filtresi olay dinleyicileri
   setupCategoryFilters();
+  loadAllArticles();
 }
 
 // ── Akademi Sayfası ──
@@ -166,6 +167,7 @@ function renderAkademi() {
       </div>
     </section>
   `;
+  loadAllCourses();
 }
 
 // ── Hakkında Sayfası ──
@@ -225,9 +227,7 @@ function renderMakale(slug) {
     </section>
   `;
 
-  // Firestore'dan makaleyi yükle (ileride aktif edilecek)
-  // loadArticle(slug);
-  console.log('📄 Makale slug:', slug);
+  loadArticle(slug);
 }
 
 // ── Tekil Kurs Sayfası ──
@@ -243,9 +243,7 @@ function renderKurs(id) {
     </section>
   `;
 
-  // Firestore'dan kursu yükle (ileride aktif edilecek)
-  // loadCourse(id);
-  console.log('🎓 Kurs ID:', id);
+  loadCourse(id);
 }
 
 // ── 404 Sayfası ──
@@ -281,9 +279,7 @@ function setupCategoryFilters() {
 
     const category = e.target.dataset.category;
     console.log('🏷️ Kategori filtresi:', category);
-
-    // Firestore'dan filtrelenmiş makaleleri yükle (ileride aktif edilecek)
-    // loadArticlesByCategory(category);
+    loadAllArticles(category);
   });
 }
 
