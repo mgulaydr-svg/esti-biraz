@@ -732,3 +732,235 @@ ul, ol { list-style: none; }
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+/* ═══════════════════════════════════════════════
+   KART STİLLERİ (Parça 0.5)
+═══════════════════════════════════════════════ */
+
+/* ─── KART GENEL ─── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+
+/* ─── KART GÖRSELİ ─── */
+.card__image {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+.card:hover .card__image img {
+  transform: scale(1.05);
+}
+
+/* ─── KART BADGE ─── */
+.card__badge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+}
+.badge--saglik { color: #059669; }
+.badge--bilim { color: #7c3aed; }
+.badge--egitim { color: #2563eb; }
+.badge--teknoloji { color: #ea580c; }
+.badge--course { color: #0891b2; }
+
+/* ─── KART İÇERİK ─── */
+.card__body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── KART FOOTER ─── */
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.card__author, .card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ─── İSKELET KART (Loading) ─── */
+.card--skeleton {
+  min-height: 320px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+.card--skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0, 0, 0, 0.04),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ═══════════════════════════════════════════════
+   MAKALE DETAY STİLLERİ
+═══════════════════════════════════════════════ */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: var(--space-6);
+  transition: opacity var(--transition-fast);
+}
+.back-link:hover { opacity: 0.7; }
+
+.article-cover {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+.article-meta {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+.article-meta__category {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-alt);
+  font-weight: 600;
+}
+.article-meta__date {
+  color: var(--color-text-muted);
+}
+.article-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: var(--space-3);
+}
+.article-author {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+.article-body {
+  font-size: var(--font-size-lg);
+  line-height: 1.8;
+  color: var(--color-text-primary);
+}
+.article-body h2 {
+  font-size: var(--font-size-2xl);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+.article-body p {
+  margin-bottom: var(--space-4);
+}
+
+/* ═══════════════════════════════════════════════
+   KURS DETAY STİLLERİ
+═══════════════════════════════════════════════ */
+.course-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-lg);
+}
+.course-info__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.course-info__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+.course-info__value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+.course-cta {
+  text-align: center;
+  padding: var(--space-8) 0;
+}
+
+/* ═══════════════════════════════════════════════
+   DURUM MESAJLARI
+═══════════════════════════════════════════════ */
+.empty-state, .error-state {
+  text-align: center;
+  padding: var(--space-12) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  grid-column: 1 / -1;
+}
+.error-state { color: var(--color-danger, #ef4444); }
