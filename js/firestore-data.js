@@ -112,7 +112,7 @@ async function loadLatestArticles() {
             </p>
             <div class="hero__actions">
               <a href="#/magazin" class="btn btn--primary btn--lg">📰 Magazin'e Gözat</a>
-              <a href="#/kurslar" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
+              <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
             </div>
           </div>
           <div class="hero__visual">
@@ -592,9 +592,23 @@ async function loadFeaturedCourses(limit = 3) {
       return;
     }
 
-    container.innerHTML = snapshot.docs
+    const coursesHtml = snapshot.docs
       .map(doc => createCourseCard(doc.id, doc.data()))
       .join('');
+
+    container.innerHTML = `
+      <section class="featured-courses">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-header__title">🎓 Öne Çıkan Kurslar</h2>
+            <a href="#/akademi" class="section-header__link">Tümünü Gör →</a>
+          </div>
+          <div class="courses-grid">
+            ${coursesHtml}
+          </div>
+        </div>
+      </section>
+`    ;
 
     console.log(`🎓 ${snapshot.size} öne çıkan kurs yüklendi.`);
   } catch (error) {
