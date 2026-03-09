@@ -2,7 +2,7 @@
    ESTİ BİRAZ — Firestore Veri Çekme (firestore-data.js)
    ============================================ */
 
-// const db = firebase.firestore();
+//const db = firebase.firestore();
 
 // ══════════════════════════════════════════════
 //  MAKALE FONKSİYONLARI
@@ -98,38 +98,54 @@ async function loadArticle(slug) {
         })
       : '';
 
+    // Okuma süresi hesapla
+    const readingTime = calculateReadingTime(article.content);
+
+    // Makale URL'si
+    const articleUrl = window.location.origin + '/#/makale/' + slug;
+
     container.innerHTML = `
-      <article class="section">
+      <article class="article-detail">
         <div class="container container--narrow">
           <a href="#/magazin" class="back-link">← Magazin'e Dön</a>
 
           ${article.coverImage
-            ? `<img src="${article.coverImage}" alt="${article.title}" class="article-cover">`
+            ? `<div class="article-detail__cover">
+                 <img src="${article.coverImage}" alt="${article.title}">
+               </div>`
             : ''}
 
-          <div class="article-meta">
-            <span class="article-meta__category badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
-            <span class="article-meta__date">${date}</span>
+          <div class="article-detail__meta">
+            <span class="article-detail__category badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
+            <span class="article-detail__date">${date}</span>
+            ${createReadingTimeBadge(readingTime)}
           </div>
 
-          <h1 class="article-title">${article.title}</h1>
+          <h1 class="article-detail__title">${article.title}</h1>
           <p class="article-author">✍️ ${article.author}</p>
 
-          <div class="article-body">
+          <div class="article-detail__content editor-content">
             ${article.content}
           </div>
+
+          ${createShareButtons(article.title, articleUrl)}
         </div>
       </article>
+
+      <div id="relatedArticles"></div>
     `;
 
+    // İlgili makaleleri yükle
+    loadRelatedArticles(slug, article.category);
+
     document.title = `${article.title} — ESTİ BİRAZ`;
+    window.scrollTo(0, 0);
     console.log('📄 Makale yüklendi:', article.title);
   } catch (error) {
     console.error('❌ Makale yüklenemedi:', error);
     container.innerHTML = '<p class="error-state">Makale yüklenirken hata oluştu.</p>';
   }
 }
-
 // ══════════════════════════════════════════════
 //  KURS FONKSİYONLARI
 // ══════════════════════════════════════════════
@@ -347,5 +363,4 @@ function getLevelLabel(level) {
     ileri: '🔴 İleri'
   };
   return labels[level] || level;
-
 }
