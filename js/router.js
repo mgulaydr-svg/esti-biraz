@@ -73,7 +73,7 @@ function renderHome() {
         </p>
         <div class="hero__actions">
           <a href="#/magazin" class="btn btn--primary btn--lg">Makaleleri Keşfet</a>
-          <a href="#/akademi" class="btn btn--outline btn--lg">Kurslara Göz At</a>
+          <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
         </div>
       </div>
     </section>
