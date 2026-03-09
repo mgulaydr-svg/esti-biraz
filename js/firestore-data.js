@@ -12,66 +12,446 @@
  * Son makaleleri çeker (ana sayfa için)
  * @param {number} limit - Kaç makale çekilecek (varsayılan: 3)
  */
-async function loadLatestArticles(limit = 3) {
-  const container = document.getElementById('latestArticles');
-  if (!container) return;
+
+
+/* ============================================
+   ANA SAYFA — Hero Section + Son Makaleler
+   ============================================ */
+
+async function loadLatestArticles() {
+  const container = document.getElementById('app');
 
   try {
     const snapshot = await db.collection('articles')
+      .where('status', '==', 'published')
       .orderBy('publishedAt', 'desc')
-      .limit(limit)
+      .limit(3)
       .get();
 
-    if (snapshot.empty) {
-      container.innerHTML = '<p class="empty-state">Henüz makale yok.</p>';
-      return;
-    }
+    const articles = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-    container.innerHTML = snapshot.docs
-      .map(doc => createArticleCard(doc.id, doc.data()))
-      .join('');
+    // Hero article (ilk makale)
+    const heroArticle = articles[0];
+    const otherArticles = articles.slice(1);
 
-    console.log(`📰 ${snapshot.size} makale yüklendi (son).`);
+    container.innerHTML = `
+      <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero__content">
+            <span class="hero__badge">☕ ESTİ BİRAZ</span>
+            <h1 class="hero__title">Bir Yudum Bilgi,<br>Bir Tas Kültür.</h1>
+            <p class="hero__desc">
+              Teknolojiden sanata, bilimden yaşama — merakını besle, ufkunu genişlet.
+            </p>
+            <div class="hero__actions">
+              <a href="#/magazin" class="btn btn--primary btn--lg">📰 Magazin'e Gözat</a>
+              <a href="#/kurslar" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
+            </div>
+          </div>
+          <div class="hero__visual">
+            <div class="hero__card-stack">
+              <div class="hero__card hero__card--1">☕</div>
+              <div class="hero__card hero__card--2">📚</div>
+              <div class="hero__card hero__card--3">💡</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÖNE ÇIKAN MAKALE -->
+      ${heroArticle ? createFeaturedArticle(heroArticle) : ''}
+
+      <!-- SON MAKALELER -->
+      <section class="latest-articles">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-header__title">📰 Son Makaleler</h2>
+            <a href="#/magazin" class="section-header__link">Tümünü Gör →</a>
+          </div>
+          <div class="articles-grid articles-grid--home">
+            ${otherArticles.map(article => createArticleCard(article)).join('')}
+          </div>
+        </div>
+      </section>
+
+      <!-- ÖNE ÇIKAN KURSLAR -->
+      <div id="featuredCourses"></div>
+    `;
+
+    // Kursları yükle
+    loadFeaturedCourses();
+
+    console.log('🏠 Ana sayfa yüklendi.');
   } catch (error) {
-    console.error('❌ Makaleler yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Makaleler yüklenirken hata oluştu.</p>';
+    console.error('❌ Ana sayfa yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Sayfa yüklenirken hata oluştu.</p>';
   }
 }
+
+/**
+ * Öne çıkan makale bölümünü oluşturur
+ */
+function createFeaturedArticle(article) {
+  const date = article.publishedAt?.toDate
+    ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      })
+    : '';
+
+  return `
+    <section class="featured-article">
+      <div class="container">
+        <a href="#/makale/${article.slug}" class="featured-article__inner">
+          <div class="featured-article__image">
+            ${article.coverImage
+              ? `<img src="${article.coverImage}" alt="${article.title}" loading="lazy">`
+              : '<div class="featured-article__placeholder">📝</div>'}
+          </div>
+          <div class="featured-article__content">
+            <span class="badge badge--${article.category} badge--lg">${getCategoryLabel(article.category)}</span>
+            <h2 class="featured-article__title">${article.title}</h2>
+            <p class="featured-article__summary">${article.summary || ''}</p>
+            <div class="featured-article__meta">
+              <span>✍️ ${article.author}</span>
+              <span>📅 ${date}</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  `;
+}
+
+/**
+ * Makale kartı oluşturur (tekrar kullanılabilir)
+ */
+function createArticleCard(article) {
+  const date = article.publishedAt?.toDate
+    ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      })
+    : '';
+
+  const readingTime = calculateReadingTime(article.content || '');
+
+  return `
+    <a href="#/makale/${article.slug}" class="article-card">
+      <div class="article-card__image">
+        ${article.coverImage
+          ? `<img src="${article.coverImage}" alt="${article.title}" loading="lazy">`
+          : '<div class="article-card__placeholder">📝</div>'}
+      </div>
+      <div class="article-card__body">
+        <span class="badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
+        <h3 class="article-card__title">${article.title}</h3>
+        <p class="article-card__summary">${article.summary || ''}</p>
+        <div class="article-card__meta">
+          <span>✍️ ${article.author}</span>
+          <span>📅 ${date}</span>
+          <span>⏱️ ${readingTime} dk</span>
+        </div>
+      </div>
+    </a>
+  `;
+}
+
 
 /**
  * Tüm makaleleri çeker (magazin sayfası için)
  * @param {string} category - Kategori filtresi ('all' = tümü)
  */
-async function loadAllArticles(category = 'all') {
-  const container = document.getElementById('articleList');
-  if (!container) return;
 
+/* ============================================
+   MAGAZİN — Tüm Makaleleri Yükle (Filtreleme + Sayfalama)
+   ============================================ */
+
+const ARTICLES_PER_PAGE = 6;
+let currentPage = 1;
+let currentCategory = 'all';
+let currentSearchQuery = '';
+let allArticlesCache = [];
+
+/**
+ * Tüm makaleleri Firestore'dan çeker ve önbelleğe alır
+ */
+async function fetchAllArticles() {
   try {
-    let query = db.collection('articles').orderBy('publishedAt', 'desc');
+    const snapshot = await db.collection('articles')
+      .where('status', '==', 'published')
+      .orderBy('publishedAt', 'desc')
+      .get();
 
-    if (category !== 'all') {
-      query = db.collection('articles')
-        .where('category', '==', category)
-        .orderBy('publishedAt', 'desc');
-    }
+    allArticlesCache = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-    const snapshot = await query.get();
-
-    if (snapshot.empty) {
-      container.innerHTML = '<p class="empty-state">Bu kategoride makale bulunamadı.</p>';
-      return;
-    }
-
-    container.innerHTML = snapshot.docs
-      .map(doc => createArticleCard(doc.id, doc.data()))
-      .join('');
-
-    console.log(`📰 ${snapshot.size} makale yüklendi (kategori: ${category}).`);
+    return allArticlesCache;
   } catch (error) {
-    console.error('❌ Makaleler yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Makaleler yüklenirken hata oluştu.</p>';
+    console.error('❌ Makaleler çekilemedi:', error);
+    return [];
   }
 }
+
+/**
+ * Makaleleri filtreler (kategori + arama)
+ */
+function filterArticles(articles) {
+  let filtered = [...articles];
+
+  // Kategori filtresi
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(a => a.category === currentCategory);
+  }
+
+  // Arama filtresi
+  if (currentSearchQuery) {
+    const query = currentSearchQuery.toLowerCase();
+    filtered = filtered.filter(a =>
+      a.title.toLowerCase().includes(query) ||
+      a.summary?.toLowerCase().includes(query) ||
+      a.author?.toLowerCase().includes(query) ||
+      a.tags?.some(t => t.toLowerCase().includes(query))
+    );
+  }
+
+  return filtered;
+}
+
+/**
+ * Sayfalama ile makaleleri dilimler
+ */
+function paginateArticles(articles, page) {
+  const start = (page - 1) * ARTICLES_PER_PAGE;
+  const end = start + ARTICLES_PER_PAGE;
+  return articles.slice(start, end);
+}
+
+/**
+ * Magazin sayfasını render eder
+ */
+async function loadAllArticles() {
+  const container = document.getElementById('app');
+
+  container.innerHTML = `
+    <section class="magazin-page">
+      <div class="container">
+        <div class="magazin-header">
+          <h1 class="magazin-header__title">📰 Magazin</h1>
+          <p class="magazin-header__desc">Tüm makaleler, tek bir yerde.</p>
+        </div>
+
+        <!-- Arama Barı -->
+        <div class="magazin-search">
+          <input type="text" id="articleSearchInput" class="magazin-search__input"
+                 placeholder="🔍 Makale ara... (başlık, yazar, etiket)"
+                 value="${currentSearchQuery}">
+        </div>
+
+        <!-- Kategori Filtreleri -->
+        <div class="magazin-filters" id="categoryFilters">
+          <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Tümü</button>
+          <button class="filter-btn ${currentCategory === 'teknoloji' ? 'active' : ''}" data-category="teknoloji">💻 Teknoloji</button>
+          <button class="filter-btn ${currentCategory === 'yasam' ? 'active' : ''}" data-category="yasam">🌿 Yaşam</button>
+          <button class="filter-btn ${currentCategory === 'kultur' ? 'active' : ''}" data-category="kultur">🎭 Kültür</button>
+          <button class="filter-btn ${currentCategory === 'bilim' ? 'active' : ''}" data-category="bilim">🔬 Bilim</button>
+          <button class="filter-btn ${currentCategory === 'spor' ? 'active' : ''}" data-category="spor">⚽ Spor</button>
+        </div>
+
+        <!-- Makale Listesi -->
+        <div class="articles-grid" id="articlesGrid">
+          <div class="loading-state">Makaleler yükleniyor...</div>
+        </div>
+
+        <!-- Sayfalama -->
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+  `;
+
+  // Event listener'ları bağla
+  setupMagazinEvents();
+
+  // Makaleleri yükle
+  if (allArticlesCache.length === 0) {
+    await fetchAllArticles();
+  }
+
+  renderArticles();
+}
+
+/**
+ * Magazin event listener'larını kurar
+ */
+function setupMagazinEvents() {
+  // Kategori filtreleri
+  const filtersContainer = document.getElementById('categoryFilters');
+  if (filtersContainer) {
+    filtersContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+
+      currentCategory = btn.dataset.category;
+      currentPage = 1;
+
+      // Aktif butonu güncelle
+      filtersContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      renderArticles();
+    });
+  }
+
+  // Arama input'u (debounce ile)
+  const searchInput = document.getElementById('articleSearchInput');
+  if (searchInput) {
+    let debounceTimer;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        currentSearchQuery = e.target.value.trim();
+        currentPage = 1;
+        renderArticles();
+      }, 300);
+    });
+  }
+}
+
+/**
+ * Filtrelenmiş ve sayfalanmış makaleleri render eder
+ */
+function renderArticles() {
+  const grid = document.getElementById('articlesGrid');
+  const paginationContainer = document.getElementById('pagination');
+  if (!grid) return;
+
+  const filtered = filterArticles(allArticlesCache);
+  const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
+  const paginated = paginateArticles(filtered, currentPage);
+
+  if (paginated.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <p>🔍 Aramanızla eşleşen makale bulunamadı.</p>
+        <button class="btn btn--secondary btn--sm" onclick="resetFilters()">Filtreleri Temizle</button>
+      </div>
+    `;
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
+
+  grid.innerHTML = paginated.map(article => {
+    const date = article.publishedAt?.toDate
+      ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        })
+      : '';
+
+    const readingTime = calculateReadingTime(article.content || '');
+
+    return `
+      <a href="#/makale/${article.slug}" class="article-card">
+        <div class="article-card__image">
+          ${article.coverImage
+            ? `<img src="${article.coverImage}" alt="${article.title}" loading="lazy">`
+            : '<div class="article-card__placeholder">📝</div>'}
+        </div>
+        <div class="article-card__body">
+          <span class="badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
+          <h3 class="article-card__title">${article.title}</h3>
+          <p class="article-card__summary">${article.summary || ''}</p>
+          <div class="article-card__meta">
+            <span>✍️ ${article.author}</span>
+            <span>📅 ${date}</span>
+            <span>⏱️ ${readingTime} dk</span>
+          </div>
+        </div>
+      </a>
+    `;
+  }).join('');
+
+  // Sayfalama
+  if (paginationContainer && totalPages > 1) {
+    paginationContainer.innerHTML = createPagination(currentPage, totalPages);
+  } else if (paginationContainer) {
+    paginationContainer.innerHTML = '';
+  }
+
+  console.log(`📰 ${paginated.length}/${filtered.length} makale gösteriliyor (Sayfa ${currentPage}/${totalPages})`);
+}
+
+/**
+ * Filtreleri sıfırlar
+ */
+function resetFilters() {
+  currentCategory = 'all';
+  currentSearchQuery = '';
+  currentPage = 1;
+
+  const searchInput = document.getElementById('articleSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  const filtersContainer = document.getElementById('categoryFilters');
+  if (filtersContainer) {
+    filtersContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    const allBtn = filtersContainer.querySelector('[data-category="all"]');
+    if (allBtn) allBtn.classList.add('active');
+  }
+
+  renderArticles();
+}
+
+/**
+ * Sayfalama HTML'i oluşturur
+ */
+function createPagination(current, total) {
+  let html = '<div class="pagination__inner">';
+
+  // Önceki
+  html += `<button class="pagination__btn ${current === 1 ? 'disabled' : ''}"
+           onclick="goToPage(${current - 1})" ${current === 1 ? 'disabled' : ''}>
+           ← Önceki
+           </button>`;
+
+  // Sayfa numaraları
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) {
+      html += `<button class="pagination__num ${i === current ? 'active' : ''}"
+               onclick="goToPage(${i})">${i}</button>`;
+    } else if (i === current - 2 || i === current + 2) {
+      html += '<span class="pagination__dots">...</span>';
+    }
+  }
+
+  // Sonraki
+  html += `<button class="pagination__btn ${current === total ? 'disabled' : ''}"
+           onclick="goToPage(${current + 1})" ${current === total ? 'disabled' : ''}>
+           Sonraki →
+           </button>`;
+
+  html += '</div>';
+  return html;
+}
+
+/**
+ * Belirtilen sayfaya gider
+ */
+function goToPage(page) {
+  const filtered = filterArticles(allArticlesCache);
+  const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
+
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderArticles();
+
+  // Sayfanın üstüne scroll
+  document.querySelector('.magazin-filters')?.scrollIntoView({ behavior: 'smooth' });
+}
+
 
 /**
  * Tekil makale yükler (slug'a göre)
