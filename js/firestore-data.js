@@ -31,7 +31,7 @@ async function loadLatestArticles() {
     const articles = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    }));
+    })).filter(a => a && a.title);  // ← bozuk dokümanları filtrele
 
     // Hero article (ilk makale)
     const heroArticle = articles[0];
@@ -73,7 +73,9 @@ async function loadLatestArticles() {
             <a href="#/magazin" class="section-header__link">Tümünü Gör →</a>
           </div>
           <div class="articles-grid articles-grid--home">
-            ${otherArticles.map(article => createArticleCard(article)).join('')}
+            ${otherArticles.length > 0 
+              ? otherArticles.map(article => createArticleCard(article)).join('')
+              : '<p>Henüz başka makale yok.</p>'}}
           </div>
         </div>
       </section>
@@ -96,7 +98,7 @@ async function loadLatestArticles() {
  * Öne çıkan makale bölümünü oluşturur
  */
 function createFeaturedArticle(article) {
-  const date = article.publishedAt?.toDate
+  const date = article?.publishedAt?.toDate
     ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
         day: 'numeric', month: 'long', year: 'numeric'
       })
@@ -130,7 +132,7 @@ function createFeaturedArticle(article) {
  * Makale kartı oluşturur (tekrar kullanılabilir)
  */
 function createArticleCard(article) {
-  const date = article.publishedAt?.toDate
+  const date = article?.publishedAt?.toDate
     ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
         day: 'numeric', month: 'long', year: 'numeric'
       })
