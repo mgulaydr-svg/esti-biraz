@@ -28,17 +28,80 @@ async function loadLatestArticles() {
       .limit(3)
       .get();
 
-    const articles = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })).filter(a => a && a.title);  // ← bozuk dokümanları filtrele
+    const articles = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(a => a && a.title);
 
-    // Hero article (ilk makale)
-    const heroArticle = articles[0];
-    const otherArticles = articles.slice(1);
+    console.log('📦 Bulunan makale sayısı:', articles.length);
+
+    const heroArticle = articles.length > 0 ? articles[0] : null;
+    const otherArticles = articles.length > 1 ? articles.slice(1) : [];
+
+    // Tarih formatlama yardımcısı
+    function formatDate(item) {
+      if (item && item.publishedAt && typeof item.publishedAt.toDate === 'function') {
+        return item.publishedAt.toDate().toLocaleDateString('tr-TR', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+      }
+      return '';
+    }
+
+    // Öne çıkan makale HTML
+    let featuredHtml = '';
+    if (heroArticle) {
+      featuredHtml = `
+        <section class="featured-article">
+          <div class="container">
+            <a href="#/makale/${heroArticle.slug}" class="featured-article__inner">
+              <div class="featured-article__image">
+                ${heroArticle.coverImage
+                  ? '<img src="' + heroArticle.coverImage + '" alt="' + heroArticle.title + '" loading="lazy">'
+                  : '<div class="featured-article__placeholder">📝</div>'}
+              </div>
+              <div class="featured-article__content">
+                <span class="badge badge--${heroArticle.category} badge--lg">${getCategoryLabel(heroArticle.category)}</span>
+                <h2 class="featured-article__title">${heroArticle.title}</h2>
+                <p class="featured-article__summary">${heroArticle.summary || ''}</p>
+                <div class="featured-article__meta">
+                  <span>✍️ ${heroArticle.author || ''}</span>
+                  <span>📅 ${formatDate(heroArticle)}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      `;
+    }
+
+    // Diğer makaleler HTML
+    let otherHtml = '';
+    for (let i = 0; i < otherArticles.length; i++) {
+      const a = otherArticles[i];
+      if (!a || !a.title) continue;
+      const rt = calculateReadingTime(a.content || '');
+      otherHtml += `
+        <a href="#/makale/${a.slug}" class="article-card">
+          <div class="article-card__image">
+            ${a.coverImage
+              ? '<img src="' + a.coverImage + '" alt="' + a.title + '" loading="lazy">'
+              : '<div class="article-card__placeholder">📝</div>'}
+          </div>
+          <div class="article-card__body">
+            <span class="badge badge--${a.category}">${getCategoryLabel(a.category)}</span>
+            <h3 class="article-card__title">${a.title}</h3>
+            <p class="article-card__summary">${a.summary || ''}</p>
+            <div class="article-card__meta">
+              <span>✍️ ${a.author || ''}</span>
+              <span>📅 ${formatDate(a)}</span>
+              <span>⏱️ ${rt} dk</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }
 
     container.innerHTML = `
-      <!-- HERO SECTION -->
       <section class="hero">
         <div class="container">
           <div class="hero__content">
@@ -62,10 +125,8 @@ async function loadLatestArticles() {
         </div>
       </section>
 
-      <!-- ÖNE ÇIKAN MAKALE -->
-      ${heroArticle ? createFeaturedArticle(heroArticle) : ''}
+      ${featuredHtml}
 
-      <!-- SON MAKALELER -->
       <section class="latest-articles">
         <div class="container">
           <div class="section-header">
@@ -73,61 +134,20 @@ async function loadLatestArticles() {
             <a href="#/magazin" class="section-header__link">Tümünü Gör →</a>
           </div>
           <div class="articles-grid articles-grid--home">
-            ${otherArticles.length > 0
-  	      ? otherArticles.filter(a => a && a.title).map(article => createArticleCard(article)).join('')
- 	      : '<p style="text-align:center;color:gray;">Henüz başka makale yok.</p>'}
+            ${otherHtml || '<p style="text-align:center;color:gray;">Henüz başka makale yok.</p>'}
           </div>
         </div>
       </section>
 
-      <!-- ÖNE ÇIKAN KURSLAR -->
       <div id="featuredCourses"></div>
     `;
 
-    // Kursları yükle
     loadFeaturedCourses();
-
     console.log('🏠 Ana sayfa yüklendi.');
   } catch (error) {
     console.error('❌ Ana sayfa yüklenemedi:', error);
     container.innerHTML = '<p class="error-state">Sayfa yüklenirken hata oluştu.</p>';
   }
-}
-
-/**
- * Öne çıkan makale bölümünü oluşturur
- */
-function createFeaturedArticle(article) {
-  if (!article) return '';
-
-  const date = article.publishedAt && article.publishedAt.toDate
-    ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      })
-    : '';
-
-  return `
-    <section class="featured-article">
-      <div class="container">
-        <a href="#/makale/${article.slug}" class="featured-article__inner">
-          <div class="featured-article__image">
-            ${article.coverImage
-              ? '<img src="' + article.coverImage + '" alt="' + article.title + '" loading="lazy">'
-              : '<div class="featured-article__placeholder">📝</div>'}
-          </div>
-          <div class="featured-article__content">
-            <span class="badge badge--${article.category} badge--lg">${getCategoryLabel(article.category)}</span>
-            <h2 class="featured-article__title">${article.title}</h2>
-            <p class="featured-article__summary">${article.summary || ''}</p>
-            <div class="featured-article__meta">
-              <span>✍️ ${article.author || ''}</span>
-              <span>📅 ${date}</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </section>
-  `;
 }
 
 /**
