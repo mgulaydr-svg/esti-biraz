@@ -73,9 +73,9 @@ async function loadLatestArticles() {
             <a href="#/magazin" class="section-header__link">Tümünü Gör →</a>
           </div>
           <div class="articles-grid articles-grid--home">
-            ${otherArticles.length > 0 
-              ? otherArticles.map(article => createArticleCard(article)).join('')
-              : '<p>Henüz başka makale yok.</p>'}}
+            ${otherArticles.length > 0
+  	      ? otherArticles.filter(a => a && a.title).map(article => createArticleCard(article)).join('')
+ 	      : '<p style="text-align:center;color:gray;">Henüz başka makale yok.</p>'}
           </div>
         </div>
       </section>
@@ -98,7 +98,9 @@ async function loadLatestArticles() {
  * Öne çıkan makale bölümünü oluşturur
  */
 function createFeaturedArticle(article) {
-  const date = article?.publishedAt?.toDate
+  if (!article) return '';
+
+  const date = article.publishedAt && article.publishedAt.toDate
     ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
         day: 'numeric', month: 'long', year: 'numeric'
       })
@@ -110,7 +112,7 @@ function createFeaturedArticle(article) {
         <a href="#/makale/${article.slug}" class="featured-article__inner">
           <div class="featured-article__image">
             ${article.coverImage
-              ? `<img src="${article.coverImage}" alt="${article.title}" loading="lazy">`
+              ? '<img src="' + article.coverImage + '" alt="' + article.title + '" loading="lazy">'
               : '<div class="featured-article__placeholder">📝</div>'}
           </div>
           <div class="featured-article__content">
@@ -118,7 +120,7 @@ function createFeaturedArticle(article) {
             <h2 class="featured-article__title">${article.title}</h2>
             <p class="featured-article__summary">${article.summary || ''}</p>
             <div class="featured-article__meta">
-              <span>✍️ ${article.author}</span>
+              <span>✍️ ${article.author || ''}</span>
               <span>📅 ${date}</span>
             </div>
           </div>
@@ -132,7 +134,9 @@ function createFeaturedArticle(article) {
  * Makale kartı oluşturur (tekrar kullanılabilir)
  */
 function createArticleCard(article) {
-  const date = article?.publishedAt?.toDate
+  if (!article) return '';
+
+  const date = article.publishedAt && article.publishedAt.toDate
     ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
         day: 'numeric', month: 'long', year: 'numeric'
       })
@@ -144,7 +148,7 @@ function createArticleCard(article) {
     <a href="#/makale/${article.slug}" class="article-card">
       <div class="article-card__image">
         ${article.coverImage
-          ? `<img src="${article.coverImage}" alt="${article.title}" loading="lazy">`
+          ? '<img src="' + article.coverImage + '" alt="' + article.title + '" loading="lazy">'
           : '<div class="article-card__placeholder">📝</div>'}
       </div>
       <div class="article-card__body">
@@ -152,7 +156,7 @@ function createArticleCard(article) {
         <h3 class="article-card__title">${article.title}</h3>
         <p class="article-card__summary">${article.summary || ''}</p>
         <div class="article-card__meta">
-          <span>✍️ ${article.author}</span>
+          <span>✍️ ${article.author || ''}</span>
           <span>📅 ${date}</span>
           <span>⏱️ ${readingTime} dk</span>
         </div>
