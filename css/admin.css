@@ -272,3 +272,108 @@
     flex-direction: column;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   GÖRSEL YÜKLEME GELİŞTİRMELERİ (Parça 1.2)
+═══════════════════════════════════════════════ */
+
+/* ─── DRAG & DROP ─── */
+.image-upload__preview {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.image-upload__preview:hover {
+  background: var(--color-bg-alt);
+  border-color: var(--color-primary);
+}
+.image-upload__preview.drag-over {
+  background: rgba(59, 130, 246, 0.05);
+  outline: 2px dashed var(--color-primary);
+  outline-offset: -4px;
+}
+
+/* ─── YÜKLEME İLERLEME ÇUBUĞU ─── */
+.upload-progress {
+  width: 80%;
+  text-align: center;
+}
+.upload-progress__bar {
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  width: 0%;
+  transition: width 0.3s ease;
+  margin-bottom: var(--space-2);
+}
+.upload-progress__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ─── EDİTÖR İÇİ GÖRSEL YÜKLEME ─── */
+.editor-image-loading {
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-md);
+  margin: var(--space-3) 0;
+  color: var(--color-text-muted);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── EDİTÖR ALINTI BLOĞU ─── */
+.editor-content blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-3) 0;
+  background: var(--color-bg-alt);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+/* ─── EDİTÖR KOD BLOĞU ─── */
+.editor-code-block {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-3) 0;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: var(--font-size-sm);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ─── EDİTÖR TABLO ─── */
+.editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-3) 0;
+  font-size: var(--font-size-sm);
+}
+.editor-table th,
+.editor-table td {
+  border: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+.editor-table th {
+  background: var(--color-bg-alt);
+  font-weight: 600;
+}
+.editor-table td {
+  background: var(--color-surface);
+}
+
+/* ─── EDİTÖR AYIRICI ─── */
+.editor-content hr {
+  border: none;
+  border-top: 2px solid var(--color-border);
+  margin: var(--space-6) 0;
+}
