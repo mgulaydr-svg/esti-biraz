@@ -207,22 +207,27 @@ async function renderMakaleEkle() {
           <div class="form-group">
             <label class="form-label">Makale İçeriği *</label>
             <div class="editor-toolbar" id="editorToolbar">
-              <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
-              <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
-              <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
-              <span class="toolbar-divider"></span>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
-              <span class="toolbar-divider"></span>
-              <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
-              <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
-              <span class="toolbar-divider"></span>
-              <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
-              <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
-              <span class="toolbar-divider"></span>
-              <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
-            </div>
+	      <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
+  	      <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
+  	      <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+  	      <button type="button" class="toolbar-btn" data-command="strikeThrough" title="Üstü Çizili"><s>S</s></button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertBlockquote" title="Alıntı">❝</button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertHR" title="Ayırıcı Çizgi">―</button>
+ 	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
+	    </div>
             <div class="editor-content" id="articleContent" contenteditable="true"
               data-placeholder="Makale içeriğinizi buraya yazın..."></div>
           </div>
@@ -245,6 +250,7 @@ async function renderMakaleEkle() {
   setupEditor();
   setupArticleForm();
   setupSlugGenerator();
+  setupCoverImageUpload(); // ← Yeni: Cloudinary yükleme
 }
 
 /**
@@ -354,23 +360,28 @@ async function renderMakaleDuzenle(articleId) {
 
             <div class="form-group">
               <label class="form-label">Makale İçeriği *</label>
-              <div class="editor-toolbar" id="editorToolbar">
-                <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
-                <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
-                <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
-                <span class="toolbar-divider"></span>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
-                <span class="toolbar-divider"></span>
-                <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
-                <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
-                <span class="toolbar-divider"></span>
-                <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
-                <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
-                <span class="toolbar-divider"></span>
-                <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
-              </div>
+            <div class="editor-toolbar" id="editorToolbar">
+	      <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
+  	      <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
+  	      <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+  	      <button type="button" class="toolbar-btn" data-command="strikeThrough" title="Üstü Çizili"><s>S</s></button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
+  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertBlockquote" title="Alıntı">❝</button>
+  	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
+  	      <button type="button" class="toolbar-btn" data-command="insertHR" title="Ayırıcı Çizgi">―</button>
+ 	      <span class="toolbar-divider"></span>
+  	      <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
+	    </div>
               <div class="editor-content" id="articleContent" contenteditable="true">${article.content || ''}</div>
             </div>
 
@@ -389,6 +400,7 @@ async function renderMakaleDuzenle(articleId) {
 
     setupEditor();
     setupArticleForm();
+    setupCoverImageUpload(); // ← Yeni: Cloudinary yükleme
     console.log('✏️ Makale düzenleme yüklendi:', article.title);
   } catch (error) {
     console.error('❌ Makale düzenleme yüklenemedi:', error);
