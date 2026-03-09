@@ -207,3 +207,14 @@ function createRelatedArticlesHTML(articles) {
     </section>
   `;
 }
+
+/**
+ * İlgili makaleleri asenkron olarak yükler
+ */
+async function loadRelatedArticles(currentSlug, category) {
+  const container = document.getElementById('relatedArticles');
+  if (!container) return;
+
+  const related = await getRelatedArticles(currentSlug, category, 3);
+  container.innerHTML = createRelatedArticlesHTML(related);
+}
