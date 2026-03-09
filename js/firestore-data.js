@@ -104,6 +104,12 @@ async function loadArticle(slug) {
     // Makale URL'si
     const articleUrl = window.location.origin + '/#/makale/' + slug;
 
+    // İstatistikleri ve beğeni durumunu al
+    const [stats, isLiked] = await Promise.all([
+      getArticleStats(slug),
+      hasUserLiked(slug)
+    ]);
+
     container.innerHTML = `
       <article class="article-detail">
         <div class="container container--narrow">
@@ -119,6 +125,7 @@ async function loadArticle(slug) {
             <span class="article-detail__category badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
             <span class="article-detail__date">${date}</span>
             ${createReadingTimeBadge(readingTime)}
+            <span class="article-detail__views">👁️ ${stats.views} görüntülenme</span>
           </div>
 
           <h1 class="article-detail__title">${article.title}</h1>
@@ -128,12 +135,22 @@ async function loadArticle(slug) {
             ${article.content}
           </div>
 
-          ${createShareButtons(article.title, articleUrl)}
+          <div class="article-detail__actions">
+            ${createLikeButton(slug, stats.likes, isLiked)}
+            ${createShareButtons(article.title, articleUrl)}
+          </div>
         </div>
       </article>
 
+      ${createCommentForm(slug)}
       <div id="relatedArticles"></div>
     `;
+
+    // Görüntülenme sayacını artır
+    incrementViewCount(slug);
+
+    // Yorumları yükle
+    loadComments(slug);
 
     // İlgili makaleleri yükle
     loadRelatedArticles(slug, article.category);
