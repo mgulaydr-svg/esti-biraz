@@ -324,3 +324,191 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   BEĞENİ BUTONU (Parça 1.4)
+═══════════════════════════════════════════════ */
+.article-detail__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+.like-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.like-btn {
+  background: none;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  width: 48px;
+  height: 48px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.like-btn:hover {
+  transform: scale(1.15);
+  border-color: #ef4444;
+}
+.like-btn.liked {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+.like-count {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+/* ─── GÖRÜNTÜLENME ─── */
+.article-detail__views {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   YORUM SİSTEMİ (Parça 1.4)
+═══════════════════════════════════════════════ */
+.comments-section {
+  max-width: 720px;
+  margin: var(--space-8) auto;
+  padding: 0 var(--space-4);
+}
+.comments-section__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+/* ─── YORUM FORMU ─── */
+.comment-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.comment-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.comment-form__input,
+.comment-form__textarea {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+}
+.comment-form__input:focus,
+.comment-form__textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.comment-form__textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.comment-form__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-3);
+}
+.comment-form__hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ─── YORUM LİSTESİ ─── */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.comments-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-6);
+  font-style: italic;
+}
+.comments-loading {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-4);
+}
+
+/* ─── TEKİL YORUM ─── */
+.comment {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.comment__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+.comment__body {
+  flex: 1;
+  min-width: 0;
+}
+.comment__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+.comment__author {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+.comment__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.comment__content {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+  word-wrap: break-word;
+}
+
+/* ─── MOBİL UYUM ─── */
+@media (max-width: 640px) {
+  .comment-form__row {
+    grid-template-columns: 1fr;
+  }
+  .article-detail__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
