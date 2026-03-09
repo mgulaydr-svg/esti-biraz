@@ -47,6 +47,7 @@ function setupArticleForm() {
         // Mevcut makaleyi güncelle
         await db.collection('articles').doc(articleId).update({
           ...articleData,
+	  status: 'published',
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         console.log('✅ Makale güncellendi:', articleId);
@@ -55,6 +56,7 @@ function setupArticleForm() {
         // Yeni makale oluştur
         const docRef = await db.collection('articles').add({
           ...articleData,
+	  status: 'published',
           publishedAt: firebase.firestore.FieldValue.serverTimestamp(),
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
