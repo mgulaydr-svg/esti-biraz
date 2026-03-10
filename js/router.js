@@ -170,6 +170,11 @@ async function renderKurs(slug) {
 }
 
 // ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
+async function renderDers(courseSlug, lessonOrder) {
+  loadLesson(courseSlug, parseInt(lessonOrder));
+}
+
+// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
 async function loadLesson(courseSlug, lessonOrder) {
   const container = document.getElementById('app');
   container.innerHTML = `
