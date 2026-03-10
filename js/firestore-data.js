@@ -557,7 +557,7 @@ async function loadArticle(slug) {
           <h1 class="article-detail__title">${article.title}</h1>
           <p class="article-author">✍️ ${article.author}</p>
 
-          <div class="article-detail__content editor-content">
+          <div class="article-detail__content">
             ${article.content}
           </div>
 
