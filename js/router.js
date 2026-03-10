@@ -10,6 +10,7 @@ const routes = {
   '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
   '/admin':     { title: 'Admin Panel',     render: renderAdmin },
   '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
+  '/akademi':   { title: 'Akademi',   render: renderAkademi },
 };
 
 // Dinamik route'lar (parametre içerenler)
@@ -17,6 +18,8 @@ const dynamicRoutes = [
   { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
   { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
   { pattern: /^\/admin\/makale-duzenle\/(.+)$/, title: 'Makale Düzenle', render: renderMakaleDuzenle },
+  { pattern: /^\/kurs\/(.+)$/, title: 'Kurs', render: renderKurs },
+  { pattern: /^\/ders\/(.+)\/(.+)$/, title: 'Ders', render: renderDers },
 ];
 
 // ── Ana Uygulama Alanı ──
@@ -361,3 +364,22 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log('🧭 Router başlatıldı.');
   router();
 });
+
+// ── Kurs Detay ──
+async function renderKurs(slug) {
+  loadCourse(slug);
+}
+
+// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
+async function loadLesson(courseSlug, lessonOrder) {
+  const container = document.getElementById('app');
+  container.innerHTML = `
+    <section class="section">
+      <div class="container text-center">
+        <h1>🚧 Ders Oynatıcı</h1>
+        <p>Bu özellik Parça 1.7'de gelecek!</p>
+        <a href="#/kurs/${courseSlug}" class="btn btn--primary">← Kursa Dön</a>
+      </div>
+    </section>
+  `;
+}

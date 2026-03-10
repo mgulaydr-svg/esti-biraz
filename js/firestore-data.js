@@ -640,28 +640,53 @@ async function loadFeaturedCourses(limit = 3) {
 /**
  * Tüm kursları çeker (akademi sayfası için)
  */
+/* ============================================
+   AKADEMİ — Tüm Kurslar Sayfası
+   ============================================ */
+
 async function loadAllCourses() {
-  const container = document.getElementById('courseList');
-  if (!container) return;
+  const container = document.getElementById('app');
+
+  container.innerHTML = `
+    <section class="akademi-page">
+      <div class="container">
+        <div class="akademi-header">
+          <h1 class="akademi-header__title">🎓 Akademi</h1>
+          <p class="akademi-header__desc">Bilgiyi keşfet, kendini geliştir.</p>
+        </div>
+
+        <div class="courses-grid" id="coursesGrid">
+          <div class="loading-state">Kurslar yükleniyor...</div>
+        </div>
+      </div>
+    </section>
+  `;
 
   try {
     const snapshot = await db.collection('courses')
+      .where('status', '==', 'published')
       .orderBy('publishedAt', 'desc')
       .get();
 
+    const grid = document.getElementById('coursesGrid');
+    if (!grid) return;
+
     if (snapshot.empty) {
-      container.innerHTML = '<p class="empty-state">Henüz kurs yok.</p>';
+      grid.innerHTML = '<p class="empty-state">Henüz kurs eklenmemiş. Yakında burada olacak! 🚀</p>';
       return;
     }
 
-    container.innerHTML = snapshot.docs
+    grid.innerHTML = snapshot.docs
       .map(doc => createCourseCard(doc.id, doc.data()))
       .join('');
 
     console.log(`🎓 ${snapshot.size} kurs yüklendi.`);
   } catch (error) {
     console.error('❌ Kurslar yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
+    const grid = document.getElementById('coursesGrid');
+    if (grid) {
+      grid.innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
+    }
   }
 }
 
@@ -823,4 +848,270 @@ function getLevelLabel(level) {
     ileri: '🔴 İleri'
   };
   return labels[level] || level;
+}
+
+/* ============================================
+   EĞİTİM AKADEMİSİ — Kurs Fonksiyonları
+   ============================================ */
+
+/**
+ * Seviye etiketini döndürür
+ */
+function getLevelLabel(level) {
+  const labels = {
+    baslangic: '🟢 Başlangıç',
+    orta: '🟡 Orta',
+    ileri: '🔴 İleri'
+  };
+  return labels[level] || level || '';
+}
+
+/**
+ * Kurs detay sayfasını yükler
+ */
+async function loadCourse(slug) {
+  const container = document.getElementById('app');
+
+  try {
+    // Kursu slug ile bul
+    const snapshot = await db.collection('courses')
+      .where('slug', '==', slug)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      render404();
+      return;
+    }
+
+    const courseDoc = snapshot.docs[0];
+    const course = courseDoc.data();
+    const courseId = courseDoc.id;
+
+    // Dersleri yükle (sıralı)
+    const lessonsSnapshot = await db.collection('courses')
+      .doc(courseId)
+      .collection('lessons')
+      .orderBy('order', 'asc')
+      .get();
+
+    const lessons = lessonsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    // Kullanıcı kayıt durumunu kontrol et
+    let enrollment = null;
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const enrollSnapshot = await db.collection('enrollments')
+        .where('userId', '==', user.uid)
+        .where('courseId', '==', courseId)
+        .limit(1)
+        .get();
+
+      if (!enrollSnapshot.empty) {
+        enrollment = {
+          id: enrollSnapshot.docs[0].id,
+          ...enrollSnapshot.docs[0].data()
+        };
+      }
+    }
+
+    // Tarihi formatla
+    const date = course.publishedAt && course.publishedAt.toDate
+      ? course.publishedAt.toDate().toLocaleDateString('tr-TR', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        })
+      : '';
+
+    // Toplam süreyi hesapla
+    const totalDuration = lessons.reduce((sum, l) => sum + (l.durationMin || 0), 0);
+    const hours = Math.floor(totalDuration / 60);
+    const mins = totalDuration % 60;
+    const durationText = hours > 0 ? `${hours} saat ${mins} dk` : `${mins} dk`;
+
+    // İlerleme hesapla
+    const completedLessons = enrollment ? (enrollment.completedLessons || []) : [];
+    const progressPercent = lessons.length > 0
+      ? Math.round((completedLessons.length / lessons.length) * 100)
+      : 0;
+
+    container.innerHTML = `
+      <div class="course-detail">
+        <div class="container">
+          <a href="#/akademi" class="back-link">← Akademi'ye Dön</a>
+
+          <!-- KURS HEADER -->
+          <div class="course-detail__header">
+            <div class="course-detail__info">
+              <div class="course-detail__badges">
+                <span class="badge badge--${course.category}">${getCategoryLabel(course.category)}</span>
+                <span class="badge badge--level">${getLevelLabel(course.level)}</span>
+              </div>
+              <h1 class="course-detail__title">${course.title}</h1>
+              <p class="course-detail__desc">${course.description || ''}</p>
+              <div class="course-detail__meta">
+                <span>👨‍🏫 ${course.instructor || ''}</span>
+                <span>📅 ${date}</span>
+                <span>📚 ${lessons.length} Ders</span>
+                <span>⏱️ ${durationText}</span>
+              </div>
+
+              ${enrollment
+                ? `<div class="course-detail__progress">
+                     <div class="progress-bar">
+                       <div class="progress-bar__fill" style="width: ${progressPercent}%"></div>
+                     </div>
+                     <span class="progress-bar__text">%${progressPercent} tamamlandı (${completedLessons.length}/${lessons.length} ders)</span>
+                   </div>
+                   <a href="#/ders/${course.slug}/1" class="btn btn--primary btn--lg">
+                     ▶️ Devam Et
+                   </a>`
+                : `<button class="btn btn--primary btn--lg" onclick="enrollCourse('${courseId}', '${course.slug}')">
+                     🎓 Kursa Kayıt Ol (Ücretsiz)
+                   </button>`
+              }
+            </div>
+            <div class="course-detail__cover">
+              ${course.coverImage
+                ? '<img src="' + course.coverImage + '" alt="' + course.title + '" loading="lazy">'
+                : '<div class="course-detail__cover-placeholder">🎓</div>'}
+            </div>
+          </div>
+
+          <!-- DERS LİSTESİ -->
+          <section class="course-lessons">
+            <h2 class="course-lessons__title">📋 Müfredat</h2>
+            <div class="course-lessons__list">
+              ${lessons.map((lesson, index) => {
+                const isCompleted = completedLessons.includes(lesson.order);
+                const isLocked = !enrollment && !lesson.isFree;
+                const lessonIcon = isCompleted ? '✅' : isLocked ? '🔒' : getTypeIcon(lesson.type);
+
+                return `
+                  <div class="lesson-item ${isCompleted ? 'lesson-item--completed' : ''} ${isLocked ? 'lesson-item--locked' : ''}">
+                    <div class="lesson-item__number">${lessonIcon}</div>
+                    <div class="lesson-item__info">
+                      <h4 class="lesson-item__title">${lesson.title}</h4>
+                      <div class="lesson-item__meta">
+                        <span>${getTypeLabel(lesson.type)}</span>
+                        ${lesson.durationMin ? '<span>⏱️ ' + lesson.durationMin + ' dk</span>' : ''}
+                        ${lesson.isFree ? '<span class="lesson-item__free">Ücretsiz</span>' : ''}
+                      </div>
+                    </div>
+                    <div class="lesson-item__action">
+                      ${isLocked
+                        ? '<span class="lesson-item__lock-text">Kayıt gerekli</span>'
+                        : '<a href="#/ders/' + course.slug + '/' + lesson.order + '" class="btn btn--sm btn--outline">Başla →</a>'
+                      }
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        </div>
+      </div>
+    `;
+
+    document.title = `${course.title} — ESTİ BİRAZ Akademi`;
+    window.scrollTo(0, 0);
+    console.log('🎓 Kurs yüklendi:', course.title);
+  } catch (error) {
+    console.error('❌ Kurs yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Kurs yüklenirken hata oluştu.</p>';
+  }
+}
+
+/**
+ * Ders tipi ikonunu döndürür
+ */
+function getTypeIcon(type) {
+  const icons = { video: '🎬', text: '📖', quiz: '❓' };
+  return icons[type] || '📄';
+}
+
+/**
+ * Ders tipi etiketini döndürür
+ */
+function getTypeLabel(type) {
+  const labels = { video: '🎬 Video', text: '📖 Metin', quiz: '❓ Quiz' };
+  return labels[type] || '📄 Ders';
+}
+
+/**
+ * Kursa kayıt olma
+ */
+async function enrollCourse(courseId, courseSlug) {
+  const user = firebase.auth().currentUser;
+
+  if (!user) {
+    alert('Kursa kayıt olmak için giriş yapmalısınız.');
+    return;
+  }
+
+  try {
+    // Zaten kayıtlı mı kontrol et
+    const existing = await db.collection('enrollments')
+      .where('userId', '==', user.uid)
+      .where('courseId', '==', courseId)
+      .limit(1)
+      .get();
+
+    if (!existing.empty) {
+      alert('Bu kursa zaten kayıtlısınız!');
+      return;
+    }
+
+    // Yeni kayıt oluştur
+    await db.collection('enrollments').add({
+      userId: user.uid,
+      courseId: courseId,
+      completedLessons: [],
+      progressPercent: 0,
+      enrolledAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastAccessedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      certificateIssued: false
+    });
+
+    console.log('✅ Kursa kayıt olundu:', courseId);
+    alert('Kursa başarıyla kayıt oldunuz! 🎉');
+
+    // Sayfayı yenile
+    loadCourse(courseSlug);
+  } catch (error) {
+    console.error('❌ Kayıt başarısız:', error);
+    alert('Kayıt sırasında hata oluştu: ' + error.message);
+  }
+}
+
+/**
+ * Kurs kartı oluşturur (tekrar kullanılabilir)
+ */
+function createCourseCard(courseId, course) {
+  if (!course || !course.title) return '';
+
+  const totalLessons = course.totalLessons || 0;
+  const level = getLevelLabel(course.level);
+
+  return `
+    <a href="#/kurs/${course.slug}" class="course-card">
+      <div class="course-card__image">
+        ${course.coverImage
+          ? '<img src="' + course.coverImage + '" alt="' + course.title + '" loading="lazy">'
+          : '<div class="course-card__placeholder">🎓</div>'}
+        <span class="course-card__level">${level}</span>
+      </div>
+      <div class="course-card__body">
+        <span class="badge badge--${course.category} badge--sm">${getCategoryLabel(course.category)}</span>
+        <h3 class="course-card__title">${course.title}</h3>
+        <p class="course-card__desc">${course.description || ''}</p>
+        <div class="course-card__footer">
+          <span>👨‍🏫 ${course.instructor || ''}</span>
+          <span>📚 ${totalLessons} Ders</span>
+        </div>
+      </div>
+    </a>
+  `;
 }
