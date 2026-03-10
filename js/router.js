@@ -2,63 +2,6 @@
    ESTİ BİRAZ — SPA Router (router.js)
    ============================================ */
 
-// ── Route Tanımları ──
-const routes = {
-  '/':         { title: 'Ana Sayfa',  render: renderHome },
-  '/magazin':  { title: 'Magazin',    render: renderMagazin },
-  '/akademi':  { title: 'Akademi',    render: renderAkademi },
-  '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
-  '/admin':     { title: 'Admin Panel',     render: renderAdmin },
-  '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
-  '/akademi':   { title: 'Akademi',   render: renderAkademi },
-};
-
-// Dinamik route'lar (parametre içerenler)
-const dynamicRoutes = [
-  { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
-  { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
-  { pattern: /^\/admin\/makale-duzenle\/(.+)$/, title: 'Makale Düzenle', render: renderMakaleDuzenle },
-  { pattern: /^\/kurs\/(.+)$/, title: 'Kurs', render: renderKurs },
-  { pattern: /^\/ders\/(.+)\/(.+)$/, title: 'Ders', render: renderDers },
-];
-
-// ── Ana Uygulama Alanı ──
-const appContainer = document.getElementById('app');
-
-// ══════════════════════════════════════════════
-//  ROUTER FONKSİYONU
-// ══════════════════════════════════════════════
-function router() {
-  const hash = window.location.hash || '#/';
-  const path = hash.slice(1); // # işaretini kaldır
-
-  console.log('🧭 Route:', path);
-
-  // 1. Statik route kontrolü
-  if (routes[path]) {
-    document.title = `${routes[path].title} — ESTİ BİRAZ`;
-    routes[path].render();
-    updateActiveNav();
-    window.scrollTo(0, 0);
-    return;
-  }
-
-  // 2. Dinamik route kontrolü
-  for (const route of dynamicRoutes) {
-    const match = path.match(route.pattern);
-    if (match) {
-      document.title = `${route.title} — ESTİ BİRAZ`;
-      route.render(match[1]); // İlk yakalama grubunu parametre olarak gönder
-      updateActiveNav();
-      window.scrollTo(0, 0);
-      return;
-    }
-  }
-
-  // 3. Eşleşme yoksa → 404
-  render404();
-}
-
 // ══════════════════════════════════════════════
 //  SAYFA RENDER FONKSİYONLARI
 // ══════════════════════════════════════════════
@@ -154,28 +97,6 @@ function renderMagazin() {
   loadAllArticles();
 }
 
-// ── Akademi Sayfası ──
-function renderAkademi() {
-  appContainer.innerHTML = `
-    <section class="section">
-      <div class="container">
-        <div class="page-header">
-          <h1 class="page-header__title">🎓 Akademi</h1>
-          <p class="page-header__desc">İnteraktif kurslarla öğrenin, sertifikanızı alın.</p>
-        </div>
-
-        <!-- Kurs Listesi -->
-        <div class="grid grid--3" id="courseList">
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
-      </div>
-    </section>
-  `;
-  loadAllCourses();
-}
-
 // ── Hakkında Sayfası ──
 function renderHakkinda() {
   appContainer.innerHTML = `
@@ -237,19 +158,29 @@ function renderMakale(slug) {
 }
 
 // ── Tekil Kurs Sayfası ──
-function renderKurs(id) {
-  appContainer.innerHTML = `
+// ── Kurs Detay ──
+
+// ✅ Yenisi
+async function renderAkademi() {
+  loadAllCourses();
+}
+
+async function renderKurs(slug) {
+  loadCourse(slug);
+}
+
+// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
+async function loadLesson(courseSlug, lessonOrder) {
+  const container = document.getElementById('app');
+  container.innerHTML = `
     <section class="section">
-      <div class="container container--narrow">
-        <div class="article-loading">
-          <div class="spinner"></div>
-          <p>Kurs yükleniyor...</p>
-        </div>
+      <div class="container text-center">
+        <h1>🚧 Ders Oynatıcı</h1>
+        <p>Bu özellik Parça 1.7'de gelecek!</p>
+        <a href="#/kurs/${courseSlug}" class="btn btn--primary">← Kursa Dön</a>
       </div>
     </section>
   `;
-
-  loadCourse(id);
 }
 
 // ── 404 Sayfası ──
@@ -332,6 +263,67 @@ async function renderAdmin() {
   loadAdminCourses();
 }
 
+
+
+// ── Route Tanımları ──
+const routes = {
+  '/':         { title: 'Ana Sayfa',  render: renderHome },
+  '/magazin':  { title: 'Magazin',    render: renderMagazin },
+  '/akademi':  { title: 'Akademi',    render: renderAkademi },
+  '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
+  '/admin':     { title: 'Admin Panel',     render: renderAdmin },
+  '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
+  '/akademi':   { title: 'Akademi',   render: renderAkademi },
+};
+
+// Dinamik route'lar (parametre içerenler)
+const dynamicRoutes = [
+  { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
+  { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
+  { pattern: /^\/admin\/makale-duzenle\/(.+)$/, title: 'Makale Düzenle', render: renderMakaleDuzenle },
+  { pattern: /^\/kurs\/(.+)$/, title: 'Kurs', render: renderKurs },
+  { pattern: /^\/ders\/(.+)\/(.+)$/, title: 'Ders', render: renderDers },
+];
+
+// ── Ana Uygulama Alanı ──
+const appContainer = document.getElementById('app');
+
+// ══════════════════════════════════════════════
+//  ROUTER FONKSİYONU
+// ══════════════════════════════════════════════
+function router() {
+  const hash = window.location.hash || '#/';
+  const path = hash.slice(1); // # işaretini kaldır
+
+  console.log('🧭 Route:', path);
+
+  // 1. Statik route kontrolü
+  if (routes[path]) {
+    document.title = `${routes[path].title} — ESTİ BİRAZ`;
+    routes[path].render();
+    updateActiveNav();
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  // 2. Dinamik route kontrolü
+  for (const route of dynamicRoutes) {
+    const match = path.match(route.pattern);
+    if (match) {
+      document.title = `${route.title} — ESTİ BİRAZ`;
+      route.render(match[1]); // İlk yakalama grubunu parametre olarak gönder
+      updateActiveNav();
+      window.scrollTo(0, 0);
+      return;
+    }
+  }
+
+  // 3. Eşleşme yoksa → 404
+  render404();
+}
+
+
+
 // ══════════════════════════════════════════════
 //  KATEGORİ FİLTRE SİSTEMİ
 // ══════════════════════════════════════════════
@@ -365,21 +357,3 @@ window.addEventListener('DOMContentLoaded', () => {
   router();
 });
 
-// ── Kurs Detay ──
-async function renderKurs(slug) {
-  loadCourse(slug);
-}
-
-// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
-async function loadLesson(courseSlug, lessonOrder) {
-  const container = document.getElementById('app');
-  container.innerHTML = `
-    <section class="section">
-      <div class="container text-center">
-        <h1>🚧 Ders Oynatıcı</h1>
-        <p>Bu özellik Parça 1.7'de gelecek!</p>
-        <a href="#/kurs/${courseSlug}" class="btn btn--primary">← Kursa Dön</a>
-      </div>
-    </section>
-  `;
-}
