@@ -1315,3 +1315,185 @@ async function loadLesson(courseSlug, lessonOrder) {
     container.innerHTML = '<p class="error-state">Ders yüklenirken hata oluştu.</p>';
   }
 }
+
+/**
+ * Ders tipine göre içerik HTML'i oluşturur
+ */
+function renderLessonContent(lesson) {
+  switch (lesson.type) {
+    case 'video':
+      if (!lesson.videoUrl) {
+        return '<div class="lesson-empty">🎬 Video henüz eklenmemiş.</div>';
+      }
+      // YouTube embed URL'ye dönüştür
+      const embedUrl = convertToEmbedUrl(lesson.videoUrl);
+      return `
+        <div class="lesson-video">
+          <div class="lesson-video__wrapper">
+            <iframe
+              src="${embedUrl}"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+        ${lesson.content ? '<div class="lesson-text">' + lesson.content + '</div>' : ''}
+      `;
+
+    case 'text':
+      if (!lesson.content) {
+        return '<div class="lesson-empty">📖 Ders içeriği henüz eklenmemiş.</div>';
+      }
+      return `<div class="lesson-text">${lesson.content}</div>`;
+
+    case 'quiz':
+      return `
+        <div class="lesson-empty">
+          <h3>❓ Quiz</h3>
+          <p>Quiz özelliği yakında eklenecek!</p>
+        </div>
+      `;
+
+    default:
+      return `<div class="lesson-text">${lesson.content || '<p>İçerik yükleniyor...</p>'}</div>`;
+  }
+}
+
+/**
+ * YouTube/Vimeo URL'yi embed formatına çevirir
+ */
+function convertToEmbedUrl(url) {
+  if (!url) return '';
+
+  // Zaten embed URL ise aynen döndür
+  if (url.includes('/embed/') || url.includes('player.vimeo.com')) {
+    return url;
+  }
+
+  // YouTube: watch?v=ID veya youtu.be/ID
+  let ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (ytMatch) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  }
+
+  // Vimeo: vimeo.com/ID
+  let vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  }
+
+  return url;
+}
+
+/* ============================================
+   İLERLEME — Ders Tamamlama / Geri Alma
+   ============================================ */
+
+async function toggleLessonComplete(enrollmentId, lessonOrder, totalLessons, courseSlug, isLastLesson) {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    alert('İlerleme kaydetmek için giriş yapmalısınız.');
+    return;
+  }
+
+  const btn = document.getElementById('completeLessonBtn');
+  if (!btn) return;
+
+  // Buton durumunu devre dışı bırak
+  btn.disabled = true;
+  btn.textContent = '⏳ Kaydediliyor...';
+
+  try {
+    const enrollRef = db.collection('enrollments').doc(enrollmentId);
+    const enrollDoc = await enrollRef.get();
+
+    if (!enrollDoc.exists) {
+      alert('Kayıt bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin.');
+      btn.disabled = false;
+      return;
+    }
+
+    const data = enrollDoc.data();
+    let completedLessons = data.completedLessons || [];
+    const alreadyCompleted = completedLessons.includes(lessonOrder);
+
+    if (alreadyCompleted) {
+      // Geri al — tamamlanmışı kaldır
+      completedLessons = completedLessons.filter(o => o !== lessonOrder);
+    } else {
+      // Tamamla — ekle
+      completedLessons.push(lessonOrder);
+      // Sırala
+      completedLessons.sort((a, b) => a - b);
+    }
+
+    // İlerleme yüzdesini hesapla
+    const progressPercent = totalLessons > 0
+      ? Math.round((completedLessons.length / totalLessons) * 100)
+      : 0;
+
+    // Firestore güncelle
+    await enrollRef.update({
+      completedLessons: completedLessons,
+      progressPercent: progressPercent,
+      lastAccessedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (alreadyCompleted) {
+      // Geri alındı
+      btn.textContent = '☐ Dersi Tamamla';
+      btn.classList.remove('btn--completed');
+      btn.disabled = false;
+      console.log('↩️ Ders geri alındı:', lessonOrder);
+    } else {
+      // Tamamlandı
+      btn.textContent = '✅ Tamamlandı!';
+      btn.classList.add('btn--completed');
+      console.log('✅ Ders tamamlandı:', lessonOrder, `(%${progressPercent})`);
+
+      // Kurs tamamlandıysa tebrik göster
+      if (progressPercent === 100) {
+        showCourseCompleteModal(courseSlug);
+        return;
+      }
+
+      // Otomatik sonraki derse geç (1.5 saniye sonra)
+      if (!isLastLesson) {
+        btn.textContent = '✅ Sonraki derse geçiliyor...';
+        setTimeout(() => {
+          window.location.hash = `#/ders/${courseSlug}/${lessonOrder + 1}`;
+        }, 1500);
+      } else {
+        btn.disabled = false;
+      }
+    }
+
+  } catch (error) {
+    console.error('❌ İlerleme kaydedilemedi:', error);
+    btn.textContent = '⚠️ Hata — Tekrar Dene';
+    btn.disabled = false;
+    alert('İlerleme kaydedilirken hata oluştu: ' + error.message);
+  }
+}
+
+/**
+ * Kurs tamamlama tebrik modalı
+ */
+function showCourseCompleteModal(courseSlug) {
+  const modal = document.createElement('div');
+  modal.className = 'course-complete-modal';
+  modal.innerHTML = `
+    <div class="course-complete-modal__overlay" onclick="this.parentElement.remove()"></div>
+    <div class="course-complete-modal__content">
+      <div class="course-complete-modal__icon">🎉</div>
+      <h2>Tebrikler!</h2>
+      <p>Bu kursu başarıyla tamamladınız!</p>
+      <div class="course-complete-modal__actions">
+        <a href="#/kurs/${courseSlug}" class="btn btn--primary btn--lg">📋 Kursa Dön</a>
+        <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Diğer Kurslar</a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
