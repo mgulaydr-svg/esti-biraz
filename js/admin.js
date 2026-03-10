@@ -160,12 +160,15 @@ async function renderMakaleEkle() {
             <div class="form-group">
               <label for="articleCategory" class="form-label">Kategori *</label>
               <select id="articleCategory" class="form-select" required>
-                <option value="">Seçiniz</option>
-                <option value="saglik">🏥 Sağlık</option>
-                <option value="bilim">🔬 Bilim</option>
-                <option value="egitim">📖 Eğitim</option>
-                <option value="teknoloji">💻 Teknoloji</option>
-              </select>
+  		<option value="">Seçiniz</option>
+  		<option value="saglik">🏥 Sağlık</option>
+  		<option value="bilim">🔬 Bilim</option>
+  		<option value="egitim">📖 Eğitim</option>
+  		<option value="teknoloji">💻 Teknoloji</option>
+  		<option value="yasam">🌿 Yaşam</option>
+  		<option value="kultur">🎭 Kültür</option>
+  		<option value="diger">📌 Diğer</option>
+	     </select>
             </div>
             <div class="form-group">
               <label class="form-label">Öne Çıkan</label>
@@ -322,6 +325,9 @@ async function renderMakaleDuzenle(articleId) {
                   <option value="bilim" ${article.category === 'bilim' ? 'selected' : ''}>🔬 Bilim</option>
                   <option value="egitim" ${article.category === 'egitim' ? 'selected' : ''}>📖 Eğitim</option>
                   <option value="teknoloji" ${article.category === 'teknoloji' ? 'selected' : ''}>💻 Teknoloji</option>
+		  <option value="yasam" ${article.category === 'yasam' ? 'selected' : ''}>🌿 Yaşam</option>
+		  <option value="kultur" ${article.category === 'kultur' ? 'selected' : ''}>🎭 Kültür</option>
+		  <option value="diger" ${article.category === 'diger' ? 'selected' : ''}>📌 Diğer</option>
                 </select>
               </div>
               <div class="form-group">

@@ -285,6 +285,9 @@ async function loadAllArticles() {
   	  <button class="filter-btn ${currentCategory === 'bilim' ? 'active' : ''}" data-category="bilim">🔬 Bilim</button>
   	  <button class="filter-btn ${currentCategory === 'egitim' ? 'active' : ''}" data-category="egitim">📖 Eğitim</button>
   	  <button class="filter-btn ${currentCategory === 'teknoloji' ? 'active' : ''}" data-category="teknoloji">💻 Teknoloji</button>
+  	  <button class="filter-btn ${currentCategory === 'yasam' ? 'active' : ''}" data-category="yasam">🌿 Yaşam</button>
+  	  <button class="filter-btn ${currentCategory === 'kultur' ? 'active' : ''}" data-category="kultur">🎭 Kültür</button>
+  	  <button class="filter-btn ${currentCategory === 'diger' ? 'active' : ''}" data-category="diger">📌 Diğer</button>
 	</div>
 
         <!-- Makale Listesi -->
@@ -802,7 +805,10 @@ function getCategoryLabel(category) {
     saglik: '🏥 Sağlık',
     bilim: '🔬 Bilim',
     egitim: '📖 Eğitim',
-    teknoloji: '💻 Teknoloji'
+    teknoloji: '💻 Teknoloji',
+    yasam: '🌿 Yaşam',
+    kultur: '🎭 Kültür',
+    diger: '📌 Diğer'
   };
   return labels[category] || category || '';
 }
