@@ -1115,3 +1115,203 @@ function createCourseCard(courseId, course) {
     </a>
   `;
 }
+
+
+/* ============================================
+   DERS OYNATICI — Ders Yükleme ve Görüntüleme
+   ============================================ */
+
+async function loadLesson(courseSlug, lessonOrder) {
+  const container = document.getElementById('app');
+
+  try {
+    // 1) Kursu slug ile bul
+    const courseSnapshot = await db.collection('courses')
+      .where('slug', '==', courseSlug)
+      .limit(1)
+      .get();
+
+    if (courseSnapshot.empty) {
+      render404();
+      return;
+    }
+
+    const courseDoc = courseSnapshot.docs[0];
+    const course = courseDoc.data();
+    const courseId = courseDoc.id;
+
+    // 2) Tüm dersleri çek (sidebar + navigasyon için)
+    const lessonsSnapshot = await db.collection('courses')
+      .doc(courseId)
+      .collection('lessons')
+      .orderBy('order', 'asc')
+      .get();
+
+    const lessons = lessonsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    // 3) Mevcut dersi bul
+    const currentLesson = lessons.find(l => l.order === lessonOrder);
+    if (!currentLesson) {
+      container.innerHTML = `
+        <section class="section">
+          <div class="container text-center">
+            <h1>❌ Ders Bulunamadı</h1>
+            <p>Bu ders mevcut değil.</p>
+            <a href="#/kurs/${courseSlug}" class="btn btn--primary">← Kursa Dön</a>
+          </div>
+        </section>
+      `;
+      return;
+    }
+
+    // 4) Kullanıcı enrollment bilgisini çek
+    let enrollment = null;
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const enrollSnapshot = await db.collection('enrollments')
+        .where('userId', '==', user.uid)
+        .where('courseId', '==', courseId)
+        .limit(1)
+        .get();
+
+      if (!enrollSnapshot.empty) {
+        enrollment = {
+          id: enrollSnapshot.docs[0].id,
+          ...enrollSnapshot.docs[0].data()
+        };
+      }
+    }
+
+    // 5) Erişim kontrolü — kayıtlı değilse ve ders ücretsiz değilse
+    if (!enrollment && !currentLesson.isFree) {
+      container.innerHTML = `
+        <section class="section">
+          <div class="container text-center">
+            <h1>🔒 Bu Ders Kilitli</h1>
+            <p>Bu derse erişmek için kursa kayıt olmanız gerekiyor.</p>
+            <a href="#/kurs/${courseSlug}" class="btn btn--primary btn--lg">🎓 Kursa Git ve Kayıt Ol</a>
+          </div>
+        </section>
+      `;
+      return;
+    }
+
+    const completedLessons = enrollment ? (enrollment.completedLessons || []) : [];
+    const isCompleted = completedLessons.includes(currentLesson.order);
+
+    // 6) Önceki / Sonraki ders
+    const currentIndex = lessons.findIndex(l => l.order === lessonOrder);
+    const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
+    const nextLesson = currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+    const isLastLesson = !nextLesson;
+
+    // 7) lastAccessedAt güncelle
+    if (enrollment) {
+      db.collection('enrollments').doc(enrollment.id).update({
+        lastAccessedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(err => console.warn('lastAccessedAt güncellenemedi:', err));
+    }
+
+    // 8) Ders içeriğini oluştur
+    const lessonContent = renderLessonContent(currentLesson);
+
+    // 9) İlerleme yüzdesi
+    const progressPercent = lessons.length > 0
+      ? Math.round((completedLessons.length / lessons.length) * 100)
+      : 0;
+
+    container.innerHTML = `
+      <div class="lesson-player">
+        <div class="container">
+
+          <!-- ÜST BAR -->
+          <div class="lesson-player__topbar">
+            <a href="#/kurs/${courseSlug}" class="lesson-player__back">← ${course.title}</a>
+            ${enrollment ? `
+              <div class="lesson-player__progress-mini">
+                <div class="progress-bar progress-bar--sm">
+                  <div class="progress-bar__fill" style="width: ${progressPercent}%"></div>
+                </div>
+                <span>%${progressPercent}</span>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- ANA İÇERİK -->
+          <div class="lesson-player__layout">
+
+            <!-- SOL: DERS İÇERİĞİ -->
+            <main class="lesson-player__main">
+              <div class="lesson-player__header">
+                <span class="lesson-player__type">${getTypeLabel(currentLesson.type)}</span>
+                <h1 class="lesson-player__title">${currentLesson.title}</h1>
+                ${currentLesson.durationMin ? '<span class="lesson-player__duration">⏱️ ' + currentLesson.durationMin + ' dk</span>' : ''}
+              </div>
+
+              <div class="lesson-player__content">
+                ${lessonContent}
+              </div>
+
+              <!-- TAMAMLA + NAVİGASYON -->
+              <div class="lesson-player__actions">
+                ${enrollment ? `
+                  <button
+                    class="btn btn--success btn--lg lesson-complete-btn ${isCompleted ? 'btn--completed' : ''}"
+                    id="completeLessonBtn"
+                    onclick="toggleLessonComplete('${enrollment.id}', ${currentLesson.order}, ${lessons.length}, '${courseSlug}', ${isLastLesson})"
+                  >
+                    ${isCompleted ? '✅ Tamamlandı' : '☐ Dersi Tamamla'}
+                  </button>
+                ` : ''}
+
+                <div class="lesson-player__nav">
+                  ${prevLesson
+                    ? '<a href="#/ders/' + courseSlug + '/' + prevLesson.order + '" class="btn btn--outline">← Önceki Ders</a>'
+                    : '<span></span>'
+                  }
+                  ${nextLesson
+                    ? '<a href="#/ders/' + courseSlug + '/' + nextLesson.order + '" class="btn btn--primary">Sonraki Ders →</a>'
+                    : '<a href="#/kurs/' + courseSlug + '" class="btn btn--outline">📋 Müfredata Dön</a>'
+                  }
+                </div>
+              </div>
+            </main>
+
+            <!-- SAĞ: MÜFREDAT SİDEBAR -->
+            <aside class="lesson-player__sidebar">
+              <h3 class="lesson-sidebar__title">📋 Müfredat</h3>
+              <div class="lesson-sidebar__list">
+                ${lessons.map(lesson => {
+                  const done = completedLessons.includes(lesson.order);
+                  const active = lesson.order === lessonOrder;
+                  const locked = !enrollment && !lesson.isFree;
+                  const icon = done ? '✅' : active ? '▶️' : locked ? '🔒' : getTypeIcon(lesson.type);
+
+                  return `
+                    <a href="${locked ? '#' : '#/ders/' + courseSlug + '/' + lesson.order}"
+                       class="lesson-sidebar__item ${active ? 'lesson-sidebar__item--active' : ''} ${done ? 'lesson-sidebar__item--done' : ''} ${locked ? 'lesson-sidebar__item--locked' : ''}">
+                      <span class="lesson-sidebar__icon">${icon}</span>
+                      <span class="lesson-sidebar__name">${lesson.title}</span>
+                    </a>
+                  `;
+                }).join('')}
+              </div>
+            </aside>
+
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.title = `${currentLesson.title} — ${course.title} — ESTİ BİRAZ`;
+    window.scrollTo(0, 0);
+    console.log('▶️ Ders yüklendi:', currentLesson.title);
+
+  } catch (error) {
+    console.error('❌ Ders yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Ders yüklenirken hata oluştu.</p>';
+  }
+}

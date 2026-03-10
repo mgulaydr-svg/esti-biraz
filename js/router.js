@@ -174,19 +174,6 @@ async function renderDers(courseSlug, lessonOrder) {
   loadLesson(courseSlug, parseInt(lessonOrder));
 }
 
-// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
-async function loadLesson(courseSlug, lessonOrder) {
-  const container = document.getElementById('app');
-  container.innerHTML = `
-    <section class="section">
-      <div class="container text-center">
-        <h1>🚧 Ders Oynatıcı</h1>
-        <p>Bu özellik Parça 1.7'de gelecek!</p>
-        <a href="#/kurs/${courseSlug}" class="btn btn--primary">← Kursa Dön</a>
-      </div>
-    </section>
-  `;
-}
 
 // ── 404 Sayfası ──
 function render404() {
