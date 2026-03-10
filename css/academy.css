@@ -303,3 +303,295 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   DERS OYNATICI (Parça 1.7)
+═══════════════════════════════════════════════ */
+
+/* ─── ÜST BAR ─── */
+.lesson-player {
+  padding: var(--space-4) 0 var(--space-12);
+}
+.lesson-player__topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.lesson-player__back {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
+.lesson-player__back:hover {
+  opacity: 0.7;
+}
+.lesson-player__progress-mini {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.progress-bar--sm {
+  width: 120px;
+  height: 6px;
+}
+
+/* ─── LAYOUT ─── */
+.lesson-player__layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* ─── ANA İÇERİK ─── */
+.lesson-player__main {
+  min-width: 0;
+}
+.lesson-player__header {
+  margin-bottom: var(--space-6);
+}
+.lesson-player__type {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+.lesson-player__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: var(--space-2);
+}
+.lesson-player__duration {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ─── VİDEO EMBED ─── */
+.lesson-video__wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #000;
+  margin-bottom: var(--space-6);
+}
+.lesson-video__wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ─── METİN DERS ─── */
+.lesson-text {
+  font-size: var(--font-size-lg);
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  max-width: 720px;
+}
+.lesson-text p {
+  margin-bottom: var(--space-4);
+}
+.lesson-text h2, .lesson-text h3 {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+.lesson-text ul, .lesson-text ol {
+  margin-left: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.lesson-text li {
+  margin-bottom: var(--space-2);
+}
+.lesson-text img {
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  margin: var(--space-4) 0;
+}
+.lesson-empty {
+  text-align: center;
+  padding: var(--space-10);
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+/* ─── TAMAMLA BUTONU + NAVİGASYON ─── */
+.lesson-player__actions {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+.lesson-complete-btn {
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  transition: all var(--transition-fast);
+}
+.btn--success {
+  background: var(--color-secondary, #10b981);
+  color: white;
+  border: 2px solid var(--color-secondary, #10b981);
+}
+.btn--success:hover {
+  background: #059669;
+  border-color: #059669;
+}
+.btn--completed {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+.btn--completed:hover {
+  background: #fecaca;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+.lesson-player__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* ─── MÜFREDAT SİDEBAR ─── */
+.lesson-player__sidebar {
+  position: sticky;
+  top: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.lesson-sidebar__title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.lesson-sidebar__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.lesson-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: background var(--transition-fast);
+}
+.lesson-sidebar__item:hover {
+  background: var(--color-bg-alt);
+}
+.lesson-sidebar__item--active {
+  background: var(--color-primary-light, #eff6ff);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.lesson-sidebar__item--done {
+  color: var(--color-secondary, #10b981);
+}
+.lesson-sidebar__item--locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.lesson-sidebar__icon {
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+.lesson-sidebar__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── KURS TAMAMLAMA MODALI ─── */
+.course-complete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.course-complete-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+.course-complete-modal__content {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10);
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  animation: modalSlideUp 0.4s ease;
+}
+.course-complete-modal__icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+}
+.course-complete-modal__content h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+}
+.course-complete-modal__content p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}
+.course-complete-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── DERS OYNATICI MOBİL ─── */
+@media (max-width: 768px) {
+  .lesson-player__layout {
+    grid-template-columns: 1fr;
+  }
+  .lesson-player__sidebar {
+    position: static;
+    order: -1;
+    max-height: none;
+  }
+  .lesson-player__nav {
+    flex-direction: column;
+  }
+  .lesson-player__topbar {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+}
