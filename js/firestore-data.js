@@ -280,13 +280,12 @@ async function loadAllArticles() {
 
         <!-- Kategori Filtreleri -->
         <div class="magazin-filters" id="categoryFilters">
-          <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Tümü</button>
-          <button class="filter-btn ${currentCategory === 'teknoloji' ? 'active' : ''}" data-category="teknoloji">💻 Teknoloji</button>
-          <button class="filter-btn ${currentCategory === 'yasam' ? 'active' : ''}" data-category="yasam">🌿 Yaşam</button>
-          <button class="filter-btn ${currentCategory === 'kultur' ? 'active' : ''}" data-category="kultur">🎭 Kültür</button>
-          <button class="filter-btn ${currentCategory === 'bilim' ? 'active' : ''}" data-category="bilim">🔬 Bilim</button>
-          <button class="filter-btn ${currentCategory === 'spor' ? 'active' : ''}" data-category="spor">⚽ Spor</button>
-        </div>
+  	  <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Tümü</button>
+  	  <button class="filter-btn ${currentCategory === 'saglik' ? 'active' : ''}" data-category="saglik">🏥 Sağlık</button>
+  	  <button class="filter-btn ${currentCategory === 'bilim' ? 'active' : ''}" data-category="bilim">🔬 Bilim</button>
+  	  <button class="filter-btn ${currentCategory === 'egitim' ? 'active' : ''}" data-category="egitim">📖 Eğitim</button>
+  	  <button class="filter-btn ${currentCategory === 'teknoloji' ? 'active' : ''}" data-category="teknoloji">💻 Teknoloji</button>
+	</div>
 
         <!-- Makale Listesi -->
         <div class="articles-grid" id="articlesGrid">
@@ -370,6 +369,24 @@ function renderArticles() {
     return;
   }
 
+  // Aktif filtre göstergesi
+  const filterInfo = document.querySelector('.magazin-filter-info');
+  if (currentCategory !== 'all' || currentSearchQuery) {
+    if (!filterInfo) {
+      const info = document.createElement('div');
+      info.className = 'magazin-filter-info';
+      grid.parentNode.insertBefore(info, grid);
+    }
+    const infoEl = document.querySelector('.magazin-filter-info');
+    if (infoEl) {
+      infoEl.innerHTML = `
+        <span>${filtered.length} makale bulundu</span>
+        <button class="btn btn--secondary btn--sm" onclick="resetFilters()">✕ Filtreleri Temizle</button>
+    `  ;
+    }
+  } else if (filterInfo) {
+    filterInfo.remove();
+  }
   grid.innerHTML = paginated.map(article => {
     const date = article.publishedAt?.toDate
       ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
