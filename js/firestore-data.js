@@ -804,7 +804,7 @@ function getCategoryLabel(category) {
     egitim: '📖 Eğitim',
     teknoloji: '💻 Teknoloji'
   };
-  return labels[category] || category;
+  return labels[category] || category || '';
 }
 
 /**
