@@ -1008,6 +1008,9 @@ ul, ol { list-style: none; }
 .badge--egitim { color: #2563eb; }
 .badge--teknoloji { color: #ea580c; }
 .badge--course { color: #0891b2; }
+.badge--yasam { color: #16a34a; background: #dcfce7; }
+.badge--kultur { color: #9333ea; background: #f3e8ff; }
+.badge--diger { color: #64748b; background: #f1f5f9; }
 
 /* ─── KART İÇERİK ─── */
 .card__body {
