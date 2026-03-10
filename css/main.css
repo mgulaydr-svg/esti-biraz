@@ -220,20 +220,25 @@ a:hover {
 }
 
 /* ─── MOBİL ─── */
-@media (max-width: 640px) {
-  .articles-grid,
-  .articles-grid--home {
+@media (max-width: 768px) {
+  .hero .container {
     grid-template-columns: 1fr;
     text-align: center;
   }
   .hero__desc {
     max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
   .hero__actions {
     justify-content: center;
   }
   .hero__visual {
     display: none;
+  }
+  .articles-grid,
+  .articles-grid--home {
+    grid-template-columns: 1fr;
   }
 }
 
