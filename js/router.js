@@ -304,7 +304,7 @@ function router() {
     const match = path.match(route.pattern);
     if (match) {
       document.title = `${route.title} — ESTİ BİRAZ`;
-      route.render(match[1]); // İlk yakalama grubunu parametre olarak gönder
+      route.render(match[1], match[2]); // İlk yakalama grubunu parametre olarak gönder
       updateActiveNav();
       window.scrollTo(0, 0);
       return;
