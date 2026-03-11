@@ -171,6 +171,7 @@ async function renderKurs(slug) {
 
 // ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
 async function renderDers(courseSlug, lessonOrder) {
+  console.log('🎯 renderDers çağrıldı:', courseSlug, lessonOrder);
   loadLesson(courseSlug, parseInt(lessonOrder));
 }
 
