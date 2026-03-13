@@ -15,6 +15,7 @@
   <!-- Favicon -->
   <link rel="icon" href="assets/icons/favicon.ico">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,116 +23,120 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Stil Dosyaları -->
-  <link rel="stylesheet" href="css/main.css?v=1.7">
-  <link rel="stylesheet" href="css/magazin.css?v=1.7">
-  <link rel="stylesheet" href="css/article-detail.css?v=1.7">
-  <link rel="stylesheet" href="css/admin.css?v=1.7">
-  <link rel="stylesheet" href="css/academy.css?v=1.7">
+  <link rel="stylesheet" href="css/main.css?v=1.8">
+  <link rel="stylesheet" href="css/magazin.css?v=1.8">
+  <link rel="stylesheet" href="css/article-detail.css?v=1.8">
+  <link rel="stylesheet" href="css/admin.css?v=1.8">
+  <link rel="stylesheet" href="css/academy.css?v=1.8">
+  <link rel="stylesheet" href="css/profile.css?v=1.8">
 
   <title>ESTİ BİRAZ</title>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════
-       HEADER / NAVİGASYON
-  ═══════════════════════════════════════════ -->
-  <header class="header" id="header">
-    <div class="container header__inner">
-      <!-- Logo -->
-      <a href="#/" class="header__logo">
+<!-- ═══════════════════════════════════════════
+     HEADER / NAVİGASYON
+═══════════════════════════════════════════ -->
+<header class="header" id="header">
+  <div class="container header__inner">
+
+    <!-- Logo (Parça 1.8 — Resim + metin fallback) -->
+    <a href="#/" class="header__logo">
+      <img src="assets/logo.png" alt="ESTİ BİRAZ" class="header__logo-img"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span class="header__logo-fallback" style="display:none;">
         <span class="logo-icon">🚀</span>
         <span class="logo-text">ESTİ BİRAZ</span>
-      </a>
+      </span>
+    </a>
 
-      <!-- Ana Menü -->
-      <nav class="header__nav" id="mainNav">
-        <a href="#/" class="nav-link active">Ana Sayfa</a>
-        <a href="#/magazin" class="nav-link">Magazin</a>
-        <a href="#/akademi" class="nav-link">Akademi</a>
-        <a href="#/hakkinda" class="nav-link">Hakkında</a>
-      </nav>
+    <!-- Ana Menü -->
+    <nav class="header__nav" id="mainNav">
+      <a href="#/" class="nav-link active">Ana Sayfa</a>
+      <a href="#/magazin" class="nav-link">Magazin</a>
+      <a href="#/akademi" class="nav-link">Akademi</a>
+      <a href="#/hakkinda" class="nav-link">Hakkında</a>
+    </nav>
 
-      <!-- Sağ Taraf: Auth Butonları -->
-      <div class="header__actions">
-        <!-- Giriş yapmamış kullanıcı -->
-        <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">
-          Giriş Yap
-        </button>
-        <!-- Giriş yapmış kullanıcı (varsayılan gizli) -->
-        <div class="user-menu hidden" id="userMenu">
-          <img src="" alt="Profil" class="user-menu__avatar" id="userAvatar">
-          <span class="user-menu__name" id="userName"></span>
-          <button class="btn btn--ghost btn--sm" onclick="logout()">Çıkış</button>
-        </div>
-      </div>
-
-      <!-- Mobil Hamburger -->
-      <button class="header__hamburger" id="hamburger" aria-label="Menüyü aç">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- Sağ Taraf: Auth / Profil Alanı (Parça 1.8) -->
+    <div class="header__actions" id="headerAuth">
+      <!-- JS tarafından doldurulacak (updateHeaderAuth fonksiyonu) -->
+      <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">
+        Giriş Yap
       </button>
     </div>
-  </header>
 
-  <!-- ═══════════════════════════════════════════
-       ANA İÇERİK ALANI (SPA Router buraya render eder)
-  ═══════════════════════════════════════════ -->
-  <main class="main" id="app">
-    <!-- Router bu alanı otomatik dolduracak -->
-    <div class="loading-screen">
-      <div class="spinner"></div>
-      <p>Yükleniyor...</p>
-    </div>
-  </main>
+    <!-- Mobil Hamburger -->
+    <button class="header__hamburger" id="hamburger" aria-label="Menüyü aç">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-  <!-- ═══════════════════════════════════════════
-       FOOTER
-  ═══════════════════════════════════════════ -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div class="footer__brand">
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     ANA İÇERİK ALANI (SPA Router buraya render eder)
+═══════════════════════════════════════════ -->
+<main class="main" id="app">
+  <div class="loading-screen">
+    <div class="spinner"></div>
+    <p>Yükleniyor...</p>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER (Parça 1.8 — Logo entegrasyonu)
+═══════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <img src="assets/logo.png" alt="ESTİ BİRAZ" class="footer__logo"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span class="footer__logo-fallback" style="display:none;">
         <span class="logo-icon">🚀</span>
         <span class="logo-text">ESTİ BİRAZ</span>
-        <p class="footer__tagline">Sağlık, bilim ve eğitim platformu.</p>
-      </div>
-      <div class="footer__links">
-        <div class="footer__col">
-          <h4>Platform</h4>
-          <a href="#/magazin">Magazin</a>
-          <a href="#/akademi">Akademi</a>
-          <a href="#/hakkinda">Hakkında</a>
-        </div>
-        <div class="footer__col">
-          <h4>Yasal</h4>
-          <a href="#/gizlilik">Gizlilik Politikası</a>
-          <a href="#/kullanim-sartlari">Kullanım Şartları</a>
-        </div>
-      </div>
-      <p class="footer__copy">© 2026 ESTİ BİRAZ. Tüm hakları saklıdır.</p>
+      </span>
+      <p class="footer__tagline">Sağlık, bilim ve eğitim platformu.</p>
     </div>
-  </footer>
+    <div class="footer__links">
+      <div class="footer__col">
+        <h4>Platform</h4>
+        <a href="#/magazin">Magazin</a>
+        <a href="#/akademi">Akademi</a>
+        <a href="#/hakkinda">Hakkında</a>
+      </div>
+      <div class="footer__col">
+        <h4>Yasal</h4>
+        <a href="#/gizlilik">Gizlilik Politikası</a>
+        <a href="#/kullanim-sartlari">Kullanım Şartları</a>
+      </div>
+    </div>
+    <p class="footer__copy">© 2026 ESTİ BİRAZ. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
 
-  <!-- ═══════════════════════════════════════════
-       SCRİPTLER
-  ═══════════════════════════════════════════ -->
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- ═══════════════════════════════════════════
+     SCRİPTLER
+═══════════════════════════════════════════ -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <!-- Uygulama Scriptleri -->
-  <script src="js/firebase-config.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/cloudinary-config.js"></script>
-  <script src="js/image-upload.js"></script>
-  <script src="js/article-detail.js"></script>
-  <script src="js/article-interactions.js"></script>
-  <script src="js/firestore-data.js"></script>
-  <script src="js/editor.js"></script>
-  <script src="js/article-submit.js"></script>
-  <script src="js/admin.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/shared/ui.js"></script>
+<!-- Uygulama Scriptleri -->
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cloudinary-config.js"></script>
+<script src="js/image-upload.js"></script>
+<script src="js/article-detail.js"></script>
+<script src="js/article-interactions.js"></script>
+<script src="js/firestore-data.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/article-submit.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/router.js"></script>
+<script src="js/shared/ui.js"></script>
 </body>
 </html>
