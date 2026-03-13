@@ -14,6 +14,16 @@ let currentUser = null;
 // ══════════════════════════════════════════════
 //  AUTH STATE OBSERVER
 // ══════════════════════════════════════════════
+// Google Redirect sonucunu yakala
+auth.getRedirectResult().then((result) => {
+  if (result.user) {
+    console.log('✅ Redirect ile giriş başarılı:', result.user.displayName);
+  }
+}).catch((error) => {
+  console.error('❌ Redirect hatası:', error.message);
+  handleAuthError(error);
+});
+
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
@@ -63,6 +73,10 @@ async function emailRegister(email, password, displayName) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     console.log('✅ Kayıt başarılı:', displayName);
+    
+    // Kayıt sonrası profil sayfasına yönlendir
+    window.location.hash = '#/profil';
+    
   } catch (error) {
     console.error('❌ Kayıt hatası:', error);
     alert(error.message);
@@ -74,6 +88,10 @@ async function emailLogin(email, password) {
     await firebase.auth()
       .signInWithEmailAndPassword(email, password);
     console.log('✅ E-posta ile giriş başarılı');
+    
+    // Giriş sonrası ana sayfaya yönlendir
+    window.location.hash = '#/';
+    
   } catch (error) {
     console.error('❌ Giriş hatası:', error);
     alert(error.message);
