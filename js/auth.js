@@ -41,8 +41,7 @@ auth.onAuthStateChanged(async (user) => {
 // ══════════════════════════════════════════════
 async function login() {
   try {
-    const result = await auth.signInWithPopup(googleProvider);
-    console.log('✅ Giriş başarılı:', result.user.displayName);
+    await auth.signInWithRedirect(googleProvider);
   } catch (error) {
     console.error('❌ Giriş hatası:', error.message);
     handleAuthError(error);
@@ -266,9 +265,9 @@ function updateHeaderAuth(user) {
   } else {
     // Giriş yapılmamış
     authContainer.innerHTML = `
-      <button class="header__login-btn" onclick="login()">
+      <a href="#/profil" class="header__login-btn">
         🔑 Giriş Yap
-      </button>
-    `;
+      </a>
+`    ;
   }
 }
