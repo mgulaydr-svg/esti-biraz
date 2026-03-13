@@ -10,7 +10,7 @@
  * Admin panelindeki makale listesini yükler
  */
 async function loadAdminArticles() {
-  const container = document.getElementById('adminArticleList');
+  const container = document.getElementById('adminContent');
   if (!container) return;
 
   try {
@@ -182,11 +182,15 @@ async function showCourseForm(courseId = null) {
         </div>
 
         <div class="form-group">
-          <label>Kapak Resmi URL</label>
-          <input type="url" id="courseCoverImage" value="${course.coverImage || ''}" 
-                 class="form-input" placeholder="https://res.cloudinary.com/...">
-          <small class="form-hint">Cloudinary'den yüklediğiniz resmin URL'sini yapıştırın</small>
-        </div>
+  	  <label>Kapak Resmi</label>
+  	  <input type="hidden" id="courseCoverImage" value="${course.coverImage || ''}">
+  	  <button type="button" class="btn btn--outline btn--sm" onclick="uploadCourseCover()">
+    	    📷 Görsel Yükle
+  	  </button>
+  	  <div id="courseCoverPreview">
+    	    ${course.coverImage ? `<img src="${course.coverImage}" style="max-width:200px; margin-top:8px; border-radius:8px;">` : ''}
+  	  </div>
+	</div>
 
         <div class="form-group">
           <label class="form-checkbox">
@@ -207,7 +211,7 @@ async function showCourseForm(courseId = null) {
     </div>
   `;
 
-  // Otomatik slug oluşturma
+// Otomatik slug oluşturma
   if (!courseId) {
     document.getElementById('courseTitle').addEventListener('input', (e) => {
       const slug = e.target.value
@@ -219,6 +223,31 @@ async function showCourseForm(courseId = null) {
       document.getElementById('courseSlug').value = slug;
     });
   }
+}
+
+
+function uploadCourseCover() {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const preview = document.getElementById('courseCoverPreview');
+    preview.innerHTML = '⏳ Yükleniyor...';
+
+    try {
+      const result = await uploadToCloudinary(file);
+      document.getElementById('courseCoverImage').value = result.url;
+      preview.innerHTML = `<img src="${result.url}" style="max-width:200px; margin-top:8px; border-radius:8px;">`;
+    } catch (error) {
+      preview.innerHTML = `<span style="color:red;">❌ ${error.message}</span>`;
+    }
+  });
+
+  fileInput.click();
 }
 
 function hideCourseForm() {
@@ -255,11 +284,17 @@ async function saveCourse(courseId) {
 
     if (courseId) {
       // Güncelle
+      if (status === 'published') {
+        courseData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
+      }
       await db.collection('courses').doc(courseId).update(courseData);
       console.log('✅ Kurs güncellendi:', title);
     } else {
       // Yeni oluştur
       courseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      if (status === 'published') {
+        courseData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
+      }
       courseData.createdBy = firebase.auth().currentUser.uid;
       courseData.lessonCount = 0;
       await db.collection('courses').add(courseData);
