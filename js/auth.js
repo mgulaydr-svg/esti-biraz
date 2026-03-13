@@ -14,33 +14,25 @@ let currentUser = null;
 // ══════════════════════════════════════════════
 //  AUTH STATE OBSERVER
 // ══════════════════════════════════════════════
-// Google Redirect sonucunu yakala
-auth.getRedirectResult().then((result) => {
-  if (result.user) {
-    console.log('✅ Redirect ile giriş başarılı:', result.user.displayName);
-  }
-}).catch((error) => {
-  console.error('❌ Redirect hatası:', error.message);
-  handleAuthError(error);
-});
 
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     console.log('🟢 Kullanıcı giriş yaptı:', user.displayName);
 
-    // Firestore'da kullanıcı profili oluştur/güncelle
     await saveUserProfile(user);
-
-    // UI güncelle
     updateUIForLoggedInUser(user);
     updateHeaderAuth(user);
+
+    // Eğer kullanıcı giriş sayfasındaysa → ana sayfaya yönlendir
+    if (window.location.hash === '#/profil') {
+      // Profil sayfasını yeniden render et (giriş formunu kaldır, profili göster)
+      if (typeof loadProfile === 'function') loadProfile();
+    }
 
   } else {
     currentUser = null;
     console.log('🔴 Kullanıcı çıkış yaptı.');
-
-    // UI güncelle
     updateUIForLoggedOutUser();
     updateHeaderAuth(null);
   }
@@ -51,8 +43,11 @@ auth.onAuthStateChanged(async (user) => {
 // ══════════════════════════════════════════════
 async function login() {
   try {
-    await auth.signInWithRedirect(googleProvider);
+    await auth.signInWithPopup(googleProvider);
+    // onAuthStateChanged otomatik tetiklenecek
   } catch (error) {
+    if (error.code === 'auth/cancelled-popup-request' || 
+        error.code === 'auth/popup-closed-by-user') return;
     console.error('❌ Giriş hatası:', error.message);
     handleAuthError(error);
   }
@@ -73,13 +68,11 @@ async function emailRegister(email, password, displayName) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     console.log('✅ Kayıt başarılı:', displayName);
-    
-    // Kayıt sonrası profil sayfasına yönlendir
+    // Kayıt sonrası profil sayfasına yönlendir (loadProfile auth'u bekleyecek)
     window.location.hash = '#/profil';
-    
   } catch (error) {
     console.error('❌ Kayıt hatası:', error);
-    alert(error.message);
+    alert(getAuthErrorMessage(error));
   }
 }
 
@@ -88,13 +81,11 @@ async function emailLogin(email, password) {
     await firebase.auth()
       .signInWithEmailAndPassword(email, password);
     console.log('✅ E-posta ile giriş başarılı');
-    
     // Giriş sonrası ana sayfaya yönlendir
     window.location.hash = '#/';
-    
   } catch (error) {
     console.error('❌ Giriş hatası:', error);
-    alert(error.message);
+    alert(getAuthErrorMessage(error));
   }
 }
 
@@ -146,6 +137,51 @@ async function saveUserProfile(user) {
     console.error('❌ Profil kaydetme hatası:', error.message);
   }
 }
+
+// ══════════════════════════════════════════════
+//  HESAP SİLME ÖZELLİĞİ
+// ══════════════════════════════════════════════
+
+async function deleteAccount() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const confirmed = confirm(
+    '⚠️ Hesabınızı silmek istediğinize emin misiniz?\n\n' +
+    'Bu işlem geri alınamaz. Tüm verileriniz (kurs kayıtları, yorumlar, beğeniler) silinecektir.'
+  );
+  if (!confirmed) return;
+
+  try {
+    // Firestore'dan kullanıcı verisini sil
+    await db.collection('users').doc(user.uid).delete();
+    
+    // Enrollments'ları sil
+    const enrollments = await db.collection('enrollments')
+      .where('userId', '==', user.uid).get();
+    const batch = db.batch();
+    enrollments.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+
+    // Firebase Auth hesabını sil
+    await user.delete();
+    
+    console.log('✅ Hesap silindi.');
+    alert('Hesabınız başarıyla silindi.');
+    window.location.hash = '#/';
+    
+  } catch (error) {
+    if (error.code === 'auth/requires-recent-login') {
+      alert('Güvenlik nedeniyle tekrar giriş yapmanız gerekiyor. Giriş yaptıktan sonra tekrar deneyin.');
+      await auth.signOut();
+      window.location.hash = '#/profil';
+    } else {
+      console.error('❌ Hesap silme hatası:', error);
+      alert('Hesap silinirken hata oluştu: ' + error.message);
+    }
+  }
+}
+
 
 // ══════════════════════════════════════════════
 //  KULLANICI ROLÜ KONTROLÜ
@@ -257,6 +293,24 @@ async function isAdminUser() {
   } catch (error) {
     console.error('❌ Yetki kontrolü başarısız:', error);
     return false;
+  }
+}
+
+function getAuthErrorMessage(error) {
+  switch (error.code) {
+    case 'auth/email-already-in-use':
+      return 'Bu e-posta adresi zaten kullanılıyor.';
+    case 'auth/invalid-email':
+      return 'Geçersiz e-posta adresi.';
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'E-posta veya şifre hatalı.';
+    case 'auth/user-not-found':
+      return 'Bu e-posta ile kayıtlı kullanıcı bulunamadı.';
+    case 'auth/weak-password':
+      return 'Şifre en az 6 karakter olmalıdır.';
+    default:
+      return error.message;
   }
 }
 
