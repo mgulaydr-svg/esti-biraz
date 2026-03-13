@@ -1497,3 +1497,179 @@ function showCourseCompleteModal(courseSlug) {
   `;
   document.body.appendChild(modal);
 }
+
+/* ============================================
+   KULLANICI PROFİL SAYFASI (Parça 1.8)
+   ============================================ */
+
+async function loadProfile() {
+  const container = document.getElementById('app');
+  const user = firebase.auth().currentUser;
+
+  if (!user) {
+    container.innerHTML = `
+      <section class="section">
+        <div class="container text-center">
+          <h1>🔒 Giriş Gerekli</h1>
+          <p>Profilinizi görüntülemek için giriş yapmalısınız.</p>
+          <button class="btn btn--primary btn--lg" onclick="googleLogin()">
+            🔑 Google ile Giriş Yap
+          </button>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  // Yükleniyor durumu
+  container.innerHTML = `
+    <section class="section">
+      <div class="container text-center">
+        <div class="loading-spinner"></div>
+        <p>Profil yükleniyor...</p>
+      </div>
+    </section>
+  `;
+
+  try {
+    // 1) Kullanıcı bilgisi
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    const userData = userDoc.exists ? userDoc.data() : {};
+    const displayName = userData.displayName || user.displayName || 'Kullanıcı';
+    const email = userData.email || user.email || '';
+    const photoURL = userData.photoURL || user.photoURL || 'assets/default-avatar.png';
+    const joinDate = userData.createdAt
+      ? new Date(userData.createdAt.toDate()).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+      : 'Bilinmiyor';
+
+    // 2) Kullanıcının enrollment'larını çek
+    const enrollSnapshot = await db.collection('enrollments')
+      .where('userId', '==', user.uid)
+      .get();
+
+    const enrollments = enrollSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    // 3) İlgili kursları çek
+    const courseIds = [...new Set(enrollments.map(e => e.courseId))];
+    const coursesMap = {};
+
+    // Kursları batch olarak çek (10'ar — Firestore 'in' limiti)
+    for (let i = 0; i < courseIds.length; i += 10) {
+      const batch = courseIds.slice(i, i + 10);
+      const coursesSnapshot = await db.collection('courses')
+        .where(firebase.firestore.FieldPath.documentId(), 'in', batch)
+        .get();
+      coursesSnapshot.docs.forEach(doc => {
+        coursesMap[doc.id] = { id: doc.id, ...doc.data() };
+      });
+    }
+
+    // 4) İstatistikleri hesapla
+    const totalCourses = enrollments.length;
+    const completedCourses = enrollments.filter(e => e.progressPercent === 100).length;
+    const inProgressCourses = enrollments.filter(e => e.progressPercent > 0 && e.progressPercent < 100).length;
+    const totalLessonsCompleted = enrollments.reduce((sum, e) => sum + (e.completedLessons ? e.completedLessons.length : 0), 0);
+
+    // 5) Kurs kartlarını oluştur
+    const courseCardsHTML = enrollments.length > 0
+      ? enrollments
+          .sort((a, b) => (b.lastAccessedAt?.toMillis?.() || 0) - (a.lastAccessedAt?.toMillis?.() || 0))
+          .map(enrollment => {
+            const course = coursesMap[enrollment.courseId];
+            if (!course) return '';
+            const progress = enrollment.progressPercent || 0;
+            const isComplete = progress === 100;
+            const completedCount = enrollment.completedLessons ? enrollment.completedLessons.length : 0;
+
+            return `
+              <a href="#/kurs/${course.slug}" class="profile-course-card ${isComplete ? 'profile-course-card--completed' : ''}">
+                <div class="profile-course-card__thumbnail">
+                  ${course.coverImage
+                    ? '<img src="' + course.coverImage + '" alt="' + course.title + '">'
+                    : '<div class="profile-course-card__placeholder">🎓</div>'
+                  }
+                  ${isComplete ? '<div class="profile-course-card__badge">✅ Tamamlandı</div>' : ''}
+                </div>
+                <div class="profile-course-card__info">
+                  <h3 class="profile-course-card__title">${course.title}</h3>
+                  <div class="profile-course-card__progress">
+                    <div class="progress-bar">
+                      <div class="progress-bar__fill" style="width: ${progress}%"></div>
+                    </div>
+                    <span class="profile-course-card__stats">
+                      %${progress} · ${completedCount} ders tamamlandı
+                    </span>
+                  </div>
+                </div>
+              </a>
+            `;
+          }).join('')
+      : '<div class="profile-empty"><p>📚 Henüz bir kursa kayıt olmadınız.</p><a href="#/akademi" class="btn btn--primary">🎓 Kursları Keşfet</a></div>';
+
+    // 6) Profil sayfasını render et
+    container.innerHTML = `
+      <section class="section profile-page">
+        <div class="container">
+
+          <!-- PROFİL HEADER -->
+          <div class="profile-header">
+            <div class="profile-header__avatar-wrapper">
+              <img src="${photoURL}" alt="${displayName}" class="profile-header__avatar"
+                   onerror="this.src='assets/default-avatar.png'">
+            </div>
+            <div class="profile-header__info">
+              <h1 class="profile-header__name">${displayName}</h1>
+              <p class="profile-header__email">${email}</p>
+              <p class="profile-header__joined">📅 Katılım: ${joinDate}</p>
+            </div>
+            <div class="profile-header__actions">
+              <button class="btn btn--outline btn--sm" onclick="googleLogout()">
+                🚪 Çıkış Yap
+              </button>
+            </div>
+          </div>
+
+          <!-- İSTATİSTİKLER -->
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <span class="profile-stat__number">${totalCourses}</span>
+              <span class="profile-stat__label">Kayıtlı Kurs</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat__number">${inProgressCourses}</span>
+              <span class="profile-stat__label">Devam Eden</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat__number">${completedCourses}</span>
+              <span class="profile-stat__label">Tamamlanan</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat__number">${totalLessonsCompleted}</span>
+              <span class="profile-stat__label">Ders Tamamlandı</span>
+            </div>
+          </div>
+
+          <!-- KURSLARIM -->
+          <div class="profile-courses">
+            <h2 class="profile-courses__title">📚 Kurslarım</h2>
+            <div class="profile-courses__grid">
+              ${courseCardsHTML}
+            </div>
+          </div>
+
+        </div>
+      </section>
+    `;
+
+    document.title = `Profilim — ESTİ BİRAZ`;
+    window.scrollTo(0, 0);
+    console.log('👤 Profil yüklendi:', displayName);
+
+  } catch (error) {
+    console.error('❌ Profil yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Profil yüklenirken hata oluştu.</p>';
+  }
+}
