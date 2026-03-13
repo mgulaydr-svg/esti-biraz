@@ -24,12 +24,15 @@ auth.onAuthStateChanged(async (user) => {
 
     // UI güncelle
     updateUIForLoggedInUser(user);
+    updateHeaderAuth(user);
+
   } else {
     currentUser = null;
     console.log('🔴 Kullanıcı çıkış yaptı.');
 
     // UI güncelle
     updateUIForLoggedOutUser();
+    updateHeaderAuth(null);
   }
 });
 
@@ -205,5 +208,35 @@ async function isAdminUser() {
   } catch (error) {
     console.error('❌ Yetki kontrolü başarısız:', error);
     return false;
+  }
+}
+
+/* ============================================
+   HEADER PROFİL ALANI GÜNCELLEMESİ (Parça 1.8)
+   ============================================ */
+
+function updateHeaderAuth(user) {
+  const authContainer = document.getElementById('headerAuth');
+  if (!authContainer) return;
+
+  if (user) {
+    // Kullanıcı giriş yapmış
+    const displayName = user.displayName || 'Kullanıcı';
+    const photoURL = user.photoURL || 'assets/default-avatar.png';
+
+    authContainer.innerHTML = `
+      <a href="#/profil" class="header__user" title="Profilim">
+        <img src="${photoURL}" alt="${displayName}" class="header__avatar"
+             onerror="this.src='assets/default-avatar.png'">
+        <span class="header__username">${displayName}</span>
+      </a>
+    `;
+  } else {
+    // Giriş yapılmamış
+    authContainer.innerHTML = `
+      <button class="header__login-btn" onclick="login()">
+        🔑 Giriş Yap
+      </button>
+    `;
   }
 }

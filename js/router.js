@@ -141,6 +141,11 @@ function renderHakkinda() {
   `;
 }
 
+// ── Profil Sayfası ──
+async function renderProfile() {
+  loadProfile();
+}
+
 // ── Tekil Makale Sayfası ──
 function renderMakale(slug) {
   appContainer.innerHTML = `
@@ -263,6 +268,7 @@ const routes = {
   '/magazin':  { title: 'Magazin',    render: renderMagazin },
   '/akademi':  { title: 'Akademi',    render: renderAkademi },
   '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
+  '/profil': { title: 'Profilim', render: renderProfile },
   '/admin':     { title: 'Admin Panel',     render: renderAdmin },
   '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
   '/akademi':   { title: 'Akademi',   render: renderAkademi },
@@ -349,3 +355,17 @@ window.addEventListener('DOMContentLoaded', () => {
   router();
 });
 
+/* ============================================
+   HEADER SCROLL EFEKTİ (Parça 1.8)
+   ============================================ */
+
+window.addEventListener('scroll', () => {
+  const header = document.getElementById('header');
+  if (!header) return;
+
+  if (window.scrollY > 20) {
+    header.classList.add('header--scrolled');
+  } else {
+    header.classList.remove('header--scrolled');
+  }
+});
