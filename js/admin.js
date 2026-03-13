@@ -23,24 +23,36 @@ async function loadAdminArticles() {
       return;
     }
 
-    container.innerHTML = snapshot.docs.map(doc => {
-      const d = doc.data();
-      const date = d.createdAt?.toDate
-        ? d.createdAt.toDate().toLocaleDateString('tr-TR')
-        : '';
-      return `
-        <div class="admin-list-item">
-          <div class="admin-list-item__info">
-            <strong>${d.title}</strong>
-            <span class="admin-list-item__meta">${getCategoryLabel(d.category)} · ${date}</span>
-          </div>
-          <div class="admin-list-item__actions">
-            <a href="#/admin/makale-duzenle/${doc.id}" class="btn btn--sm btn--outline">✏️ Düzenle</a>
-            <button class="btn btn--sm btn--danger" onclick="deleteArticle('${doc.id}')">🗑️ Sil</button>
-          </div>
+    container.innerHTML = `
+      <div class="admin-section">
+        <div class="admin-section__header">
+          <h2>📰 Makale Yönetimi</h2>
+          <button class="btn btn--primary btn--sm" onclick="renderMakaleEkle()">
+            ➕ Yeni Makale
+          </button>
         </div>
-      `;
-    }).join('');
+        <div class="admin-list">
+          ${snapshot.docs.map(doc => {
+            const d = doc.data();
+            const date = d.createdAt?.toDate
+              ? d.createdAt.toDate().toLocaleDateString('tr-TR')
+              : '';
+            return `
+              <div class="admin-list-item">
+                <div class="admin-list-item__info">
+                  <strong>${d.title}</strong>
+                  <span class="admin-list-item__meta">${getCategoryLabel(d.category)} · ${date}</span>
+                </div>
+                <div class="admin-list-item__actions">
+                  <a href="#/admin/makale-duzenle/${doc.id}" class="btn btn--sm btn--outline">✏️ Düzenle</a>
+                  <button class="btn btn--sm btn--danger" onclick="deleteArticle('${doc.id}')">🗑️ Sil</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
 
     console.log(`📰 Admin: ${snapshot.size} makale listelendi.`);
   } catch (error) {
