@@ -49,44 +49,265 @@ async function loadAdminArticles() {
   }
 }
 
-/**
- * Admin panelindeki kurs listesini yükler
- */
+/* ============================================
+   ADMIN PANELİ — KURS YÖNETİMİ (Parça 1.9)
+   ============================================ */
+
 async function loadAdminCourses() {
-  const container = document.getElementById('adminCourseList');
+  const container = document.getElementById('adminContent');
   if (!container) return;
+
+  container.innerHTML = '<div class="loading-spinner"></div>';
 
   try {
     const snapshot = await db.collection('courses')
-      .orderBy('createdAt', 'desc')
-      .get();
+      .orderBy('createdAt', 'desc').get();
 
-    if (snapshot.empty) {
-      container.innerHTML = '<p class="empty-state">Henüz kurs yok.</p>';
-      return;
-    }
+    const courses = snapshot.docs.map(doc => ({
+      id: doc.id, ...doc.data()
+    }));
 
-    container.innerHTML = snapshot.docs.map(doc => {
-      const d = doc.data();
-      return `
-        <div class="admin-list-item">
-          <div class="admin-list-item__info">
-            <strong>${d.title}</strong>
-            <span class="admin-list-item__meta">${d.level ? getLevelLabel(d.level) : ''}</span>
-          </div>
-          <div class="admin-list-item__actions">
-            <button class="btn btn--sm btn--outline" onclick="alert('Kurs düzenleme Faz 2\'de!')">✏️</button>
-          </div>
+    container.innerHTML = `
+      <div class="admin-section">
+        <div class="admin-section__header">
+          <h2>🎓 Kurs Yönetimi</h2>
+          <button class="btn btn--primary btn--sm" onclick="showCourseForm()">
+            ➕ Yeni Kurs
+          </button>
         </div>
-      `;
-    }).join('');
 
-    console.log(`🎓 Admin: ${snapshot.size} kurs listelendi.`);
+        <div id="courseFormContainer"></div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Başlık</th>
+                <th>Kategori</th>
+                <th>Durum</th>
+                <th>Ders</th>
+                <th>Öne Çıkan</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${courses.map(course => `
+                <tr>
+                  <td><strong>${course.title}</strong></td>
+                  <td>${course.category || '—'}</td>
+                  <td>
+                    <span class="badge badge--${course.status === 'published' ? 'success' : 'warning'}">
+                      ${course.status === 'published' ? '✅ Yayında' : '📝 Taslak'}
+                    </span>
+                  </td>
+                  <td>${course.lessonCount || 0}</td>
+                  <td>${course.featured ? '⭐' : '—'}</td>
+                  <td class="admin-table__actions">
+                    <button class="btn btn--sm btn--outline" onclick="editCourse('${course.id}')">
+                      ✏️ Düzenle
+                    </button>
+                    <button class="btn btn--sm btn--outline" onclick="manageLessons('${course.id}', '${course.title}')">
+                      📚 Dersler
+                    </button>
+                    <button class="btn btn--sm btn--danger" onclick="deleteCourse('${course.id}', '${course.title}')">
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        ${courses.length === 0 ? '<p class="text-muted text-center">Henüz kurs eklenmemiş.</p>' : ''}
+      </div>
+    `;
   } catch (error) {
-    console.error('❌ Admin kurs listesi yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Yüklenirken hata oluştu.</p>';
+    console.error('❌ Kurslar yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
   }
 }
+
+async function showCourseForm(courseId = null) {
+  const container = document.getElementById('courseFormContainer');
+  let course = {};
+
+  if (courseId) {
+    const doc = await db.collection('courses').doc(courseId).get();
+    course = doc.exists ? { id: doc.id, ...doc.data() } : {};
+  }
+
+  container.innerHTML = `
+    <div class="admin-form">
+      <h3>${courseId ? '✏️ Kursu Düzenle' : '➕ Yeni Kurs'}</h3>
+      <form id="courseForm" onsubmit="event.preventDefault(); saveCourse('${courseId || ''}');">
+        
+        <div class="form-group">
+          <label>Kurs Başlığı *</label>
+          <input type="text" id="courseTitle" value="${course.title || ''}" required
+                 class="form-input" placeholder="Örn: Temel Sağlık Eğitimi">
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL) *</label>
+          <input type="text" id="courseSlug" value="${course.slug || ''}" required
+                 class="form-input" placeholder="Örn: temel-saglik-egitimi">
+        </div>
+
+        <div class="form-group">
+          <label>Açıklama</label>
+          <textarea id="courseDescription" class="form-input" rows="3"
+                    placeholder="Kurs hakkında kısa açıklama...">${course.description || ''}</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori</label>
+            <select id="courseCategory" class="form-input">
+              <option value="">Seçiniz</option>
+              <option value="saglik" ${course.category === 'saglik' ? 'selected' : ''}>Sağlık</option>
+              <option value="bilim" ${course.category === 'bilim' ? 'selected' : ''}>Bilim</option>
+              <option value="egitim" ${course.category === 'egitim' ? 'selected' : ''}>Eğitim</option>
+              <option value="beslenme" ${course.category === 'beslenme' ? 'selected' : ''}>Beslenme</option>
+              <option value="gebelik" ${course.category === 'gebelik' ? 'selected' : ''}>Gebelik</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Durum</label>
+            <select id="courseStatus" class="form-input">
+              <option value="draft" ${course.status === 'draft' ? 'selected' : ''}>📝 Taslak</option>
+              <option value="published" ${course.status === 'published' ? 'selected' : ''}>✅ Yayında</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kapak Resmi URL</label>
+          <input type="url" id="courseCoverImage" value="${course.coverImage || ''}" 
+                 class="form-input" placeholder="https://res.cloudinary.com/...">
+          <small class="form-hint">Cloudinary'den yüklediğiniz resmin URL'sini yapıştırın</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" id="courseFeatured" ${course.featured ? 'checked' : ''}>
+            ⭐ Öne çıkan kurs olarak işaretle
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">
+            ${courseId ? '💾 Güncelle' : '➕ Oluştur'}
+          </button>
+          <button type="button" class="btn btn--outline" onclick="hideCourseForm()">
+            ❌ İptal
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  // Otomatik slug oluşturma
+  if (!courseId) {
+    document.getElementById('courseTitle').addEventListener('input', (e) => {
+      const slug = e.target.value
+        .toLowerCase()
+        .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+        .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      document.getElementById('courseSlug').value = slug;
+    });
+  }
+}
+
+function hideCourseForm() {
+  const container = document.getElementById('courseFormContainer');
+  if (container) container.innerHTML = '';
+}
+
+
+async function saveCourse(courseId) {
+  const title = document.getElementById('courseTitle').value.trim();
+  const slug = document.getElementById('courseSlug').value.trim();
+  const description = document.getElementById('courseDescription').value.trim();
+  const category = document.getElementById('courseCategory').value;
+  const status = document.getElementById('courseStatus').value;
+  const coverImage = document.getElementById('courseCoverImage').value.trim();
+  const featured = document.getElementById('courseFeatured').checked;
+
+  if (!title || !slug) {
+    alert('Başlık ve slug zorunludur.');
+    return;
+  }
+
+  try {
+    const courseData = {
+      title,
+      slug,
+      description,
+      category,
+      status,
+      coverImage,
+      featured,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (courseId) {
+      // Güncelle
+      await db.collection('courses').doc(courseId).update(courseData);
+      console.log('✅ Kurs güncellendi:', title);
+    } else {
+      // Yeni oluştur
+      courseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      courseData.createdBy = firebase.auth().currentUser.uid;
+      courseData.lessonCount = 0;
+      await db.collection('courses').add(courseData);
+      console.log('✅ Yeni kurs oluşturuldu:', title);
+    }
+
+    hideCourseForm();
+    loadAdminCourses();  // Listeyi yenile
+
+  } catch (error) {
+    console.error('❌ Kurs kaydedilemedi:', error);
+    alert('Kurs kaydedilirken hata oluştu: ' + error.message);
+  }
+}
+
+
+async function editCourse(courseId) {
+  await showCourseForm(courseId);
+  // Formu görünür alana kaydır
+  document.getElementById('courseFormContainer').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteCourse(courseId, title) {
+  const confirmed = confirm(
+    `⚠️ "${title}" kursunu silmek istediğinize emin misiniz?\n\n` +
+    'Bu işlem kursa ait tüm dersleri de silecektir!'
+  );
+  if (!confirmed) return;
+
+  try {
+    // Önce kursa ait dersleri sil
+    const lessonsSnapshot = await db.collection('lessons')
+      .where('courseId', '==', courseId).get();
+    
+    const batch = db.batch();
+    lessonsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    batch.delete(db.collection('courses').doc(courseId));
+    await batch.commit();
+
+    console.log('✅ Kurs ve dersleri silindi:', title);
+    loadAdminCourses();  // Listeyi yenile
+
+  } catch (error) {
+    console.error('❌ Kurs silinemedi:', error);
+    alert('Kurs silinirken hata oluştu: ' + error.message);
+  }
+}
+
 
 // ══════════════════════════════════════════════
 //  MAKALE SİLME
@@ -255,6 +476,304 @@ async function renderMakaleEkle() {
   setupSlugGenerator();
   setupCoverImageUpload(); // ← Yeni: Cloudinary yükleme
 }
+
+
+/* ============================================
+   ADMIN PANELİ — DERS YÖNETİMİ (Parça 1.9)
+   ============================================ */
+
+async function manageLessons(courseId, courseTitle) {
+  const container = document.getElementById('adminContent');
+  container.innerHTML = '<div class="loading-spinner"></div>';
+
+  try {
+    const snapshot = await db.collection('lessons')
+      .where('courseId', '==', courseId)
+      .orderBy('order', 'asc')
+      .get();
+
+    const lessons = snapshot.docs.map(doc => ({
+      id: doc.id, ...doc.data()
+    }));
+
+    container.innerHTML = `
+      <div class="admin-section">
+        <div class="admin-section__header">
+          <div>
+            <button class="btn btn--sm btn--outline" onclick="loadAdminCourses()">
+              ← Kurslara Dön
+            </button>
+            <h2 style="margin-top:var(--space-3)">📚 ${courseTitle} — Dersler</h2>
+          </div>
+          <button class="btn btn--primary btn--sm" onclick="showLessonForm('${courseId}')">
+            ➕ Yeni Ders
+          </button>
+        </div>
+
+        <div id="lessonFormContainer"></div>
+
+        <div class="admin-lessons-list" id="lessonsList">
+          ${lessons.length > 0 ? lessons.map((lesson, index) => `
+            <div class="admin-lesson-item" data-id="${lesson.id}">
+              <div class="admin-lesson-item__order">
+                <span class="admin-lesson-item__number">${index + 1}</span>
+                <div class="admin-lesson-item__arrows">
+                  ${index > 0 ? `<button class="btn-icon" onclick="moveLessonUp('${courseId}', '${lesson.id}', ${lesson.order})">⬆️</button>` : ''}
+                  ${index < lessons.length - 1 ? `<button class="btn-icon" onclick="moveLessonDown('${courseId}', '${lesson.id}', ${lesson.order})">⬇️</button>` : ''}
+                </div>
+              </div>
+              <div class="admin-lesson-item__info">
+                <strong>${lesson.title}</strong>
+                <span class="text-muted">
+                  ${lesson.type === 'audio' ? '🎧 Ses' : lesson.type === 'text' ? '📄 Metin' : '🎬 Video'}
+                  ${lesson.duration ? ' · ' + formatDuration(lesson.duration) : ''}
+                </span>
+              </div>
+              <div class="admin-lesson-item__actions">
+                <button class="btn btn--sm btn--outline" onclick="editLesson('${courseId}', '${lesson.id}')">
+                  ✏️
+                </button>
+                <button class="btn btn--sm btn--danger" onclick="deleteLesson('${courseId}', '${lesson.id}', '${lesson.title}')">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          `).join('') : '<p class="text-muted text-center">Henüz ders eklenmemiş.</p>'}
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error('❌ Dersler yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Dersler yüklenirken hata oluştu.</p>';
+  }
+}
+
+function formatDuration(seconds) {
+  const min = Math.floor(seconds / 60);
+  const sec = seconds % 60;
+  return `${min}:${sec.toString().padStart(2, '0')}`;
+}
+
+
+async function showLessonForm(courseId, lessonId = null) {
+  const container = document.getElementById('lessonFormContainer');
+  let lesson = {};
+
+  if (lessonId) {
+    const doc = await db.collection('lessons').doc(lessonId).get();
+    lesson = doc.exists ? { id: doc.id, ...doc.data() } : {};
+  } else {
+    // Yeni ders için sıra numarasını belirle
+    const snapshot = await db.collection('lessons')
+      .where('courseId', '==', courseId)
+      .orderBy('order', 'desc').limit(1).get();
+    const lastOrder = snapshot.empty ? 0 : snapshot.docs[0].data().order;
+    lesson.order = lastOrder + 1;
+  }
+
+  container.innerHTML = `
+    <div class="admin-form">
+      <h3>${lessonId ? '✏️ Dersi Düzenle' : '➕ Yeni Ders'}</h3>
+      <form onsubmit="event.preventDefault(); saveLesson('${courseId}', '${lessonId || ''}');">
+
+        <div class="form-group">
+          <label>Ders Başlığı *</label>
+          <input type="text" id="lessonTitle" value="${lesson.title || ''}" required
+                 class="form-input" placeholder="Örn: Giriş — Kurs Tanıtımı">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ders Tipi</label>
+            <select id="lessonType" class="form-input" onchange="toggleLessonFields()">
+              <option value="video" ${lesson.type === 'video' ? 'selected' : ''}>🎬 Video</option>
+              <option value="audio" ${lesson.type === 'audio' ? 'selected' : ''}>🎧 Ses</option>
+              <option value="text" ${lesson.type === 'text' ? 'selected' : ''}>📄 Metin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sıra No</label>
+            <input type="number" id="lessonOrder" value="${lesson.order || 1}" min="1"
+                   class="form-input">
+          </div>
+        </div>
+
+        <div id="mediaFields">
+          <div class="form-group">
+            <label>Medya URL *</label>
+            <input type="url" id="lessonMediaUrl" value="${lesson.mediaUrl || ''}"
+                   class="form-input" placeholder="YouTube veya Cloudinary URL">
+            <small class="form-hint">Video: YouTube linki · Ses: Cloudinary ses dosyası URL</small>
+          </div>
+
+          <div class="form-group">
+            <label>Süre (saniye)</label>
+            <input type="number" id="lessonDuration" value="${lesson.duration || ''}" min="0"
+                   class="form-input" placeholder="Örn: 300 (5 dakika)">
+          </div>
+        </div>
+
+        <div id="textFields" style="display:none;">
+          <div class="form-group">
+            <label>Ders İçeriği</label>
+            <textarea id="lessonContent" class="form-input" rows="8"
+                      placeholder="Metin ders içeriğini buraya yazın...">${lesson.content || ''}</textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">
+            ${lessonId ? '💾 Güncelle' : '➕ Ekle'}
+          </button>
+          <button type="button" class="btn btn--outline" onclick="hideLessonForm()">
+            ❌ İptal
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  toggleLessonFields();  // İlk yüklemede doğru alanları göster
+}
+
+function toggleLessonFields() {
+  const type = document.getElementById('lessonType').value;
+  const mediaFields = document.getElementById('mediaFields');
+  const textFields = document.getElementById('textFields');
+
+  if (type === 'text') {
+    mediaFields.style.display = 'none';
+    textFields.style.display = 'block';
+  } else {
+    mediaFields.style.display = 'block';
+    textFields.style.display = 'none';
+  }
+}
+
+function hideLessonForm() {
+  const container = document.getElementById('lessonFormContainer');
+  if (container) container.innerHTML = '';
+}
+
+
+async function saveLesson(courseId, lessonId) {
+  const title = document.getElementById('lessonTitle').value.trim();
+  const type = document.getElementById('lessonType').value;
+  const order = parseInt(document.getElementById('lessonOrder').value) || 1;
+
+  if (!title) {
+    alert('Ders başlığı zorunludur.');
+    return;
+  }
+
+  try {
+    const lessonData = {
+      courseId,
+      title,
+      type,
+      order,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (type === 'text') {
+      lessonData.content = document.getElementById('lessonContent').value.trim();
+      lessonData.mediaUrl = '';
+      lessonData.duration = 0;
+    } else {
+      lessonData.mediaUrl = document.getElementById('lessonMediaUrl').value.trim();
+      lessonData.duration = parseInt(document.getElementById('lessonDuration').value) || 0;
+      lessonData.content = '';
+    }
+
+    if (lessonId) {
+      await db.collection('lessons').doc(lessonId).update(lessonData);
+      console.log('✅ Ders güncellendi:', title);
+    } else {
+      lessonData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('lessons').add(lessonData);
+      console.log('✅ Yeni ders eklendi:', title);
+    }
+
+    // Kurs ders sayısını güncelle
+    await updateCourseLessonCount(courseId);
+
+    hideLessonForm();
+    // Ders listesini yenile — kurs başlığını DOM'dan al
+    const courseTitle = document.querySelector('.admin-section h2')?.textContent?.replace('📚 ', '').replace(' — Dersler', '') || '';
+    manageLessons(courseId, courseTitle);
+
+  } catch (error) {
+    console.error('❌ Ders kaydedilemedi:', error);
+    alert('Ders kaydedilirken hata oluştu: ' + error.message);
+  }
+}
+
+async function updateCourseLessonCount(courseId) {
+  const snapshot = await db.collection('lessons')
+    .where('courseId', '==', courseId).get();
+  await db.collection('courses').doc(courseId).update({
+    lessonCount: snapshot.size
+  });
+}
+
+
+async function editLesson(courseId, lessonId) {
+  await showLessonForm(courseId, lessonId);
+  document.getElementById('lessonFormContainer').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteLesson(courseId, lessonId, title) {
+  if (!confirm(`"${title}" dersini silmek istediğinize emin misiniz?`)) return;
+
+  try {
+    await db.collection('lessons').doc(lessonId).delete();
+    await updateCourseLessonCount(courseId);
+    console.log('✅ Ders silindi:', title);
+
+    const courseTitle = document.querySelector('.admin-section h2')?.textContent?.replace('📚 ', '').replace(' — Dersler', '') || '';
+    manageLessons(courseId, courseTitle);
+  } catch (error) {
+    console.error('❌ Ders silinemedi:', error);
+    alert('Ders silinirken hata oluştu: ' + error.message);
+  }
+}
+
+async function moveLessonUp(courseId, lessonId, currentOrder) {
+  await swapLessonOrder(courseId, lessonId, currentOrder, currentOrder - 1);
+}
+
+async function moveLessonDown(courseId, lessonId, currentOrder) {
+  await swapLessonOrder(courseId, lessonId, currentOrder, currentOrder + 1);
+}
+
+async function swapLessonOrder(courseId, lessonId, fromOrder, toOrder) {
+  try {
+    // Hedef sıradaki dersi bul
+    const targetSnapshot = await db.collection('lessons')
+      .where('courseId', '==', courseId)
+      .where('order', '==', toOrder)
+      .limit(1)
+      .get();
+
+    const batch = db.batch();
+
+    // Mevcut dersin sırasını değiştir
+    batch.update(db.collection('lessons').doc(lessonId), { order: toOrder });
+
+    // Hedef dersin sırasını değiştir
+    if (!targetSnapshot.empty) {
+      batch.update(targetSnapshot.docs[0].ref, { order: fromOrder });
+    }
+
+    await batch.commit();
+
+    const courseTitle = document.querySelector('.admin-section h2')?.textContent?.replace('📚 ', '').replace(' — Dersler', '') || '';
+    manageLessons(courseId, courseTitle);
+  } catch (error) {
+    console.error('❌ Sıralama hatası:', error);
+  }
+}
+
 
 /**
  * Makale düzenleme sayfasını render eder

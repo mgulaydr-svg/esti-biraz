@@ -199,65 +199,72 @@ function render404() {
 
 // ── Admin Panel ──
 async function renderAdmin() {
-  const admin = await isAdminUser();
-  if (!admin) {
-    appContainer.innerHTML = `
+  const user = await new Promise((resolve) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((u) => {
+      unsubscribe();
+      resolve(u);
+    });
+  });
+
+  if (!user) {
+    document.getElementById('app').innerHTML = `
       <section class="section">
         <div class="container text-center">
-          <div class="error-page">
-            <span class="error-page__icon">🔒</span>
-            <h1 class="error-page__title">Yetkisiz Erişim</h1>
-            <p class="error-page__text">Bu sayfayı görüntülemek için admin veya editör yetkisi gerekiyor.</p>
-            <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
-          </div>
+          <h1>🔒 Yetki Gerekli</h1>
+          <p>Admin paneline erişmek için giriş yapmalısınız.</p>
         </div>
       </section>
     `;
     return;
   }
 
-  appContainer.innerHTML = `
+  const isAllowed = await isAdminUser();
+  if (!isAllowed) {
+    document.getElementById('app').innerHTML = `
+      <section class="section">
+        <div class="container text-center">
+          <h1>⛔ Erişim Engellendi</h1>
+          <p>Bu sayfaya erişim yetkiniz bulunmuyor.</p>
+          <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  // Admin panelini yükle
+  document.getElementById('app').innerHTML = `
     <section class="section">
       <div class="container">
-        <div class="page-header">
-          <h1 class="page-header__title">🛠️ Admin Panel</h1>
-          <p class="page-header__desc">İçerik yönetimi ve site ayarları.</p>
+        <h1>⚙️ Admin Paneli</h1>
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchAdminTab(this, 'articles')">
+            📰 Makaleler
+          </button>
+          <button class="admin-tab" onclick="switchAdminTab(this, 'courses')">
+            🎓 Kurslar
+          </button>
         </div>
-
-        <div class="admin-grid">
-          <!-- Makale Yönetimi -->
-          <div class="admin-card">
-            <div class="admin-card__icon">📰</div>
-            <h3 class="admin-card__title">Makale Yönetimi</h3>
-            <p class="admin-card__desc">Makale ekle, düzenle veya sil.</p>
-            <div class="admin-card__actions">
-              <a href="#/admin/makale-ekle" class="btn btn--primary">+ Yeni Makale</a>
-            </div>
-            <div class="admin-card__list" id="adminArticleList">
-              <p class="loading-text">Makaleler yükleniyor...</p>
-            </div>
-          </div>
-
-          <!-- Kurs Yönetimi -->
-          <div class="admin-card">
-            <div class="admin-card__icon">🎓</div>
-            <h3 class="admin-card__title">Kurs Yönetimi</h3>
-            <p class="admin-card__desc">Kurs ekle, düzenle veya sil.</p>
-            <div class="admin-card__actions">
-              <button class="btn btn--outline" onclick="alert('Kurs ekleme Faz 2\'de gelecek!')">+ Yeni Kurs</button>
-            </div>
-            <div class="admin-card__list" id="adminCourseList">
-              <p class="loading-text">Kurslar yükleniyor...</p>
-            </div>
-          </div>
-        </div>
+        <div id="adminContent"></div>
       </div>
     </section>
   `;
 
-  // Admin listelerini yükle
+  // Varsayılan sekmeyi yükle
   loadAdminArticles();
-  loadAdminCourses();
+}
+
+function switchAdminTab(btn, tab) {
+  // Aktif sekmeyi güncelle
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  // İçeriği yükle
+  if (tab === 'articles') {
+    loadAdminArticles();
+  } else if (tab === 'courses') {
+    loadAdminCourses();
+  }
 }
 
 
