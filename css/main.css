@@ -1207,3 +1207,101 @@ ul, ol { list-style: none; }
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ═══════════════════════════════════════════════
+   HEADER LOGO — Parça 1.8
+═══════════════════════════════════════════════ */
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+.header__logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity var(--transition-fast);
+}
+.header__logo-img:hover {
+  opacity: 0.8;
+}
+.header__logo-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ─── HEADER SCROLL EFEKTİ ─── */
+.header--scrolled {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+/* ─── HEADER PROFİL ALANI ─── */
+.header__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full, 999px);
+  transition: background var(--transition-fast);
+}
+.header__user:hover {
+  background: var(--color-bg-alt);
+}
+.header__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+.header__username {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.header__login-btn {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.header__login-btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .header__username {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER LOGO — Parça 1.8
+═══════════════════════════════════════════════ */
+
+.footer__logo {
+  height: 32px;
+  width: auto;
+  margin-bottom: var(--space-2);
+}
+.footer__logo-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
