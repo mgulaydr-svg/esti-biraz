@@ -49,6 +49,38 @@ async function login() {
   }
 }
 
+/* ============================================
+   E-POSTA İLE GİRİŞ / KAYIT (Parça 1.8)
+   ============================================ */
+
+async function emailRegister(email, password, displayName) {
+  try {
+    const result = await firebase.auth()
+      .createUserWithEmailAndPassword(email, password);
+    await result.user.updateProfile({ displayName: displayName });
+    await db.collection('users').doc(result.user.uid).set({
+      displayName: displayName,
+      email: email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    console.log('✅ Kayıt başarılı:', displayName);
+  } catch (error) {
+    console.error('❌ Kayıt hatası:', error);
+    alert(error.message);
+  }
+}
+
+async function emailLogin(email, password) {
+  try {
+    await firebase.auth()
+      .signInWithEmailAndPassword(email, password);
+    console.log('✅ E-posta ile giriş başarılı');
+  } catch (error) {
+    console.error('❌ Giriş hatası:', error);
+    alert(error.message);
+  }
+}
+
 // ══════════════════════════════════════════════
 //  ÇIKIŞ FONKSİYONU
 // ══════════════════════════════════════════════

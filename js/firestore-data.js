@@ -1514,15 +1514,55 @@ async function loadProfile() {
   if (!user) {
     container.innerHTML = `
       <section class="section">
-        <div class="container text-center">
-          <h1>🔒 Giriş Gerekli</h1>
-          <p>Profilinizi görüntülemek için giriş yapmalısınız.</p>
-          <button class="btn btn--primary btn--lg" onclick="login()">
+        <div class="container" style="max-width:420px; margin:0 auto;">
+          <h1 style="text-align:center; margin-bottom:var(--space-6);">🔒 Giriş Yap</h1>
+      
+          <form onsubmit="event.preventDefault(); emailLogin(
+            document.getElementById('loginEmail').value,
+            document.getElementById('loginPass').value
+          );" style="display:flex; flex-direction:column; gap:var(--space-3);">
+            <input id="loginEmail" type="email" placeholder="E-posta" required
+                   class="input" style="padding:var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <input id="loginPass" type="password" placeholder="Şifre" required
+                   class="input" style="padding:var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <button type="submit" class="btn btn--primary btn--lg" style="width:100%;">
+              📧 E-posta ile Giriş
+            </button>
+          </form>
+
+          <div style="text-align:center; margin:var(--space-4) 0; color:var(--color-text-muted);">veya</div>
+
+          <button class="btn btn--outline btn--lg" onclick="login()" style="width:100%;">
             🔑 Google ile Giriş Yap
           </button>
+
+          <p style="text-align:center; margin-top:var(--space-4); font-size:var(--font-size-sm); color:var(--color-text-muted);">
+            Hesabınız yok mu? 
+            <a href="javascript:void(0)" onclick="document.getElementById('registerForm').style.display='flex'; this.parentElement.style.display='none';">
+              Kayıt olun
+            </a>
+          </p>
+
+          <form id="registerForm" style="display:none; flex-direction:column; gap:var(--space-3); margin-top:var(--space-4);"
+                onsubmit="event.preventDefault(); emailRegister(
+                  document.getElementById('regEmail').value,
+                  document.getElementById('regPass').value,
+                  document.getElementById('regName').value
+                );">
+            <input id="regName" type="text" placeholder="Ad Soyad" required
+                   class="input" style="padding:var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <input id="regEmail" type="email" placeholder="E-posta" required
+                   class="input" style="padding:var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <input id="regPass" type="password" placeholder="Şifre (en az 6 karakter)" required minlength="6"
+                   class="input" style="padding:var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+            <button type="submit" class="btn btn--primary btn--lg" style="width:100%;">
+              ✅ Kayıt Ol
+            </button>
+          </form>
+
         </div>
       </section>
-    `;
+`    ;
     return;
   }
 
