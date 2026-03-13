@@ -1504,7 +1504,12 @@ function showCourseCompleteModal(courseSlug) {
 
 async function loadProfile() {
   const container = document.getElementById('app');
-  const user = firebase.auth().currentUser;
+  const user = await new Promise((resolve) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((u) => {
+      unsubscribe();
+      resolve(u);
+    });
+  });
 
   if (!user) {
     container.innerHTML = `
@@ -1512,7 +1517,7 @@ async function loadProfile() {
         <div class="container text-center">
           <h1>🔒 Giriş Gerekli</h1>
           <p>Profilinizi görüntülemek için giriş yapmalısınız.</p>
-          <button class="btn btn--primary btn--lg" onclick="googleLogin()">
+          <button class="btn btn--primary btn--lg" onclick="login()">
             🔑 Google ile Giriş Yap
           </button>
         </div>
@@ -1626,7 +1631,7 @@ async function loadProfile() {
               <p class="profile-header__joined">📅 Katılım: ${joinDate}</p>
             </div>
             <div class="profile-header__actions">
-              <button class="btn btn--outline btn--sm" onclick="googleLogout()">
+              <button class="btn btn--outline btn--sm" onclick="logout()">
                 🚪 Çıkış Yap
               </button>
             </div>
