@@ -193,6 +193,23 @@ async function showCourseForm(courseId = null) {
           </div>
         </div>
 
+	<div class="form-row">
+  	  <div class="form-group">
+    	    <label>Seviye</label>
+    	    <select id="courseLevel" class="form-input">
+      	      <option value="">Seçiniz</option>
+      	      <option value="baslangic" ${course.level === 'baslangic' ? 'selected' : ''}>🟢 Başlangıç</option>
+      	      <option value="orta" ${course.level === 'orta' ? 'selected' : ''}>🟡 Orta</option>
+      	      <option value="ileri" ${course.level === 'ileri' ? 'selected' : ''}>🔴 İleri</option>
+    	    </select>
+  	  </div>
+  	  <div class="form-group">
+    	    <label>Eğitmen</label>
+    	    <input type="text" id="courseInstructor" value="${course.instructor || ''}"
+                   class="form-input" placeholder="Örn: Dr. Mehmet">
+  	  </div>
+	</div>
+
         <div class="form-group">
   	  <label>Kapak Resmi</label>
   	  <input type="hidden" id="courseCoverImage" value="${course.coverImage || ''}">
@@ -291,6 +308,8 @@ async function saveCourse(courseId) {
       status,
       coverImage,
       featured,
+      level,
+      instructor,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -308,7 +327,7 @@ async function saveCourse(courseId) {
         courseData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
       }
       courseData.createdBy = firebase.auth().currentUser.uid;
-      courseData.lessonCount = 0;
+      courseData.totalLessons = 0;
       await db.collection('courses').add(courseData);
       console.log('✅ Yeni kurs oluşturuldu:', title);
     }
@@ -759,7 +778,7 @@ async function updateCourseLessonCount(courseId) {
   const snapshot = await db.collection('lessons')
     .where('courseId', '==', courseId).get();
   await db.collection('courses').doc(courseId).update({
-    lessonCount: snapshot.size
+    totalLessons: snapshot.size
   });
 }
 
