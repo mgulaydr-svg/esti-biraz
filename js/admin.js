@@ -829,9 +829,9 @@ async function manageLessons(courseId, courseTitle) {
         </div>
       </div>
     `;
-  // manageLessons() fonksiyonundaki catch bloğunu şununla değiştirin:
-  } catch (error) {
-    console.error('❌ Dersler yüklenemedi:', error);
+    // manageLessons() fonksiyonundaki catch bloğunu şununla değiştirin:
+    } catch (error) {
+      console.error('❌ Dersler yüklenemedi:', error);
     
     // Firestore index hatası kontrolü
     const errorMsg = error.message || '';
@@ -855,6 +855,7 @@ async function manageLessons(courseId, courseTitle) {
       container.innerHTML = '<p class="error-state">Dersler yüklenirken hata oluştu.</p>';
     }
   }
+}
 
 function formatDuration(seconds) {
   const min = Math.floor(seconds / 60);
