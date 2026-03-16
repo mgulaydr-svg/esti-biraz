@@ -2,64 +2,285 @@
    ESTİ BİRAZ — Admin Fonksiyonları (admin.js)
    ============================================ */
 
-// ══════════════════════════════════════════════
-//  ADMIN MAKALE LİSTESİ
-// ══════════════════════════════════════════════
+/* ============================================
+   ADMIN PANELİ — MAKALE YÖNETİMİ (Düzeltilmiş)
+   ============================================ */
 
-/**
- * Admin panelindeki makale listesini yükler
- */
 async function loadAdminArticles() {
   const container = document.getElementById('adminContent');
   if (!container) return;
 
+  container.innerHTML = '<div class="loading-spinner"></div>';
+
   try {
     const snapshot = await db.collection('articles')
-      .orderBy('createdAt', 'desc')
-      .get();
+      .orderBy('createdAt', 'desc').get();
 
-    if (snapshot.empty) {
-      container.innerHTML = '<p class="empty-state">Henüz makale yok.</p>';
-      return;
-    }
+    const articles = snapshot.docs.map(doc => ({
+      id: doc.id, ...doc.data()
+    }));
 
     container.innerHTML = `
       <div class="admin-section">
         <div class="admin-section__header">
           <h2>📰 Makale Yönetimi</h2>
-          <button class="btn btn--primary btn--sm" onclick="renderMakaleEkle()">
+          <button class="btn btn--primary btn--sm" onclick="showArticleForm()">
             ➕ Yeni Makale
           </button>
         </div>
-        <div class="admin-list">
-          ${snapshot.docs.map(doc => {
-            const d = doc.data();
-            const date = d.createdAt?.toDate
-              ? d.createdAt.toDate().toLocaleDateString('tr-TR')
-              : '';
-            return `
-              <div class="admin-list-item">
-                <div class="admin-list-item__info">
-                  <strong>${d.title}</strong>
-                  <span class="admin-list-item__meta">${getCategoryLabel(d.category)} · ${date}</span>
-                </div>
-                <div class="admin-list-item__actions">
-                  <a href="#/admin/makale-duzenle/${doc.id}" class="btn btn--sm btn--outline">✏️ Düzenle</a>
-                  <button class="btn btn--sm btn--danger" onclick="deleteArticle('${doc.id}')">🗑️ Sil</button>
-                </div>
-              </div>
-            `;
-          }).join('')}
+
+        <div id="articleFormContainer"></div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Başlık</th>
+                <th>Kategori</th>
+                <th>Yazar</th>
+                <th>Öne Çıkan</th>
+                <th>Tarih</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${articles.map(article => {
+                const date = article.createdAt?.toDate
+                  ? article.createdAt.toDate().toLocaleDateString('tr-TR')
+                  : '—';
+                return `
+                  <tr>
+                    <td><strong>${article.title}</strong></td>
+                    <td>${getCategoryLabel(article.category) || article.category || '—'}</td>
+                    <td>${article.author || '—'}</td>
+                    <td>${article.featured ? '⭐' : '—'}</td>
+                    <td>${date}</td>
+                    <td class="admin-table__actions">
+                      <button class="btn btn--sm btn--outline" onclick="editArticle('${article.id}')">
+                        ✏️ Düzenle
+                      </button>
+                      <button class="btn btn--sm btn--danger" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')"> 
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
+
+        ${articles.length === 0 ? '<p class="text-muted text-center">Henüz makale eklenmemiş.</p>' : ''}
       </div>
     `;
-
-    console.log(`📰 Admin: ${snapshot.size} makale listelendi.`);
   } catch (error) {
-    console.error('❌ Admin makale listesi yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Yüklenirken hata oluştu.</p>';
+    console.error('❌ Makaleler yüklenemedi:', error);
+    container.innerHTML = '<p class="error-state">Makaleler yüklenirken hata oluştu.</p>';
   }
 }
+
+
+async function showArticleForm(articleId = null) {
+  const container = document.getElementById('articleFormContainer');
+  let article = {};
+
+  if (articleId) {
+    const doc = await db.collection('articles').doc(articleId).get();
+    article = doc.exists ? { id: doc.id, ...doc.data() } : {};
+  }
+
+  container.innerHTML = `
+    <div class="admin-form">
+      <h3>${articleId ? '✏️ Makaleyi Düzenle' : '➕ Yeni Makale'}</h3>
+      <form id="articleForm" onsubmit="event.preventDefault(); saveArticleInline('${articleId || ''}');">
+
+        <div class="form-group">
+          <label>Makale Başlığı *</label>
+          <input type="text" id="articleTitle" value="${article.title || ''}" required
+                 class="form-input" placeholder="Örn: Sağlıklı Beslenme Rehberi">
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL) *</label>
+          <input type="text" id="articleSlug" value="${article.slug || ''}" required
+                 class="form-input" placeholder="Örn: saglikli-beslenme-rehberi">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori *</label>
+            <select id="articleCategory" class="form-input" required>
+              <option value="">Seçiniz</option>
+              <option value="saglik" ${article.category === 'saglik' ? 'selected' : ''}>🏥 Sağlık</option>
+              <option value="bilim" ${article.category === 'bilim' ? 'selected' : ''}>🔬 Bilim</option>
+              <option value="egitim" ${article.category === 'egitim' ? 'selected' : ''}>📖 Eğitim</option>
+              <option value="teknoloji" ${article.category === 'teknoloji' ? 'selected' : ''}>💻 Teknoloji</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Yazar *</label>
+            <input type="text" id="articleAuthor" value="${article.author || ''}" required
+                   class="form-input" placeholder="Dr. Ayşe Yılmaz">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kısa Özet *</label>
+          <textarea id="articleSummary" class="form-input" rows="3" required
+                    placeholder="Kart üzerinde görünecek kısa açıklama...">${article.summary || ''}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Kapak Görseli URL</label>
+          <input type="url" id="articleCoverImage" value="${article.coverImage || ''}"
+                 class="form-input" placeholder="https://res.cloudinary.com/...">
+        </div>
+
+        <div class="form-group">
+          <label>Makale İçeriği *</label>
+          <div class="editor-toolbar" id="editorToolbar">
+            <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
+            <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
+            <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
+            <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
+            <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
+            <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
+            <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
+          </div>
+          <div class="editor-content" id="articleContent" contenteditable="true"
+               data-placeholder="Makale içeriğinizi buraya yazın...">${article.content || ''}</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input type="checkbox" id="articleFeatured" ${article.featured ? 'checked' : ''}>
+            ⭐ Öne çıkan makale olarak işaretle
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">
+            ${articleId ? '💾 Güncelle' : '📤 Yayınla'}
+          </button>
+          <button type="button" class="btn btn--outline" onclick="hideArticleForm()">
+            ❌ İptal
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  // Editörü başlat
+  setupEditor();
+
+  // Yeni makalede otomatik slug
+  if (!articleId) {
+    document.getElementById('articleTitle').addEventListener('input', (e) => {
+      const slug = e.target.value
+        .toLowerCase()
+        .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+        .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      document.getElementById('articleSlug').value = slug;
+    });
+  }
+}
+
+function hideArticleForm() {
+  const container = document.getElementById('articleFormContainer');
+  if (container) container.innerHTML = '';
+}
+
+
+async function saveArticleInline(articleId) {
+  const title = document.getElementById('articleTitle').value.trim();
+  const slug = document.getElementById('articleSlug').value.trim();
+  const category = document.getElementById('articleCategory').value;
+  const author = document.getElementById('articleAuthor').value.trim();
+  const summary = document.getElementById('articleSummary').value.trim();
+  const coverImage = document.getElementById('articleCoverImage').value.trim();
+  const content = document.getElementById('articleContent').innerHTML;
+  const featured = document.getElementById('articleFeatured').checked;
+
+  if (!title || !slug || !category || !author || !summary) {
+    alert('Lütfen tüm zorunlu alanları doldurun.');
+    return;
+  }
+  if (!content || content === '<br>') {
+    alert('Makale içeriği boş olamaz.');
+    return;
+  }
+
+  try {
+    const articleData = {
+      title, slug, category, author, summary,
+      coverImage, content, featured,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (articleId) {
+      await db.collection('articles').doc(articleId).update(articleData);
+      console.log('✅ Makale güncellendi:', title);
+    } else {
+      articleData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      articleData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('articles').add(articleData);
+      console.log('✅ Yeni makale oluşturuldu:', title);
+    }
+
+    hideArticleForm();
+    loadAdminArticles();  // Listeyi yenile
+
+  } catch (error) {
+    console.error('❌ Makale kaydedilemedi:', error);
+    alert('Makale kaydedilirken hata oluştu: ' + error.message);
+  }
+}
+
+
+async function editArticle(articleId) {
+  await showArticleForm(articleId);
+  document.getElementById('articleFormContainer').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteArticle(articleId, title) {
+  if (!confirm(`"${title}" makalesini silmek istediğinize emin misiniz?`)) return;
+
+  try {
+    // Makaleye ait yorumları da sil
+    const commentsSnapshot = await db.collection('comments')
+      .where('articleId', '==', articleId).get();
+    const likesSnapshot = await db.collection('likes')
+      .where('articleId', '==', articleId).get();
+
+    const batch = db.batch();
+    commentsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    likesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    batch.delete(db.collection('articles').doc(articleId));
+    
+    // articleStats varsa onu da sil
+    batch.delete(db.collection('articleStats').doc(articleId));
+    
+    await batch.commit();
+
+    console.log('✅ Makale silindi:', title);
+    loadAdminArticles();
+  } catch (error) {
+    console.error('❌ Makale silinemedi:', error);
+    alert('Makale silinirken hata oluştu: ' + error.message);
+  }
+}
+
+
 
 /* ============================================
    ADMIN PANELİ — KURS YÖNETİMİ (Parça 1.9)
@@ -549,6 +770,7 @@ async function renderMakaleEkle() {
    ============================================ */
 
 async function manageLessons(courseId, courseTitle) {
+  console.log('🔍 manageLessons çağrıldı, courseId:', courseId, typeof courseId);  
   const container = document.getElementById('adminContent');
   container.innerHTML = '<div class="loading-spinner"></div>';
 
