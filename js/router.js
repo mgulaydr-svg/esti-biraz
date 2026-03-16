@@ -277,7 +277,6 @@ const routes = {
   '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
   '/profil': { title: 'Profilim', render: renderProfile },
   '/admin':     { title: 'Admin Panel',     render: renderAdmin },
-  '/admin/makale-ekle': { title: 'Makale Ekle', render: renderMakaleEkle },
   '/akademi':   { title: 'Akademi',   render: renderAkademi },
 };
 
@@ -285,7 +284,6 @@ const routes = {
 const dynamicRoutes = [
   { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
   { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
-  { pattern: /^\/admin\/makale-duzenle\/(.+)$/, title: 'Makale Düzenle', render: renderMakaleDuzenle },
   { pattern: /^\/kurs\/(.+)$/, title: 'Kurs', render: renderKurs },
   { pattern: /^\/ders\/(.+)\/(.+)$/, title: 'Ders', render: renderDers },
 ];

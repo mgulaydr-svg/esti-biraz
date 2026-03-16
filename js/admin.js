@@ -775,10 +775,9 @@ async function manageLessons(courseId, courseTitle) {
   container.innerHTML = '<div class="loading-spinner"></div>';
 
   try {
-    const snapshot = await db.collection('lessons')
-      .where('courseId', '==', courseId)
-      .orderBy('order', 'asc')
-      .get();
+    const snapshot = await db.collection('courses').doc(courseId)
+      .collection('lessons')
+      .orderBy('order', 'asc').get();
 
     const lessons = snapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
@@ -830,11 +829,32 @@ async function manageLessons(courseId, courseTitle) {
         </div>
       </div>
     `;
+  // manageLessons() fonksiyonundaki catch bloğunu şununla değiştirin:
   } catch (error) {
     console.error('❌ Dersler yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Dersler yüklenirken hata oluştu.</p>';
+    
+    // Firestore index hatası kontrolü
+    const errorMsg = error.message || '';
+    if (errorMsg.includes('index') || errorMsg.includes('requires an index')) {
+      container.innerHTML = `
+        <div class="admin-section">
+          <button class="btn btn--sm btn--outline" onclick="loadAdminCourses()">
+            ← Kurslara Dön
+          </button>
+          <div class="error-state" style="margin-top:var(--space-4);">
+            <h3>⚠️ Firestore Index Gerekli</h3>
+            <p>Ders sorgusunun çalışması için composite index oluşturmanız gerekiyor.</p>
+            <p><strong>Çözüm:</strong> Tarayıcı konsolundaki (F12) hata mesajındaki linke tıklayarak index'i otomatik oluşturabilirsiniz.</p>
+            <p class="text-muted" style="font-size:0.85rem; margin-top:var(--space-2);">
+              Hata detayı: ${errorMsg}
+            </p>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = '<p class="error-state">Dersler yüklenirken hata oluştu.</p>';
+    }
   }
-}
 
 function formatDuration(seconds) {
   const min = Math.floor(seconds / 60);
@@ -973,14 +993,18 @@ async function saveLesson(courseId, lessonId) {
       lessonData.content = '';
     }
 
-    if (lessonId) {
-      await db.collection('lessons').doc(lessonId).update(lessonData);
-      console.log('✅ Ders güncellendi:', title);
-    } else {
-      lessonData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('lessons').add(lessonData);
-      console.log('✅ Yeni ders eklendi:', title);
-    }
+      // saveLesson() içindeki kaydetme kısmı:
+      const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
+
+      if (lessonId) {
+        await lessonsRef.doc(lessonId).update(lessonData);
+        console.log('✅ Ders güncellendi:', title);
+      } else {
+        lessonData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        await lessonsRef.add(lessonData);
+        console.log('✅ Yeni ders eklendi:', title);
+}    
+
 
     // Kurs ders sayısını güncelle
     await updateCourseLessonCount(courseId);
@@ -997,8 +1021,8 @@ async function saveLesson(courseId, lessonId) {
 }
 
 async function updateCourseLessonCount(courseId) {
-  const snapshot = await db.collection('lessons')
-    .where('courseId', '==', courseId).get();
+  const snapshot = await db.collection('courses').doc(courseId)
+    .collection('lessons').get();
   await db.collection('courses').doc(courseId).update({
     totalLessons: snapshot.size
   });
@@ -1014,7 +1038,7 @@ async function deleteLesson(courseId, lessonId, title) {
   if (!confirm(`"${title}" dersini silmek istediğinize emin misiniz?`)) return;
 
   try {
-    await db.collection('lessons').doc(lessonId).delete();
+    await db.collection('courses').doc(courseId).collection('lessons').doc(lessonId).delete();
     await updateCourseLessonCount(courseId);
     console.log('✅ Ders silindi:', title);
 
