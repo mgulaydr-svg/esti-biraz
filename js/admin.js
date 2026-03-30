@@ -514,6 +514,8 @@ async function saveCourse(courseId) {
   const status = document.getElementById('courseStatus').value;
   const coverImage = document.getElementById('courseCoverImage').value.trim();
   const featured = document.getElementById('courseFeatured').checked;
+  const level = document.getElementById('courseLevel').value;
+  const instructor = document.getElementById('courseInstructor').value.trim();
 
   if (!title || !slug) {
     alert('Başlık ve slug zorunludur.');
@@ -548,7 +550,7 @@ async function saveCourse(courseId) {
         courseData.publishedAt = firebase.firestore.FieldValue.serverTimestamp();
       }
       courseData.createdBy = firebase.auth().currentUser.uid;
-      courseData.totalLessons = 0;
+      courseData.LessonCount = 0;
       await db.collection('courses').add(courseData);
       console.log('✅ Yeni kurs oluşturuldu:', title);
     }
