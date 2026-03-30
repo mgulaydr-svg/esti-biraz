@@ -768,21 +768,28 @@ async function renderMakaleEkle() {
 
 
 /* ============================================
-   ADMIN PANELİ — DERS YÖNETİMİ (Parça 1.9)
+   ADMIN PANELİ — DERS YÖNETİMİ (Tam Düzeltme)
+   Veri modeli: courses/{courseId}/lessons/{lessonId}
    ============================================ */
 
 async function manageLessons(courseId, courseTitle) {
-  console.log('🔍 manageLessons çağrıldı, courseId:', courseId, typeof courseId);  
+  console.log('🔍 manageLessons çağrıldı, courseId:', courseId, typeof courseId);
+
   const container = document.getElementById('adminContent');
+  if (!container) return;
+
   container.innerHTML = '<div class="loading-spinner"></div>';
 
   try {
-    const snapshot = await db.collection('courses').doc(courseId)
-      .collection('lessons')
-      .orderBy('order', 'asc').get();
+    const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
+
+    const snapshot = await lessonsRef
+      .orderBy('order', 'asc')
+      .get();
 
     const lessons = snapshot.docs.map(doc => ({
-      id: doc.id, ...doc.data()
+      id: doc.id,
+      ...doc.data()
     }));
 
     container.innerHTML = `
@@ -807,10 +814,15 @@ async function manageLessons(courseId, courseTitle) {
               <div class="admin-lesson-item__order">
                 <span class="admin-lesson-item__number">${index + 1}</span>
                 <div class="admin-lesson-item__arrows">
-                  ${index > 0 ? `<button class="btn-icon" onclick="moveLessonUp('${courseId}', '${lesson.id}', ${lesson.order})">⬆️</button>` : ''}
-                  ${index < lessons.length - 1 ? `<button class="btn-icon" onclick="moveLessonDown('${courseId}', '${lesson.id}', ${lesson.order})">⬇️</button>` : ''}
+                  ${index > 0
+                    ? `<button class="btn-icon" onclick="moveLessonUp('${courseId}', '${lesson.id}', ${lesson.order})">⬆️</button>`
+                    : ''}
+                  ${index < lessons.length - 1
+                    ? `<button class="btn-icon" onclick="moveLessonDown('${courseId}', '${lesson.id}', ${lesson.order})">⬇️</button>`
+                    : ''}
                 </div>
               </div>
+
               <div class="admin-lesson-item__info">
                 <strong>${lesson.title}</strong>
                 <span class="text-muted">
@@ -818,11 +830,12 @@ async function manageLessons(courseId, courseTitle) {
                   ${lesson.duration ? ' · ' + formatDuration(lesson.duration) : ''}
                 </span>
               </div>
+
               <div class="admin-lesson-item__actions">
                 <button class="btn btn--sm btn--outline" onclick="editLesson('${courseId}', '${lesson.id}')">
                   ✏️
                 </button>
-                <button class="btn btn--sm btn--danger" onclick="deleteLesson('${courseId}', '${lesson.id}', '${lesson.title}')">
+                <button class="btn btn--sm btn--danger" onclick="deleteLesson('${courseId}', '${lesson.id}', '${(lesson.title || '').replace(/'/g, "\\'")}')">
                   🗑️
                 </button>
               </div>
@@ -831,12 +844,11 @@ async function manageLessons(courseId, courseTitle) {
         </div>
       </div>
     `;
-    // manageLessons() fonksiyonundaki catch bloğunu şununla değiştirin:
-    } catch (error) {
-      console.error('❌ Dersler yüklenemedi:', error);
-    
-    // Firestore index hatası kontrolü
+  } catch (error) {
+    console.error('❌ Dersler yüklenemedi:', error);
+
     const errorMsg = error.message || '';
+
     if (errorMsg.includes('index') || errorMsg.includes('requires an index')) {
       container.innerHTML = `
         <div class="admin-section">
@@ -846,7 +858,7 @@ async function manageLessons(courseId, courseTitle) {
           <div class="error-state" style="margin-top:var(--space-4);">
             <h3>⚠️ Firestore Index Gerekli</h3>
             <p>Ders sorgusunun çalışması için composite index oluşturmanız gerekiyor.</p>
-            <p><strong>Çözüm:</strong> Tarayıcı konsolundaki (F12) hata mesajındaki linke tıklayarak index'i otomatik oluşturabilirsiniz.</p>
+            <p><strong>Çözüm:</strong> Tarayıcı konsolundaki hata mesajındaki linke tıklayarak index'i oluştur.</p>
             <p class="text-muted" style="font-size:0.85rem; margin-top:var(--space-2);">
               Hata detayı: ${errorMsg}
             </p>
@@ -865,21 +877,25 @@ function formatDuration(seconds) {
   return `${min}:${sec.toString().padStart(2, '0')}`;
 }
 
-
 async function showLessonForm(courseId, lessonId = null) {
   const container = document.getElementById('lessonFormContainer');
+  if (!container) return;
+
+  const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
   let lesson = {};
 
   if (lessonId) {
-    const doc = await db.collection('lessons').doc(lessonId).get();
+    const doc = await lessonsRef.doc(lessonId).get();
     lesson = doc.exists ? { id: doc.id, ...doc.data() } : {};
   } else {
-    // Yeni ders için sıra numarasını belirle
-    const snapshot = await db.collection('lessons')
-      .where('courseId', '==', courseId)
-      .orderBy('order', 'desc').limit(1).get();
-    const lastOrder = snapshot.empty ? 0 : snapshot.docs[0].data().order;
+    const snapshot = await lessonsRef
+      .orderBy('order', 'desc')
+      .limit(1)
+      .get();
+
+    const lastOrder = snapshot.empty ? 0 : (snapshot.docs[0].data().order || 0);
     lesson.order = lastOrder + 1;
+    lesson.type = 'video';
   }
 
   container.innerHTML = `
@@ -944,7 +960,7 @@ async function showLessonForm(courseId, lessonId = null) {
     </div>
   `;
 
-  toggleLessonFields();  // İlk yüklemede doğru alanları göster
+  toggleLessonFields();
 }
 
 function toggleLessonFields() {
@@ -966,7 +982,6 @@ function hideLessonForm() {
   if (container) container.innerHTML = '';
 }
 
-
 async function saveLesson(courseId, lessonId) {
   const title = document.getElementById('lessonTitle').value.trim();
   const type = document.getElementById('lessonType').value;
@@ -978,6 +993,8 @@ async function saveLesson(courseId, lessonId) {
   }
 
   try {
+    const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
+
     const lessonData = {
       courseId,
       title,
@@ -996,27 +1013,21 @@ async function saveLesson(courseId, lessonId) {
       lessonData.content = '';
     }
 
-      // saveLesson() içindeki kaydetme kısmı:
-      const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
+    if (lessonId) {
+      await lessonsRef.doc(lessonId).update(lessonData);
+      console.log('✅ Ders güncellendi:', title);
+    } else {
+      lessonData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await lessonsRef.add(lessonData);
+      console.log('✅ Yeni ders eklendi:', title);
+    }
 
-      if (lessonId) {
-        await lessonsRef.doc(lessonId).update(lessonData);
-        console.log('✅ Ders güncellendi:', title);
-      } else {
-        lessonData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        await lessonsRef.add(lessonData);
-        console.log('✅ Yeni ders eklendi:', title);
-}    
-
-
-    // Kurs ders sayısını güncelle
     await updateCourseLessonCount(courseId);
 
     hideLessonForm();
-    // Ders listesini yenile — kurs başlığını DOM'dan al
+
     const courseTitle = document.querySelector('.admin-section h2')?.textContent?.replace('📚 ', '').replace(' — Dersler', '') || '';
     manageLessons(courseId, courseTitle);
-
   } catch (error) {
     console.error('❌ Ders kaydedilemedi:', error);
     alert('Ders kaydedilirken hata oluştu: ' + error.message);
@@ -1024,13 +1035,16 @@ async function saveLesson(courseId, lessonId) {
 }
 
 async function updateCourseLessonCount(courseId) {
-  const snapshot = await db.collection('courses').doc(courseId)
-    .collection('lessons').get();
+  const snapshot = await db.collection('courses')
+    .doc(courseId)
+    .collection('lessons')
+    .get();
+
   await db.collection('courses').doc(courseId).update({
-    totalLessons: snapshot.size
+    lessonCount: snapshot.size,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
-
 
 async function editLesson(courseId, lessonId) {
   await showLessonForm(courseId, lessonId);
@@ -1063,21 +1077,25 @@ async function moveLessonDown(courseId, lessonId, currentOrder) {
 
 async function swapLessonOrder(courseId, lessonId, fromOrder, toOrder) {
   try {
-    // Hedef sıradaki dersi bul
-    const targetSnapshot = await db.collection('lessons')
-      .where('courseId', '==', courseId)
+    const lessonsRef = db.collection('courses').doc(courseId).collection('lessons');
+
+    const targetSnapshot = await lessonsRef
       .where('order', '==', toOrder)
       .limit(1)
       .get();
 
     const batch = db.batch();
 
-    // Mevcut dersin sırasını değiştir
-    batch.update(db.collection('lessons').doc(lessonId), { order: toOrder });
+    batch.update(lessonsRef.doc(lessonId), {
+      order: toOrder,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-    // Hedef dersin sırasını değiştir
     if (!targetSnapshot.empty) {
-      batch.update(targetSnapshot.docs[0].ref, { order: fromOrder });
+      batch.update(targetSnapshot.docs[0].ref, {
+        order: fromOrder,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
 
     await batch.commit();
@@ -1086,164 +1104,6 @@ async function swapLessonOrder(courseId, lessonId, fromOrder, toOrder) {
     manageLessons(courseId, courseTitle);
   } catch (error) {
     console.error('❌ Sıralama hatası:', error);
-  }
-}
-
-
-/**
- * Makale düzenleme sayfasını render eder
- * @param {string} articleId - Düzenlenecek makale ID'si
- */
-async function renderMakaleDuzenle(articleId) {
-  const admin = await isAdminUser();
-  if (!admin) {
-    appContainer.innerHTML = `
-      <section class="section">
-        <div class="container text-center">
-          <div class="error-page">
-            <span class="error-page__icon">🔒</span>
-            <h1 class="error-page__title">Yetkisiz Erişim</h1>
-            <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
-          </div>
-        </div>
-      </section>
-    `;
-    return;
-  }
-
-  // Önce yükleniyor ekranı
-  appContainer.innerHTML = `
-    <section class="section">
-      <div class="container container--narrow">
-        <div class="article-loading">
-          <div class="spinner"></div>
-          <p>Makale yükleniyor...</p>
-        </div>
-      </div>
-    </section>
-  `;
-
-  try {
-    const doc = await db.collection('articles').doc(articleId).get();
-
-    if (!doc.exists) {
-      render404();
-      return;
-    }
-
-    const article = doc.data();
-
-    // Aynı formu render et ama verilerle doldur
-    appContainer.innerHTML = `
-      <section class="section">
-        <div class="container container--narrow">
-          <a href="#/admin" class="back-link">← Admin Panel'e Dön</a>
-          <h1 class="page-header__title">✏️ Makale Düzenle</h1>
-
-          <form id="articleForm" class="admin-form" data-article-id="${articleId}">
-            <div class="form-group">
-              <label for="articleTitle" class="form-label">Makale Başlığı *</label>
-              <input type="text" id="articleTitle" class="form-input" value="${article.title || ''}" required>
-            </div>
-
-            <div class="form-group">
-              <label for="articleSlug" class="form-label">URL Slug *</label>
-              <input type="text" id="articleSlug" class="form-input" value="${article.slug || ''}" required>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="articleCategory" class="form-label">Kategori *</label>
-                <select id="articleCategory" class="form-select" required>
-                  <option value="saglik" ${article.category === 'saglik' ? 'selected' : ''}>🏥 Sağlık</option>
-                  <option value="bilim" ${article.category === 'bilim' ? 'selected' : ''}>🔬 Bilim</option>
-                  <option value="egitim" ${article.category === 'egitim' ? 'selected' : ''}>📖 Eğitim</option>
-                  <option value="teknoloji" ${article.category === 'teknoloji' ? 'selected' : ''}>💻 Teknoloji</option>
-		  <option value="yasam" ${article.category === 'yasam' ? 'selected' : ''}>🌿 Yaşam</option>
-		  <option value="kultur" ${article.category === 'kultur' ? 'selected' : ''}>🎭 Kültür</option>
-		  <option value="diger" ${article.category === 'diger' ? 'selected' : ''}>📌 Diğer</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Öne Çıkan</label>
-                <label class="form-checkbox">
-                  <input type="checkbox" id="articleFeatured" ${article.featured ? 'checked' : ''}>
-                  <span>Ana sayfada göster</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="articleSummary" class="form-label">Kısa Özet *</label>
-              <textarea id="articleSummary" class="form-textarea" rows="3" required>${article.summary || ''}</textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="articleAuthor" class="form-label">Yazar *</label>
-              <input type="text" id="articleAuthor" class="form-input" value="${article.author || ''}" required>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Kapak Görseli</label>
-              <div class="image-upload" id="imageUploadArea">
-                <div class="image-upload__preview" id="imagePreview">
-                  ${article.coverImage
-                    ? '<img src="' + article.coverImage + '" alt="Kapak">'
-                    : '<span class="image-upload__placeholder">📷 Görsel URL\'si girin</span>'}
-                </div>
-                <div class="image-upload__controls">
-                  <input type="text" id="articleCoverImage" class="form-input" value="${article.coverImage || ''}">
-                  <button type="button" class="btn btn--outline btn--sm" onclick="previewCoverImage()">Önizle</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Makale İçeriği *</label>
-            <div class="editor-toolbar" id="editorToolbar">
-	      <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
-  	      <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
-  	      <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
-  	      <button type="button" class="toolbar-btn" data-command="strikeThrough" title="Üstü Çizili"><s>S</s></button>
-  	      <span class="toolbar-divider"></span>
-  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
-  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
-  	      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Paragraf">¶</button>
-  	      <span class="toolbar-divider"></span>
-  	      <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Madde İşareti">• Liste</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numaralı Liste">1. Liste</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertBlockquote" title="Alıntı">❝</button>
-  	      <span class="toolbar-divider"></span>
-  	      <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
-  	      <button type="button" class="toolbar-btn" data-command="insertHR" title="Ayırıcı Çizgi">―</button>
- 	      <span class="toolbar-divider"></span>
-  	      <button type="button" class="toolbar-btn" data-command="removeFormat" title="Formatı Temizle">✖</button>
-	    </div>
-              <div class="editor-content" id="articleContent" contenteditable="true">${article.content || ''}</div>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn--primary btn--lg" id="submitArticle">
-                💾 Değişiklikleri Kaydet
-              </button>
-              <button type="button" class="btn btn--outline btn--lg" onclick="window.location.hash='#/admin'">
-                İptal
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-    `;
-
-    setupEditor();
-    setupArticleForm();
-    setupCoverImageUpload(); // ← Yeni: Cloudinary yükleme
-    console.log('✏️ Makale düzenleme yüklendi:', article.title);
-  } catch (error) {
-    console.error('❌ Makale düzenleme yüklenemedi:', error);
-    appContainer.innerHTML = '<p class="error-state">Makale yüklenirken hata oluştu.</p>';
+    alert('Ders sıralaması güncellenemedi: ' + error.message);
   }
 }
