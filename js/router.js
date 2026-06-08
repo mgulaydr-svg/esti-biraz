@@ -1,203 +1,150 @@
 /* ============================================
-   ESTİ BİRAZ — SPA Router (router.js)
-   ============================================ */
+   ESTİ BİRAZ — SPA Router
+   Not: /magazin eski bağlantılar için alias olarak korunur.
+============================================ */
 
-// ══════════════════════════════════════════════
-//  SAYFA RENDER FONKSİYONLARI
-// ══════════════════════════════════════════════
+const appContainer = document.getElementById('app');
 
-// ── Ana Sayfa ──
+function pageMeta(title, description, extra = {}) {
+  if (typeof setPageMeta === 'function') {
+    setPageMeta({ title, description, ...extra });
+  } else {
+    document.title = `${title} — ESTİ BİRAZ`;
+  }
+}
+
 function renderHome() {
+  pageMeta(
+    'Ana Sayfa',
+    'ESTİ BİRAZ; sağlık, bilim, eğitim ve kültür alanlarında makaleler ve çevrim içi öğrenme içerikleri sunar.'
+  );
   appContainer.innerHTML = `
-    <!-- HERO BÖLÜMÜ -->
-    <section class="hero">
+    <section class="hero-section">
       <div class="container">
-        <h1 class="hero__title">Sağlık, Bilim ve<br>Eğitimin Buluşma Noktası</h1>
-        <p class="hero__subtitle">
-          Kanıta dayalı makaleler okuyun, interaktif kurslarla öğrenin,
-          sertifikanızı alın.
-        </p>
-        <div class="hero__actions">
-          <a href="#/magazin" class="btn btn--primary btn--lg">Makaleleri Keşfet</a>
-          <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
+        <span class="hero-kicker">☕ ESTİ BİRAZ</span>
+        <h1>Sağlık, Bilim ve Eğitimin Buluşma Noktası</h1>
+        <p>Kanıta dayalı makaleler okuyun, öğrenme modülleriyle bilginizi pekiştirin.</p>
+        <div class="hero-actions">
+          <a href="#/makaleler" class="btn btn--primary">Makaleleri Keşfet</a>
+          <a href="#/akademi" class="btn btn--outline">Kursları Keşfet</a>
         </div>
       </div>
     </section>
 
-    <!-- SON MAKALELER -->
-    <section class="section">
-      <div class="container">
-        <div class="section__header">
-          <h2 class="section__title">📰 Son Makaleler</h2>
-          <a href="#/magazin" class="section__link">Tümünü gör →</a>
-        </div>
-        <div class="grid grid--3" id="latestArticles">
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
+    <section class="container section">
+      <div id="latestArticles">
+        <h2>Son Makaleler</h2>
+        <p>Makaleler yükleniyor...</p>
       </div>
     </section>
 
-    <!-- ÖNE ÇIKAN KURSLAR -->
-    <section class="section section--alt">
-      <div class="container">
-        <div class="section__header">
-          <h2 class="section__title">🎓 Öne Çıkan Kurslar</h2>
-          <a href="#/akademi" class="section__link">Tümünü gör →</a>
-        </div>
-        <div class="grid grid--3" id="featuredCourses">
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
+    <section class="container section">
+      <div id="featuredCourses">
+        <h2>Öne Çıkan Kurslar</h2>
+        <p>Kurslar yükleniyor...</p>
       </div>
     </section>
   `;
 
-  // Firestore'dan veri çekme
-  loadLatestArticles();
-  loadFeaturedCourses();
+  if (typeof loadLatestArticles === 'function') loadLatestArticles();
+  if (typeof loadFeaturedCourses === 'function') loadFeaturedCourses();
 }
 
-// ── Magazin Sayfası ──
-function renderMagazin() {
-  appContainer.innerHTML = `
-    <section class="section">
-      <div class="container">
-        <div class="page-header">
-          <h1 class="page-header__title">📰 Magazin</h1>
-          <p class="page-header__desc">Sağlık, bilim ve eğitim alanında kanıta dayalı makaleler.</p>
-        </div>
-
-        <!-- Kategori Filtreleri -->
-        <div class="filter-bar" id="categoryFilters">
-          <button class="filter-btn active" data-category="all">Tümü</button>
-          <button class="filter-btn" data-category="saglik">Sağlık</button>
-          <button class="filter-btn" data-category="bilim">Bilim</button>
-          <button class="filter-btn" data-category="egitim">Eğitim</button>
-          <button class="filter-btn" data-category="teknoloji">Teknoloji</button>
-        </div>
-
-        <!-- Makale Listesi -->
-        <div class="grid grid--3" id="articleList">
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-          <div class="card card--skeleton"></div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // Kategori filtresi olay dinleyicileri
-  setupCategoryFilters();
-  loadAllArticles();
+function renderMakaleler() {
+  pageMeta(
+    'Makaleler',
+    'Sağlık, bilim, eğitim, teknoloji, yaşam ve kültür alanlarında güvenilir makaleler.'
+  );
+  if (typeof loadAllArticles === 'function') {
+    loadAllArticles();
+  } else {
+    appContainer.innerHTML = '<main class="container"><h1>Makaleler</h1><p>Makaleler yüklenemedi.</p></main>';
+  }
 }
 
-// ── Hakkında Sayfası ──
+function renderAkademi() {
+  pageMeta(
+    'Akademi',
+    'ESTİ BİRAZ Akademi ile kursları ve dersleri keşfedin.'
+  );
+  if (typeof loadAllCourses === 'function') {
+    loadAllCourses();
+  } else {
+    appContainer.innerHTML = '<main class="container"><h1>Akademi</h1><p>Kurslar yüklenemedi.</p></main>';
+  }
+}
+
 function renderHakkinda() {
+  pageMeta(
+    'Hakkında',
+    'ESTİ BİRAZ platformunun amacı, kapsamı ve iletişim bilgileri.'
+  );
   appContainer.innerHTML = `
-    <section class="section">
-      <div class="container">
-        <div class="page-header">
-          <h1 class="page-header__title">Hakkında</h1>
-        </div>
+    <section class="container page-section">
+      <h1>Hakkında</h1>
+      <h2>ESTİ BİRAZ Nedir?</h2>
+      <p>ESTİ BİRAZ; sağlık, bilim, eğitim ve kültür alanlarında güvenilir, erişilebilir ve öğrenmeyi destekleyen içerikler sunan dijital bir platformdur.</p>
+      <p>Amacımız, karmaşık konuları anlaşılır bir dille aktarmak; makale, kurs ve ders içerikleriyle kalıcı öğrenmeyi desteklemektir.</p>
 
-        <div class="about-content">
-          <div class="about-card">
-            <h2>🚀 ESTİ BİRAZ Nedir?</h2>
-            <p>
-              ESTİ BİRAZ, sağlık, bilim ve eğitim alanında kanıta dayalı,
-              güvenilir ve erişilebilir içerikler sunan bir platformdur.
-            </p>
-            <p>
-              Amacımız, karmaşık bilimsel konuları herkesin anlayabileceği
-              bir dille aktarmak ve interaktif eğitim araçlarıyla
-              öğrenmeyi kolaylaştırmaktır.
-            </p>
-          </div>
+      <h2>Misyonumuz</h2>
+      <ul>
+        <li>Kanıta dayalı ve anlaşılır içerik üretmek</li>
+        <li>Bilimi ve eğitimi erişilebilir hale getirmek</li>
+        <li>Öğrenmeyi makale, kurs ve etkinliklerle desteklemek</li>
+        <li>Toplum sağlığı ve eğitim kültürüne katkı sunmak</li>
+      </ul>
 
-          <div class="about-card">
-            <h2>🎯 Misyonumuz</h2>
-            <ul class="about-list">
-              <li>Kanıta dayalı, güvenilir sağlık bilgisi sunmak</li>
-              <li>Bilimi herkes için erişilebilir kılmak</li>
-              <li>İnteraktif eğitim deneyimleri oluşturmak</li>
-              <li>Toplum sağlığını geliştirmeye katkıda bulunmak</li>
-            </ul>
-          </div>
-
-          <div class="about-card">
-            <h2>👤 İletişim</h2>
-            <p>Sorularınız, önerileriniz veya iş birliği teklifleriniz için bize ulaşabilirsiniz.</p>
-            <p>📧 <a href="mailto:iletisim@estibiraz.com">iletisim@estibiraz.com</a></p>
-          </div>
-        </div>
-      </div>
+      <h2>İletişim</h2>
+      <p>Sorularınız, önerileriniz veya iş birliği teklifleriniz için: <a href="mailto:iletisim@estibiraz.com">iletisim@estibiraz.com</a></p>
     </section>
   `;
 }
 
-// ── Profil Sayfası ──
 async function renderProfile() {
-  loadProfile();
+  pageMeta('Profilim', 'Kullanıcı profili ve öğrenme ilerlemesi.');
+  if (typeof loadProfile === 'function') loadProfile();
 }
 
-// ── Tekil Makale Sayfası ──
 function renderMakale(slug) {
+  appContainer.innerHTML = '<main class="container"><p>Makale yükleniyor...</p></main>';
+  if (typeof loadArticle === 'function') loadArticle(slug);
+}
+
+function renderKurs(slug) {
+  appContainer.innerHTML = '<main class="container"><p>Kurs yükleniyor...</p></main>';
+  if (typeof loadCourse === 'function') loadCourse(slug);
+}
+
+function renderDers(courseSlug, lessonOrder) {
+  appContainer.innerHTML = '<main class="container"><p>Ders yükleniyor...</p></main>';
+  if (typeof loadLesson === 'function') loadLesson(courseSlug, parseInt(lessonOrder, 10));
+}
+
+function renderLegalPage(type) {
+  const isPrivacy = type === 'gizlilik';
+  pageMeta(
+    isPrivacy ? 'Gizlilik Politikası' : 'Kullanım Şartları',
+    isPrivacy ? 'ESTİ BİRAZ gizlilik politikası.' : 'ESTİ BİRAZ kullanım şartları.'
+  );
   appContainer.innerHTML = `
-    <section class="section">
-      <div class="container container--narrow">
-        <div class="article-loading">
-          <div class="spinner"></div>
-          <p>Makale yükleniyor...</p>
-        </div>
-      </div>
+    <section class="container page-section">
+      <h1>${isPrivacy ? 'Gizlilik Politikası' : 'Kullanım Şartları'}</h1>
+      <p>Bu bölüm yayın öncesinde ayrıntılı olarak düzenlenmelidir.</p>
     </section>
   `;
-
-  loadArticle(slug);
 }
 
-// ── Tekil Kurs Sayfası ──
-// ── Kurs Detay ──
-
-// ✅ Yenisi
-async function renderAkademi() {
-  loadAllCourses();
-}
-
-async function renderKurs(slug) {
-  loadCourse(slug);
-}
-
-// ── Ders Oynatıcı (Parça 1.7'de detaylandırılacak) ──
-async function renderDers(courseSlug, lessonOrder) {
-  loadLesson(courseSlug, parseInt(lessonOrder));
-}
-
-
-// ── 404 Sayfası ──
 function render404() {
-  document.title = 'Sayfa Bulunamadı — ESTİ BİRAZ';
+  pageMeta('Sayfa Bulunamadı', 'Aradığınız sayfa bulunamadı.');
   appContainer.innerHTML = `
-    <section class="section">
-      <div class="container text-center">
-        <div class="error-page">
-          <span class="error-page__icon">🔍</span>
-          <h1 class="error-page__title">404</h1>
-          <p class="error-page__text">Aradığınız sayfa bulunamadı.</p>
-          <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
-        </div>
-      </div>
+    <section class="container page-section text-center">
+      <h1>404</h1>
+      <p>Aradığınız sayfa bulunamadı.</p>
+      <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
     </section>
   `;
 }
 
-// ── Admin Panel ──
 async function renderAdmin() {
   const user = await new Promise((resolve) => {
     const unsubscribe = firebase.auth().onAuthStateChanged((u) => {
@@ -207,170 +154,104 @@ async function renderAdmin() {
   });
 
   if (!user) {
-    document.getElementById('app').innerHTML = `
-      <section class="section">
-        <div class="container text-center">
-          <h1>🔒 Yetki Gerekli</h1>
-          <p>Admin paneline erişmek için giriş yapmalısınız.</p>
-        </div>
+    pageMeta('Yetki Gerekli', 'Admin paneli için giriş yapılmalıdır.');
+    appContainer.innerHTML = `
+      <section class="container page-section">
+        <h1>Yetki Gerekli</h1>
+        <p>Admin paneline erişmek için giriş yapmalısınız.</p>
       </section>
     `;
     return;
   }
 
-  const isAllowed = await isAdminUser();
-  if (!isAllowed) {
-    document.getElementById('app').innerHTML = `
-      <section class="section">
-        <div class="container text-center">
-          <h1>⛔ Erişim Engellendi</h1>
-          <p>Bu sayfaya erişim yetkiniz bulunmuyor.</p>
-          <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
-        </div>
+  const allowed = typeof isAdminUser === 'function' ? await isAdminUser() : false;
+  if (!allowed) {
+    pageMeta('Erişim Engellendi', 'Bu sayfaya erişim yetkiniz bulunmuyor.');
+    appContainer.innerHTML = `
+      <section class="container page-section">
+        <h1>⛔ Erişim Engellendi</h1>
+        <p>Bu sayfaya erişim yetkiniz bulunmuyor.</p>
+        <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
       </section>
     `;
     return;
   }
 
-  // Admin panelini yükle
-  document.getElementById('app').innerHTML = `
-    <section class="section">
-      <div class="container">
-        <h1>⚙️ Admin Paneli</h1>
-        <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchAdminTab(this, 'articles')">
-            📰 Makaleler
-          </button>
-          <button class="admin-tab" onclick="switchAdminTab(this, 'courses')">
-            🎓 Kurslar
-          </button>
-        </div>
-        <div id="adminContent"></div>
+  pageMeta('Admin Paneli', 'Makale ve kurs yönetimi.');
+  appContainer.innerHTML = `
+    <section class="container admin-page">
+      <h1>⚙️ Admin Paneli</h1>
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab(this, 'articles')">Makaleler</button>
+        <button class="admin-tab" onclick="switchAdminTab(this, 'courses')">Kurslar</button>
       </div>
+      <div id="adminContent"></div>
     </section>
   `;
-
-  // Varsayılan sekmeyi yükle
-  loadAdminArticles();
+  if (typeof loadAdminArticles === 'function') loadAdminArticles();
 }
 
 function switchAdminTab(btn, tab) {
-  // Aktif sekmeyi güncelle
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-
-  // İçeriği yükle
-  if (tab === 'articles') {
-    loadAdminArticles();
-  } else if (tab === 'courses') {
-    loadAdminCourses();
-  }
+  if (tab === 'articles' && typeof loadAdminArticles === 'function') loadAdminArticles();
+  if (tab === 'courses' && typeof loadAdminCourses === 'function') loadAdminCourses();
 }
 
-
-
-// ── Route Tanımları ──
 const routes = {
-  '/':         { title: 'Ana Sayfa',  render: renderHome },
-  '/magazin':  { title: 'Magazin',    render: renderMagazin },
-  '/akademi':  { title: 'Akademi',    render: renderAkademi },
-  '/hakkinda': { title: 'Hakkında',   render: renderHakkinda },
-  '/profil': { title: 'Profilim', render: renderProfile },
-  '/admin':     { title: 'Admin Panel',     render: renderAdmin },
-  '/akademi':   { title: 'Akademi',   render: renderAkademi },
+  '/': renderHome,
+  '/makaleler': renderMakaleler,
+  '/magazin': renderMakaleler,
+  '/akademi': renderAkademi,
+  '/hakkinda': renderHakkinda,
+  '/profil': renderProfile,
+  '/admin': renderAdmin,
+  '/gizlilik': () => renderLegalPage('gizlilik'),
+  '/kullanim-sartlari': () => renderLegalPage('kullanim')
 };
 
-// Dinamik route'lar (parametre içerenler)
 const dynamicRoutes = [
-  { pattern: /^\/makale\/(.+)$/, title: 'Makale',  render: renderMakale },
-  { pattern: /^\/kurs\/(.+)$/,   title: 'Kurs',    render: renderKurs },
-  { pattern: /^\/kurs\/(.+)$/, title: 'Kurs', render: renderKurs },
-  { pattern: /^\/ders\/(.+)\/(.+)$/, title: 'Ders', render: renderDers },
+  { pattern: /^\/makale\/(.+)$/, render: renderMakale },
+  { pattern: /^\/kurs\/(.+)$/, render: renderKurs },
+  { pattern: /^\/ders\/(.+)\/(.+)$/, render: renderDers }
 ];
 
-// ── Ana Uygulama Alanı ──
-const appContainer = document.getElementById('app');
+function normalizePath(path) {
+  if (!path || path === '#') return '/';
+  return path.startsWith('/') ? path : `/${path}`;
+}
 
-// ══════════════════════════════════════════════
-//  ROUTER FONKSİYONU
-// ══════════════════════════════════════════════
 function router() {
   const hash = window.location.hash || '#/';
-  const path = hash.slice(1); // # işaretini kaldır
+  const path = normalizePath(hash.slice(1));
 
-  console.log('🧭 Route:', path);
-
-  // 1. Statik route kontrolü
   if (routes[path]) {
-    document.title = `${routes[path].title} — ESTİ BİRAZ`;
-    routes[path].render();
-    updateActiveNav();
+    routes[path]();
+    if (typeof updateActiveNav === 'function') updateActiveNav();
     window.scrollTo(0, 0);
     return;
   }
 
-  // 2. Dinamik route kontrolü
   for (const route of dynamicRoutes) {
     const match = path.match(route.pattern);
     if (match) {
-      document.title = `${route.title} — ESTİ BİRAZ`;
-      route.render(match[1], match[2]); // İlk yakalama grubunu parametre olarak gönder
-      updateActiveNav();
+      route.render(match[1], match[2]);
+      if (typeof updateActiveNav === 'function') updateActiveNav();
       window.scrollTo(0, 0);
       return;
     }
   }
 
-  // 3. Eşleşme yoksa → 404
   render404();
 }
 
-
-
-// ══════════════════════════════════════════════
-//  KATEGORİ FİLTRE SİSTEMİ
-// ══════════════════════════════════════════════
-function setupCategoryFilters() {
-  const filterBar = document.getElementById('categoryFilters');
-  if (!filterBar) return;
-
-  filterBar.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('filter-btn')) return;
-
-    // Aktif butonu güncelle
-    filterBar.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    e.target.classList.add('active');
-
-    const category = e.target.dataset.category;
-    console.log('🏷️ Kategori filtresi:', category);
-    loadAllArticles(category);
-  });
-}
-
-// ══════════════════════════════════════════════
-//  ROUTER BAŞLATMA
-// ══════════════════════════════════════════════
-
-// Hash değiştiğinde router'ı çalıştır
+window.switchAdminTab = switchAdminTab;
+window.router = router;
 window.addEventListener('hashchange', router);
-
-// Sayfa ilk yüklendiğinde router'ı çalıştır
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('🧭 Router başlatıldı.');
-  router();
-});
-
-/* ============================================
-   HEADER SCROLL EFEKTİ (Parça 1.8)
-   ============================================ */
+window.addEventListener('DOMContentLoaded', router);
 
 window.addEventListener('scroll', () => {
   const header = document.getElementById('header');
   if (!header) return;
-
-  if (window.scrollY > 20) {
-    header.classList.add('header--scrolled');
-  } else {
-    header.classList.remove('header--scrolled');
-  }
+  header.classList.toggle('header--scrolled', window.scrollY > 20);
 });
