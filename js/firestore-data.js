@@ -153,38 +153,6 @@ async function loadLatestArticles() {
 /**
  * Makale kartı oluşturur (tekrar kullanılabilir)
  */
-function createArticleCard(article) {
-  if (!article) return '';
-
-  const date = article.publishedAt && article.publishedAt.toDate
-    ? article.publishedAt.toDate().toLocaleDateString('tr-TR', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      })
-    : '';
-
-  const readingTime = calculateReadingTime(article.content || '');
-
-  return `
-    <a href="#/makale/${article.slug}" class="article-card">
-      <div class="article-card__image">
-        ${article.coverImage
-          ? '<img src="' + article.coverImage + '" alt="' + article.title + '" loading="lazy">'
-          : '<div class="article-card__placeholder">📝</div>'}
-      </div>
-      <div class="article-card__body">
-        <span class="badge badge--${article.category}">${getCategoryLabel(article.category)}</span>
-        <h3 class="article-card__title">${article.title}</h3>
-        <p class="article-card__summary">${article.summary || ''}</p>
-        <div class="article-card__meta">
-          <span>✍️ ${article.author || ''}</span>
-          <span>📅 ${date}</span>
-          <span>⏱️ ${readingTime} dk</span>
-        </div>
-      </div>
-    </a>
-  `;
-}
-
 
 /**
  * Tüm makaleleri çeker (magazin sayfası için)
@@ -690,77 +658,6 @@ async function loadAllCourses() {
   }
 }
 
-/**
- * Tekil kurs yükler (slug'a göre)
- * @param {string} slug - Kurs slug'ı
- */
-async function loadCourse(slug) {
-  const container = document.getElementById('app');
-
-  try {
-    const snapshot = await db.collection('courses')
-      .where('slug', '==', slug)
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) {
-      render404();
-      return;
-    }
-
-    const course = snapshot.docs[0].data();
-
-    container.innerHTML = `
-      <section class="section">
-        <div class="container container--narrow">
-          <a href="#/akademi" class="back-link">← Akademi'ye Dön</a>
-
-          ${course.coverImage
-            ? `<img src="${course.coverImage}" alt="${course.title}" class="article-cover">`
-            : ''}
-
-          <h1 class="article-title">${course.title}</h1>
-
-          <div class="course-info">
-            <div class="course-info__item">
-              <span class="course-info__label">👨‍🏫 Eğitmen</span>
-              <span class="course-info__value">${course.instructor}</span>
-            </div>
-            <div class="course-info__item">
-              <span class="course-info__label">⏱️ Süre</span>
-              <span class="course-info__value">${course.duration}</span>
-            </div>
-            <div class="course-info__item">
-              <span class="course-info__label">📚 Ders Sayısı</span>
-              <span class="course-info__value">${course.lessonCount} ders</span>
-            </div>
-            <div class="course-info__item">
-              <span class="course-info__label">📊 Seviye</span>
-              <span class="course-info__value">${getLevelLabel(course.level)}</span>
-            </div>
-          </div>
-
-          <div class="article-body">
-            <h2>Kurs Hakkında</h2>
-            <p>${course.description}</p>
-          </div>
-
-          <div class="course-cta">
-            <button class="btn btn--primary btn--lg" onclick="alert('Kayıt sistemi yakında!')">
-              🎓 Kursa Kayıt Ol
-            </button>
-          </div>
-        </div>
-      </section>
-    `;
-
-    document.title = `${course.title} — ESTİ BİRAZ`;
-    console.log('🎓 Kurs yüklendi:', course.title);
-  } catch (error) {
-    console.error('❌ Kurs yüklenemedi:', error);
-    container.innerHTML = '<p class="error-state">Kurs yüklenirken hata oluştu.</p>';
-  }
-}
 
 // ══════════════════════════════════════════════
 //  KART OLUŞTURMA (HTML TEMPLATE'LERİ)
@@ -841,14 +738,6 @@ function getCategoryLabel(category) {
 /**
  * Seviye kodunu Türkçe etikete çevirir
  */
-function getLevelLabel(level) {
-  const labels = {
-    baslangic: '🟢 Başlangıç',
-    orta: '🟡 Orta',
-    ileri: '🔴 İleri'
-  };
-  return labels[level] || level;
-}
 
 /* ============================================
    EĞİTİM AKADEMİSİ — Kurs Fonksiyonları
