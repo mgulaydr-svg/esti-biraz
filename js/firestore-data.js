@@ -111,7 +111,7 @@ async function loadLatestArticles() {
               Teknolojiden sanata, bilimden yaşama — merakını besle, ufkunu genişlet.
             </p>
             <div class="hero__actions">
-              <a href="#/magazin" class="btn btn--primary btn--lg">📰 Magazin'e Gözat</a>
+              <a href="#/makaleler" class="btn btn--primary btn--lg">📰 Makalelere Gözat</a>
               <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
             </div>
           </div>
@@ -131,7 +131,7 @@ async function loadLatestArticles() {
         <div class="container">
           <div class="section-header">
             <h2 class="section-header__title">📰 Son Makaleler</h2>
-            <a href="#/magazin" class="section-header__link">Tümünü Gör →</a>
+            <a href="#/makaleler" class="section-header__link">Tümünü Gör →</a>
           </div>
           <div class="articles-grid articles-grid--home">
             ${otherHtml || '<p style="text-align:center;color:gray;">Henüz başka makale yok.</p>'}
@@ -235,8 +235,8 @@ async function loadAllArticles() {
     <section class="magazin-page">
       <div class="container">
         <div class="magazin-header">
-          <h1 class="magazin-header__title">📰 Magazin</h1>
-          <p class="magazin-header__desc">Tüm makaleler, tek bir yerde.</p>
+          <h1 class="magazin-header__title">📰 Makaleler</h1>
+          <p class="magazin-header__desc">Sağlık, eğitim, bilim, veri ve teknoloji alanındaki yazıları tek bir yerde keşfedin.</p>
         </div>
 
         <!-- Arama Barı -->
@@ -507,7 +507,7 @@ async function loadArticle(slug) {
     container.innerHTML = `
       <article class="article-detail">
         <div class="container container--narrow">
-          <a href="#/magazin" class="back-link">← Magazin'e Dön</a>
+          <a href="#/makaleler" class="back-link">← Makalelere Dön</a>
 
           ${article.coverImage
             ? `<div class="article-detail__cover">
