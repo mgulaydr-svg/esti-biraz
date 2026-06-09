@@ -106,13 +106,14 @@ async function loadLatestArticles() {
         <div class="container">
           <div class="hero__content">
             <span class="hero__badge">☕ ESTİ BİRAZ</span>
-            <h1 class="hero__title">Bir Yudum Bilgi,<br>Bir Tas Kültür.</h1>
+            <h1 class="hero__title">Bir Yudum Bilgi,<br>Biraz Merak.</h1>
             <p class="hero__desc">
-              Teknolojiden sanata, bilimden yaşama — merakını besle, ufkunu genişlet.
+              Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
+  			  güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
             </p>
             <div class="hero__actions">
-              <a href="#/makaleler" class="btn btn--primary btn--lg">📰 Makalelere Gözat</a>
-              <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Kursları Keşfet</a>
+              <a href="#/makaleler" class="btn btn--primary btn--lg">📰 Makaleleri Keşfet</a>
+              <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Akademiye Gözat</a>
             </div>
           </div>
           <div class="hero__visual">
@@ -124,6 +125,27 @@ async function loadLatestArticles() {
           </div>
         </div>
       </section>
+	  <section class="trust-strip container">
+	  <div class="trust-item">
+	    <strong>Kaynaklı İçerik</strong>
+	    <span>Bilgi, mümkün olduğunca güvenilir kaynaklarla desteklenir.</span>
+	  </div>
+	
+	  <div class="trust-item">
+	    <strong>Sade Anlatım</strong>
+	    <span>Karmaşık konular anlaşılır ve öğrenilebilir hale getirilir.</span>
+	  </div>
+	
+	  <div class="trust-item">
+	    <strong>Eğitim Odaklı</strong>
+	    <span>Makaleler, dersler ve öğrenme materyalleri birlikte düşünülür.</span>
+	  </div>
+	
+	  <div class="trust-item">
+	    <strong>Veri ve Bilim</strong>
+	    <span>Sağlık, teknoloji ve istatistik bakışı bir araya getirilir.</span>
+	  </div>
+	</section>
 
       ${featuredHtml}
 
