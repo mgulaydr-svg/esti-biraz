@@ -126,26 +126,38 @@ async function loadLatestArticles() {
         </div>
       </section>
 	  <section class="trust-strip container">
-	  <div class="trust-item">
-	    <strong>Kaynaklı İçerik</strong>
-	    <span>Bilgi, mümkün olduğunca güvenilir kaynaklarla desteklenir.</span>
-	  </div>
-	
-	  <div class="trust-item">
-	    <strong>Sade Anlatım</strong>
-	    <span>Karmaşık konular anlaşılır ve öğrenilebilir hale getirilir.</span>
-	  </div>
-	
-	  <div class="trust-item">
-	    <strong>Eğitim Odaklı</strong>
-	    <span>Makaleler, dersler ve öğrenme materyalleri birlikte düşünülür.</span>
-	  </div>
-	
-	  <div class="trust-item">
-	    <strong>Veri ve Bilim</strong>
-	    <span>Sağlık, teknoloji ve istatistik bakışı bir araya getirilir.</span>
-	  </div>
-	</section>
+		  <div class="trust-card">
+		    <div class="trust-icon">📚</div>
+		    <div>
+		      <strong>Kaynaklı İçerik</strong>
+		      <span>Güvenilir bilgiye dayalı yazılar.</span>
+		    </div>
+		  </div>
+		
+		  <div class="trust-card">
+		    <div class="trust-icon">✨</div>
+		    <div>
+		      <strong>Sade Anlatım</strong>
+		      <span>Karmaşık konular anlaşılır hale gelir.</span>
+		    </div>
+		  </div>
+		
+		  <div class="trust-card">
+		    <div class="trust-icon">🎓</div>
+		    <div>
+		      <strong>Eğitim Odaklı</strong>
+		      <span>Makaleler, dersler ve öğrenme notları.</span>
+		    </div>
+		  </div>
+		
+		  <div class="trust-card">
+		    <div class="trust-icon">📊</div>
+		    <div>
+		      <strong>Veri ve Bilim</strong>
+		      <span>Sağlık, teknoloji ve istatistik bakışı.</span>
+		    </div>
+		  </div>
+		</section>
 
       ${featuredHtml}
 
