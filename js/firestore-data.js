@@ -103,62 +103,60 @@ async function loadLatestArticles() {
 
     container.innerHTML = `
       <section class="hero">
-        <div class="container">
-          <div class="hero__content">
-            <span class="hero__badge">☕ ESTİ BİRAZ</span>
-            <h1 class="hero__title">Bir Yudum Bilgi,<br>Biraz Merak.</h1>
-            <p class="hero__desc">
-              Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
-  			  güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
-            </p>
-            <div class="hero__actions">
-              <a href="#/makaleler" class="btn btn--primary btn--lg">📰 Makaleleri Keşfet</a>
-              <a href="#/akademi" class="btn btn--outline btn--lg">🎓 Akademiye Gözat</a>
-            </div>
-          </div>
-          <div class="hero__visual">
-            <div class="hero__card-stack">
-              <div class="hero__card hero__card--1">☕</div>
-              <div class="hero__card hero__card--2">📚</div>
-              <div class="hero__card hero__card--3">💡</div>
-            </div>
-          </div>
-        </div>
-      </section>
-	  <section class="trust-strip container">
-		  <div class="trust-card">
-		    <div class="trust-icon">📚</div>
-		    <div>
-		      <strong>Kaynaklı İçerik</strong>
-		      <span>Güvenilir bilgiye dayalı yazılar.</span>
-		    </div>
-		  </div>
+		  <div class="container hero-content">
+		    <div class="hero-text">
+		      <span class="hero-kicker">ESTİ BİRAZ</span>
 		
-		  <div class="trust-card">
-		    <div class="trust-icon">✨</div>
-		    <div>
-		      <strong>Sade Anlatım</strong>
-		      <span>Karmaşık konular anlaşılır hale gelir.</span>
-		    </div>
-		  </div>
+		      <h1>Bir Yudum Bilgi, Biraz Merak.</h1>
 		
-		  <div class="trust-card">
-		    <div class="trust-icon">🎓</div>
-		    <div>
-		      <strong>Eğitim Odaklı</strong>
-		      <span>Makaleler, dersler ve öğrenme notları.</span>
+		      <p>
+		        Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
+		        güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
+		      </p>
 		    </div>
-		  </div>
 		
-		  <div class="trust-card">
-		    <div class="trust-icon">📊</div>
-		    <div>
-		      <strong>Veri ve Bilim</strong>
-		      <span>Sağlık, teknoloji ve istatistik bakışı.</span>
+		    <div class="hero-trust">
+		      <div class="trust-card">
+		        <div class="trust-icon">📚</div>
+		        <div>
+		          <strong>Kaynaklı İçerik</strong>
+		          <span>Güvenilir bilgiye dayalı yazılar.</span>
+		        </div>
+		      </div>
+		
+		      <div class="trust-card">
+		        <div class="trust-icon">✨</div>
+		        <div>
+		          <strong>Sade Anlatım</strong>
+		          <span>Karmaşık konular anlaşılır hale gelir.</span>
+		        </div>
+		      </div>
+		
+		      <div class="trust-card">
+		        <div class="trust-icon">🎓</div>
+		        <div>
+		          <strong>Eğitim Odaklı</strong>
+		          <span>Makaleler, dersler ve öğrenme notları.</span>
+		        </div>
+		      </div>
+		
+		      <div class="trust-card">
+		        <div class="trust-icon">📊</div>
+		        <div>
+		          <strong>Veri ve Bilim</strong>
+		          <span>Sağlık, teknoloji ve istatistik bakışı.</span>
+		        </div>
+		      </div>
 		    </div>
 		  </div>
 		</section>
-
+		
+		<section class="hero-action-strip">
+		  <div class="container hero-actions">
+		    <a href="#/makaleler" class="btn btn-primary">Makaleleri Keşfet</a>
+		    <a href="#/akademi" class="btn btn-secondary">Akademiye Göz At</a>
+		  </div>
+		</section>
       ${featuredHtml}
 
       <section class="latest-articles">
