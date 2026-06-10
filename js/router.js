@@ -28,7 +28,7 @@ function renderHome() {
   }
 }
 
-function renderMagazin() {
+function renderMakaleler() {
   pageMeta(
     'Makaleler',
     'ESTİ BİRAZ makaleleri; sağlık, eğitim, bilim, veri ve teknoloji alanlarında güvenilir ve anlaşılır yazılar.'
