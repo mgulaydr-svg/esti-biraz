@@ -4,6 +4,7 @@ async function ebGetArticleBySlug(slug) {
   if (!slug) return null;
 
   const snapshot = await db.collection('articles')
+    .where('status', '==', 'published')
     .where('slug', '==', slug)
     .limit(1)
     .get();
@@ -11,13 +12,7 @@ async function ebGetArticleBySlug(slug) {
   if (snapshot.empty) return null;
 
   const doc = snapshot.docs[0];
-  const article = { id: doc.id, ...doc.data() };
-
-  if (article.status && article.status !== 'published') {
-    return null;
-  }
-
-  return article;
+  return { id: doc.id, ...doc.data() };
 }
 
 async function ebGetRelatedArticles(currentArticle, limit = 3) {
@@ -35,20 +30,29 @@ async function ebGetRelatedArticles(currentArticle, limit = 3) {
 
       articles = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(article => article.slug !== currentArticle.slug && article.title);
+        .filter(article =>
+          article.title &&
+          article.slug !== currentArticle.slug
+        );
     }
   } catch (error) {
-    console.warn('İlgili makaleler kategori sorgusu başarısız, genel listeye düşülüyor:', error);
+    console.warn('İlgili makaleler kategori sorgusu başarısız:', error);
   }
 
   if (articles.length < limit && typeof ebGetPublishedArticles === 'function') {
-    const fallback = await ebGetPublishedArticles(12);
-    const fallbackFiltered = fallback.filter(article =>
-      article.slug !== currentArticle.slug &&
-      !articles.some(existing => existing.id === article.id)
-    );
+    try {
+      const fallback = await ebGetPublishedArticles(12);
 
-    articles = articles.concat(fallbackFiltered);
+      const fallbackFiltered = fallback.filter(article =>
+        article.title &&
+        article.slug !== currentArticle.slug &&
+        !articles.some(existing => existing.id === article.id)
+      );
+
+      articles = articles.concat(fallbackFiltered);
+    } catch (error) {
+      console.warn('İlgili makaleler genel sorgusu başarısız:', error);
+    }
   }
 
   return articles.slice(0, limit);
