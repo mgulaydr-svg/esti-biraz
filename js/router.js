@@ -19,8 +19,8 @@ function renderHome() {
     'ESTİ BİRAZ; sağlık, eğitim, bilim, veri ve teknoloji alanlarında makaleler ve öğrenme içerikleri sunar.'
   );
 
-  if (typeof renderHomePageV2 === 'function') {
-    renderHomePageV2();
+  if (typeof HomePageV2 === 'function') {
+    HomePageV2();
   } else if (typeof loadLatestArticles === 'function') {
     loadLatestArticles();
   } else {
@@ -28,15 +28,18 @@ function renderHome() {
   }
 }
 
-function renderMakaleler() {
+function renderMagazin() {
   pageMeta(
     'Makaleler',
-    'Sağlık, bilim, eğitim, teknoloji, yaşam ve kültür alanlarında güvenilir makaleler.'
+    'ESTİ BİRAZ makaleleri; sağlık, eğitim, bilim, veri ve teknoloji alanlarında güvenilir ve anlaşılır yazılar.'
   );
-  if (typeof loadAllArticles === 'function') {
+
+  if (typeof renderArticlesPageV2 === 'function') {
+    renderArticlesPageV2();
+  } else if (typeof loadAllArticles === 'function') {
     loadAllArticles();
   } else {
-    appContainer.innerHTML = '<main class="container"><h1>Makaleler</h1><p>Makaleler yüklenemedi.</p></main>';
+    appContainer.innerHTML = '<p>Makaleler yüklenemedi.</p>';
   }
 }
 
