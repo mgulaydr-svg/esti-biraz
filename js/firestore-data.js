@@ -105,25 +105,26 @@ async function loadLatestArticles() {
 		<section class="hero hero-modern">
 		  <div class="container hero-modern__inner">
 		
-		    <div class="hero-modern__badge">
+		    <div class="hero-brand-side">
 		      <img 
 		        src="assets/logo.png" 
 		        alt="Esti Biraz logosu" 
-		        class="hero-logo"
+		        class="hero-logo-large"
 		      >
-		      <span>ESTİ BİRAZ</span>
+		
+		      <div class="hero-actions">
+		        <a href="#/makaleler" class="btn btn-primary hero-btn">Makaleleri Keşfet</a>
+		        <a href="#/akademi" class="btn btn-secondary hero-btn">Akademiye Göz At</a>
+		      </div>
 		    </div>
 		
-		    <h1>Bir Yudum Bilgi,<br>Biraz Merak.</h1>
+		    <div class="hero-text-side">
+		      <h1>Bir Yudum Bilgi,<br>Biraz Merak.</h1>
 		
-		    <p>
-		      Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
-		      güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
-		    </p>
-		
-		    <div class="hero-actions">
-		      <a href="#/makaleler" class="btn btn-primary hero-btn">Makaleleri Keşfet</a>
-		      <a href="#/akademi" class="btn btn-secondary hero-btn">Akademiye Göz At</a>
+		      <p>
+		        Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
+		        güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
+		      </p>
 		    </div>
 		
 		  </div>
