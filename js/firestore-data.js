@@ -167,17 +167,23 @@ async function loadLatestArticles() {
 	  
       ${featuredHtml}
 
-      <section class="latest-articles">
-        <div class="container">
-          <div class="section-header">
-            <h2 class="section-header__title">📰 Son Makaleler</h2>
-            <a href="#/makaleler" class="section-header__link">Tümünü Gör →</a>
-          </div>
-          <div class="articles-grid articles-grid--home">
-            ${otherHtml || '<p style="text-align:center;color:gray;">Henüz başka makale yok.</p>'}
-          </div>
-        </div>
-      </section>
+      <section class="home-section container">
+	    <div class="section-header">
+	      <div>
+	        <span class="section-kicker">MAKALELER</span>
+	        <h2>Son Yazılar</h2>
+	        <p>
+	          Sağlık, eğitim, bilim, veri ve teknoloji alanlarında güncel ve anlaşılır içerikler.
+	        </p>
+	      </div>
+	
+	      <a href="#/makaleler" class="section-link">Tüm Makaleler →</a>
+	    </div>
+	
+	    <div id="latest-articles" class="articles-grid">
+	      <!-- Makale kartları buraya gelecek -->
+	    </div>
+	  </section>
 
       <div id="featuredCourses"></div>
     `;
