@@ -105,7 +105,7 @@ async function loadLatestArticles() {
       <section class="hero hero-compact">
 		  <div class="container hero-content">
 		    <img 
-		      src="assets/img/esti-biraz-logo.png" 
+		      src="assets/logo.png" 
 		      alt="Esti Biraz logosu" 
 		      class="hero-logo"
 		    >
