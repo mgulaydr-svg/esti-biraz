@@ -61,12 +61,17 @@ function renderMakalelerTest() {
 function renderAkademi() {
   pageMeta(
     'Akademi',
-    'ESTİ BİRAZ Akademi ile kursları ve dersleri keşfedin.'
+    'ESTİ BİRAZ Akademi; sağlık, eğitim, bilim, veri ve teknoloji alanlarında yapılandırılmış öğrenme içerikleri.'
   );
-  if (typeof loadAllCourses === 'function') {
-    loadAllCourses();
+
+  if (typeof renderAcademyPageV2 === 'function') {
+    renderAcademyPageV2();
+  } else if (typeof loadCourses === 'function') {
+    loadCourses();
+  } else if (typeof loadAcademy === 'function') {
+    loadAcademy();
   } else {
-    appContainer.innerHTML = '<main class="container"><h1>Akademi</h1><p>Kurslar yüklenemedi.</p></main>';
+    appContainer.innerHTML = '<p>Akademi sayfası yüklenemedi.</p>';
   }
 }
 
