@@ -120,7 +120,14 @@ function renderMakale(slug) {
 
 function renderKurs(slug) {
   appContainer.innerHTML = '<main class="container"><p>Kurs yükleniyor...</p></main>';
-  if (typeof loadCourse === 'function') loadCourse(slug);
+
+  if (typeof renderCourseDetailPageV2 === 'function') {
+    renderCourseDetailPageV2(slug);
+  } else if (typeof loadCourse === 'function') {
+    loadCourse(slug);
+  } else {
+    appContainer.innerHTML = '<main class="container"><p>Kurs yüklenemedi.</p></main>';
+  }
 }
 
 function renderDers(courseSlug, lessonOrder) {
