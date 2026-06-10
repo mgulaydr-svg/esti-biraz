@@ -34,10 +34,10 @@ function renderMakaleler() {
     'ESTİ BİRAZ makaleleri; sağlık, eğitim, bilim, veri ve teknoloji alanlarında güvenilir ve anlaşılır yazılar.'
   );
 
-  if (typeof loadAllArticles === 'function') {
-    loadAllArticles();
-  } else if (typeof renderArticlesPageV2 === 'function') {
+  if (typeof renderArticlesPageV2 === 'function') {
     renderArticlesPageV2();
+  } else if (typeof loadAllArticles === 'function') {
+    loadAllArticles();
   } else {
     appContainer.innerHTML = '<p>Makaleler yüklenemedi.</p>';
   }
