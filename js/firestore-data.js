@@ -102,29 +102,30 @@ async function loadLatestArticles() {
     }
 
     container.innerHTML = `
-      <section class="hero hero-compact">
-		  <div class="container hero-content">
-		    <img 
-		      src="assets/logo.png" 
-		      alt="Esti Biraz logosu" 
-		      class="hero-logo"
-		    >
+		<section class="hero hero-modern">
+		  <div class="container hero-modern__inner">
 		
-		    <span class="hero-kicker">ESTİ BİRAZ</span>
+		    <div class="hero-modern__badge">
+		      <img 
+		        src="assets/logo.png" 
+		        alt="Esti Biraz logosu" 
+		        class="hero-logo"
+		      >
+		      <span>ESTİ BİRAZ</span>
+		    </div>
 		
-		    <h1>Bir Yudum Bilgi, Biraz Merak.</h1>
+		    <h1>Bir Yudum Bilgi,<br>Biraz Merak.</h1>
 		
 		    <p>
 		      Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
 		      güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
 		    </p>
-		  </div>
-		</section>
 		
-		<section class="hero-action-strip">
-		  <div class="container hero-actions">
-		    <a href="#/makaleler" class="btn btn-primary">Makaleleri Keşfet</a>
-		    <a href="#/akademi" class="btn btn-secondary">Akademiye Göz At</a>
+		    <div class="hero-actions">
+		      <a href="#/makaleler" class="btn btn-primary hero-btn">Makaleleri Keşfet</a>
+		      <a href="#/akademi" class="btn btn-secondary hero-btn">Akademiye Göz At</a>
+		    </div>
+		
 		  </div>
 		</section>
 		
@@ -161,6 +162,8 @@ async function loadLatestArticles() {
 		    </div>
 		  </div>
 		</section>
+
+	  
       ${featuredHtml}
 
       <section class="latest-articles">
