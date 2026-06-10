@@ -43,6 +43,21 @@ function renderMakaleler() {
   }
 }
 
+function renderMakalelerTest() {
+  pageMeta(
+    'Makaleler Test',
+    'ESTİ BİRAZ makaleleri için editoryal test görünümü.'
+  );
+
+  if (typeof renderArticlesPageV2 === 'function') {
+    renderArticlesPageV2();
+  } else if (typeof loadAllArticles === 'function') {
+    loadAllArticles();
+  } else {
+    appContainer.innerHTML = '<p>Makaleler test sayfası yüklenemedi.</p>';
+  }
+}
+
 function renderAkademi() {
   pageMeta(
     'Akademi',
@@ -183,6 +198,7 @@ const routes = {
   '/': renderHome,
   '/makaleler': renderMakaleler,
   '/magazin': renderMakaleler,
+  '/makaleler-test': renderMakalelerTest,
   '/akademi': renderAkademi,
   '/hakkinda': renderHakkinda,
   '/profil': renderProfile,
