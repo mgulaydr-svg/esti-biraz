@@ -21,6 +21,7 @@ function ebCreateCourseCard(course) {
   const instructor = ebEscapeHtml(course.instructor || 'Esti Biraz');
   const categoryLabel = ebEscapeHtml(ebGetCategoryLabel(course.category));
   const level = ebEscapeHtml(ebGetLevelLabel(course.level));
+  const lessonTotal = course.totalLessons || course.lessonCount || course.lessonsCount || '';
 
   const imageHtml = course.coverImage
     ? `<img src="${ebEscapeHtml(course.coverImage)}" alt="${title}" loading="lazy">`
@@ -44,7 +45,7 @@ function ebCreateCourseCard(course) {
 
         <div class="course-card__meta">
           <span>👤 ${instructor}</span>
-          ${course.lessonCount ? `<span>📚 ${course.lessonCount} ders</span>` : ''}
+          ${lessonTotal ? `<span>📚 ${lessonTotal} ders</span>` : ''}
         </div>
 
         <div class="course-card__read">Kursa Git →</div>
