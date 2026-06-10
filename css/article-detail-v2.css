@@ -140,9 +140,10 @@
 
 .article-detail-content {
   color: #203b38;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: clamp(1.08rem, 1.15vw, 1.16rem);
   line-height: 1.86;
-  max-width: 720px;
+  max-width: 680px;
 }
 
 .article-detail-content > *:first-child {
@@ -171,7 +172,7 @@
 }
 
 .article-detail-content p {
-  margin: 0 0 1.25em;
+  margin: 0 0 1.35em;
 }
 
 .article-detail-content a {
