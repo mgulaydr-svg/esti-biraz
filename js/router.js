@@ -103,7 +103,14 @@ async function renderProfile() {
 
 function renderMakale(slug) {
   appContainer.innerHTML = '<main class="container"><p>Makale yükleniyor...</p></main>';
-  if (typeof loadArticle === 'function') loadArticle(slug);
+
+  if (typeof renderArticleDetailPageV2 === 'function') {
+    renderArticleDetailPageV2(slug);
+  } else if (typeof loadArticle === 'function') {
+    loadArticle(slug);
+  } else {
+    appContainer.innerHTML = '<main class="container"><p>Makale yüklenemedi.</p></main>';
+  }
 }
 
 function renderKurs(slug) {
