@@ -16,38 +16,16 @@ function pageMeta(title, description, extra = {}) {
 function renderHome() {
   pageMeta(
     'Ana Sayfa',
-    'ESTİ BİRAZ; sağlık, bilim, eğitim ve kültür alanlarında makaleler ve çevrim içi öğrenme içerikleri sunar.'
+    'ESTİ BİRAZ; sağlık, eğitim, bilim, veri ve teknoloji alanlarında makaleler ve öğrenme içerikleri sunar.'
   );
-  appContainer.innerHTML = `
-    <section class="hero-section">
-      <div class="container">
-        <span class="hero-kicker">☕ ESTİ BİRAZ</span>
-        <h1>Sağlık, Bilim ve Eğitimin Buluşma Noktası</h1>
-        <p>Kanıta dayalı makaleler okuyun, öğrenme modülleriyle bilginizi pekiştirin.</p>
-        <div class="hero-actions">
-          <a href="#/makaleler" class="btn btn--primary">Makaleleri Keşfet</a>
-          <a href="#/akademi" class="btn btn--outline">Kursları Keşfet</a>
-        </div>
-      </div>
-    </section>
 
-    <section class="container section">
-      <div id="latestArticles">
-        <h2>Son Makaleler</h2>
-        <p>Makaleler yükleniyor...</p>
-      </div>
-    </section>
-
-    <section class="container section">
-      <div id="featuredCourses">
-        <h2>Öne Çıkan Kurslar</h2>
-        <p>Kurslar yükleniyor...</p>
-      </div>
-    </section>
-  `;
-
-  if (typeof loadLatestArticles === 'function') loadLatestArticles();
-  if (typeof loadFeaturedCourses === 'function') loadFeaturedCourses();
+  if (typeof renderHomePageV2 === 'function') {
+    renderHomePageV2();
+  } else if (typeof loadLatestArticles === 'function') {
+    loadLatestArticles();
+  } else {
+    appContainer.innerHTML = '<p>Ana sayfa yüklenemedi.</p>';
+  }
 }
 
 function renderMakaleler() {
