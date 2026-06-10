@@ -75,31 +75,51 @@ async function loadLatestArticles() {
     }
 
     // Diğer makaleler HTML
-    let otherHtml = '';
-    for (let i = 0; i < otherArticles.length; i++) {
-      const a = otherArticles[i];
-      if (!a || !a.title) continue;
-      const rt = calculateReadingTime(a.content || '');
-      otherHtml += `
-        <a href="#/makale/${a.slug}" class="article-card">
-          <div class="article-card__image">
-            ${a.coverImage
-              ? '<img src="' + a.coverImage + '" alt="' + a.title + '" loading="lazy">'
-              : '<div class="article-card__placeholder">📝</div>'}
-          </div>
-          <div class="article-card__body">
-            <span class="badge badge--${a.category}">${getCategoryLabel(a.category)}</span>
-            <h3 class="article-card__title">${a.title}</h3>
-            <p class="article-card__summary">${a.summary || ''}</p>
-            <div class="article-card__meta">
-              <span>✍️ ${a.author || ''}</span>
-              <span>📅 ${formatDate(a)}</span>
-              <span>⏱️ ${rt} dk</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }
+	let otherHtml = '';
+	
+	for (let i = 0; i < otherArticles.length; i++) {
+	  const a = otherArticles[i];
+	  if (!a || !a.title) continue;
+	
+	  const rt = calculateReadingTime(a.content || '');
+	
+	  otherHtml += `
+	    <a href="#/makale/${a.slug}" class="article-card">
+	      <div class="article-card__image">
+	        ${a.coverImage
+	          ? `<img src="${a.coverImage}" alt="${a.title}" loading="lazy">`
+	          : `<div class="article-card__placeholder">📝</div>`}
+	      </div>
+	
+	      <div class="article-card__body">
+	        <div class="article-card__top">
+	          <span class="badge badge--${a.category}">
+	            ${getCategoryLabel(a.category)}
+	          </span>
+	
+	          <span class="article-card__reading">
+	            ${rt} dk okuma
+	          </span>
+	        </div>
+	
+	        <h3 class="article-card__title">${a.title}</h3>
+	
+	        <p class="article-card__summary">
+	          ${a.summary || ''}
+	        </p>
+	
+	        <div class="article-card__meta">
+	          <span>✍️ ${a.author || 'Esti Biraz'}</span>
+	          <span>📅 ${formatDate(a)}</span>
+	        </div>
+	
+	        <div class="article-card__read">
+	          Devamını Oku →
+	        </div>
+	      </div>
+	    </a>
+	  `;
+	}
 
     container.innerHTML = `
 		<section class="hero hero-modern">
