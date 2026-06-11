@@ -369,7 +369,7 @@
   }
 
   .academy-featured-card__body {
-    padding: 26px 0 0;
+    padding: 26px 16px 0;
   }
 }
 
@@ -382,5 +382,35 @@
 
   .academy-featured-card__image {
     min-height: 220px;
+  }
+}
+
+/* Akademi kart iç boşluk düzeltmesi */
+.academy-course-card {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.academy-featured-card__body {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+@media (max-width: 1080px) {
+  .academy-featured-card__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .academy-course-card {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .academy-featured-card__body {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 }
