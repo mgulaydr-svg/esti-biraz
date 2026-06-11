@@ -259,13 +259,22 @@ function router() {
   const path = normalizePath(hash.slice(1));
 
   if (path.startsWith('/ders/')) {
-    const parts = path.split('/');
-    const courseSlug = decodeURIComponent(parts[2] || '');
-    const lessonKey = decodeURIComponent(parts[3] || '');
-      
+  const parts = path.split('/');
+  const courseSlug = decodeURIComponent(parts[2] || '');
+  const lessonKey = decodeURIComponent(parts[3] || '');
+
+  if (typeof renderLessonDetailPageV2 === 'function') {
+    renderLessonDetailPageV2(courseSlug, lessonKey);
+  } else if (typeof renderDers === 'function') {
     renderDers(courseSlug, lessonKey);
-    return;
+  } else if (typeof loadLesson === 'function') {
+    loadLesson(courseSlug, lessonKey);
+  } else {
+    appContainer.innerHTML = '<main class="container"><p>Ders yüklenemedi.</p></main>';
   }
+
+  return;
+}
 
   if (routes[path]) {
     routes[path]();
