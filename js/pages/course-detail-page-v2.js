@@ -174,9 +174,17 @@ function ebGetFirstLessonHref(course, lesson) {
 }
 
 function ebGetLessonHref(course, lesson, index) {
-  const courseSlug = ebEscapeHtml(course.slug || course.id || '');
-  const order = lesson?.order ?? lesson?.lessonOrder ?? lesson?.lessonNo ?? index + 1;
-  return `#/ders/${courseSlug}/${order}`;
+  const courseSlug = encodeURIComponent(String(course.slug || course.id || ''));
+
+  const lessonKey =
+    lesson?.slug ||
+    lesson?.order ||
+    lesson?.lessonOrder ||
+    lesson?.lessonNo ||
+    lesson?.sira ||
+    index + 1;
+
+  return `#/ders/${courseSlug}/${encodeURIComponent(String(lessonKey))}`;
 }
 
 function ebCourseDetailLoadingTemplate() {
