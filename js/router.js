@@ -162,14 +162,19 @@ function renderLegalPage(type) {
 }
 
 function render404() {
-  pageMeta('Sayfa Bulunamadı', 'Aradığınız sayfa bulunamadı.');
-  appContainer.innerHTML = `
-    <section class="container page-section text-center">
-      <h1>404</h1>
-      <p>Aradığınız sayfa bulunamadı.</p>
-      <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
-    </section>
-  `;
+  if (typeof renderNotFoundPageV2 === 'function') {
+    renderNotFoundPageV2();
+  } else {
+    pageMeta('Sayfa Bulunamadı', 'Aradığınız sayfa bulunamadı.');
+
+    appContainer.innerHTML = `
+      <section class="container page-section text-center">
+        <h1>404</h1>
+        <p>Aradığınız sayfa bulunamadı.</p>
+        <a href="#/" class="btn btn--primary">Ana Sayfaya Dön</a>
+      </section>
+    `;
+  }
 }
 
 async function renderAdmin() {
