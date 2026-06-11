@@ -68,3 +68,28 @@
     width: 100%;
   }
 }
+
+/* Sol müfredatta tamamlanan ders göstergesi */
+
+.lesson-sidebar__item.is-completed {
+  border-left-color: #16a34a;
+  background: #ecfdf5;
+}
+
+.lesson-sidebar__item.is-completed span {
+  background: #16a34a;
+}
+
+.lesson-sidebar__item.is-completed strong {
+  color: #003f3a;
+}
+
+.lesson-sidebar__completion {
+  grid-column: 2;
+  display: inline-flex;
+  margin-top: 2px;
+  color: #16a34a;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 900;
+}
