@@ -308,3 +308,82 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Ders sayfası müfredat alanı okunurluk düzeltmesi */
+
+.lesson-sidebar {
+  background: #ffffff;
+}
+
+.lesson-sidebar__box {
+  padding: 18px 18px 16px;
+  border-top: 5px solid #003f3a;
+  border-radius: 0 0 16px 16px;
+  background: #f7fbfa;
+  box-shadow: 0 12px 28px rgba(0, 63, 58, 0.08);
+}
+
+.lesson-sidebar__label {
+  display: block;
+  margin-bottom: 8px;
+  color: #006d9e;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.lesson-sidebar__box strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #003f3a;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.lesson-sidebar__box small {
+  display: block;
+  color: #5f7471;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.lesson-sidebar__list {
+  padding: 10px;
+  border: 1px solid rgba(0, 63, 58, 0.10);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 63, 58, 0.06);
+}
+
+.lesson-sidebar__item {
+  border-radius: 14px;
+  border-left: 4px solid transparent;
+  border-bottom: none;
+  background: transparent;
+}
+
+.lesson-sidebar__item + .lesson-sidebar__item {
+  margin-top: 6px;
+}
+
+.lesson-sidebar__item:hover {
+  background: #f7fbfa;
+}
+
+.lesson-sidebar__item.is-active {
+  border-left-color: #006d9e;
+  background: rgba(0, 109, 158, 0.08);
+}
+
+.lesson-sidebar__item.is-active span {
+  background: #006d9e;
+}
+
+.lesson-sidebar__item.is-active strong {
+  color: #003f3a;
+  font-weight: 900;
+}
+
+.lesson-sidebar__item em {
+  margin-top: -2px;
+}
