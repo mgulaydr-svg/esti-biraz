@@ -72,7 +72,13 @@ function ebCourseDetailTemplate(course, lessons = []) {
                 ${lessons.length
                   ? `<a href="${ebGetFirstLessonHref(course, lessons[0])}" class="course-primary-action">İlk Derse Başla</a>`
                   : `<a href="#/akademi" class="course-primary-action">Akademiye Dön</a>`}
-                <a href="#course-lessons" class="course-secondary-action">Dersleri Gör</a>
+                <button 
+                  type="button" 
+                  class="course-secondary-action"
+                  onclick="document.getElementById('course-lessons')?.scrollIntoView({ behavior: 'smooth', block: 'start' })"
+                >
+                  Dersleri Gör
+                </button>
               </div>
             </div>
 
