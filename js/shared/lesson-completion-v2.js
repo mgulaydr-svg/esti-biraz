@@ -1,6 +1,8 @@
 /* ESTİ BİRAZ — Lesson Completion v2
-   Geçici çözüm: localStorage. Nihai çözüm: Firestore + users/{uid}/lessonProgress.
+   Geçici çözüm: localStorage.
+   Nihai çözüm: Firestore + users/{uid}/lessonProgress.
 */
+
 (function () {
   function getCurrentPath() {
     const raw = window.location.hash || '#/';
@@ -23,6 +25,14 @@
     return `eb_lesson_completed_${courseSlug}_${lessonKey}`;
   }
 
+  function isLessonCompleted(courseSlug, lessonKey) {
+    return localStorage.getItem(getStorageKey(courseSlug, lessonKey)) === 'true';
+  }
+
+  function setLessonCompleted(courseSlug, lessonKey, completed) {
+    localStorage.setItem(getStorageKey(courseSlug, lessonKey), String(completed));
+  }
+
   function getLessonProgressLabel() {
     const metaItems = Array.from(document.querySelectorAll('.lesson-detail-meta span'));
     const lessonMeta = metaItems.find(item => (item.textContent || '').trim().startsWith('Ders '));
@@ -39,48 +49,99 @@
 
     if (document.getElementById('lessonCompletionPanelV2')) return;
 
-    const storageKey = getStorageKey(route.courseSlug, route.lessonKey);
-    const isCompleted = localStorage.getItem(storageKey) === 'true';
+    const completed = isLessonCompleted(route.courseSlug, route.lessonKey);
     const progressLabel = getLessonProgressLabel();
 
     const panel = document.createElement('section');
     panel.id = 'lessonCompletionPanelV2';
-    panel.className = `lesson-completion-panel-v2 ${isCompleted ? 'is-completed' : ''}`;
+    panel.className = `lesson-completion-panel-v2 ${completed ? 'is-completed' : ''}`;
     panel.dataset.courseSlug = route.courseSlug;
     panel.dataset.lessonKey = route.lessonKey;
 
     panel.innerHTML = `
       <div class="lesson-completion-panel-v2__text">
         <span>Ders ilerlemesi</span>
-        <strong>${isCompleted ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?'}</strong>
+        <strong>${completed ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?'}</strong>
         <small>${progressLabel}</small>
       </div>
 
       <button type="button" class="lesson-completion-panel-v2__button">
-        ${isCompleted ? '✓ Tamamlandı' : 'Dersi Tamamla'}
+        ${completed ? '✓ Tamamlandı' : 'Dersi Tamamla'}
       </button>
     `;
 
     lessonNavigation.insertAdjacentElement('beforebegin', panel);
   }
 
-  function toggleCompletion(panel) {
-    const courseSlug = panel.dataset.courseSlug;
-    const lessonKey = panel.dataset.lessonKey;
-    if (!courseSlug || !lessonKey) return;
+  function parseLessonHref(href) {
+    if (!href) return null;
 
-    const storageKey = getStorageKey(courseSlug, lessonKey);
-    const isCompleted = localStorage.getItem(storageKey) === 'true';
-    const nextState = !isCompleted;
+    const hashIndex = href.indexOf('#/ders/');
+    if (hashIndex === -1) return null;
 
-    localStorage.setItem(storageKey, String(nextState));
-    panel.classList.toggle('is-completed', nextState);
+    const route = href.slice(hashIndex + 1);
+    const parts = route.split('/');
+
+    return {
+      courseSlug: decodeURIComponent(parts[2] || ''),
+      lessonKey: decodeURIComponent(parts[3] || '')
+    };
+  }
+
+  function decorateSidebarCompletion() {
+    const sidebarItems = document.querySelectorAll('.lesson-sidebar__item');
+
+    sidebarItems.forEach(item => {
+      const href = item.getAttribute('href') || '';
+      const parsed = parseLessonHref(href);
+
+      if (!parsed || !parsed.courseSlug || !parsed.lessonKey) return;
+
+      const completed = isLessonCompleted(parsed.courseSlug, parsed.lessonKey);
+
+      item.classList.toggle('is-completed', completed);
+
+      let badge = item.querySelector('.lesson-sidebar__completion');
+
+      if (completed && !badge) {
+        badge = document.createElement('small');
+        badge.className = 'lesson-sidebar__completion';
+        badge.textContent = '✓ Tamamlandı';
+        item.appendChild(badge);
+      }
+
+      if (!completed && badge) {
+        badge.remove();
+      }
+    });
+  }
+
+  function updatePanelState(panel, completed) {
+    panel.classList.toggle('is-completed', completed);
 
     const title = panel.querySelector('strong');
     const button = panel.querySelector('button');
 
-    if (title) title.textContent = nextState ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?';
-    if (button) button.textContent = nextState ? '✓ Tamamlandı' : 'Dersi Tamamla';
+    if (title) {
+      title.textContent = completed ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?';
+    }
+
+    if (button) {
+      button.textContent = completed ? '✓ Tamamlandı' : 'Dersi Tamamla';
+    }
+  }
+
+  function toggleCompletion(panel) {
+    const courseSlug = panel.dataset.courseSlug;
+    const lessonKey = panel.dataset.lessonKey;
+
+    if (!courseSlug || !lessonKey) return;
+
+    const completed = !isLessonCompleted(courseSlug, lessonKey);
+
+    setLessonCompleted(courseSlug, lessonKey, completed);
+    updatePanelState(panel, completed);
+    decorateSidebarCompletion();
   }
 
   document.addEventListener('click', event => {
@@ -88,12 +149,18 @@
     if (!button) return;
 
     const panel = button.closest('.lesson-completion-panel-v2');
-    if (panel) toggleCompletion(panel);
+    if (!panel) return;
+
+    toggleCompletion(panel);
   });
 
   function run() {
     clearTimeout(window.__ebLessonCompletionTimer);
-    window.__ebLessonCompletionTimer = setTimeout(injectCompletionPanel, 120);
+
+    window.__ebLessonCompletionTimer = setTimeout(() => {
+      injectCompletionPanel();
+      decorateSidebarCompletion();
+    }, 120);
   }
 
   document.addEventListener('DOMContentLoaded', run);
