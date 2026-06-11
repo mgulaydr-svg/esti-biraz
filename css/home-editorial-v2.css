@@ -166,19 +166,22 @@
 
 .home-lead-article {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  min-height: 350px;
+  grid-template-columns: 1fr;
+  min-height: auto;
 }
 
 .home-lead-article__image {
   overflow: hidden;
   background: #f7fbfa;
+  aspect-ratio: 16 / 9;
 }
 
 .home-lead-article__image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: #f7fbfa;
 }
 
 .home-article-placeholder {
@@ -299,4 +302,53 @@
   .home-course-preview-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Ana sayfa kategori renkleri */
+.home-lead-article.category-line--saglik,
+.home-small-article.category-line--saglik,
+.home-mini-article.category-line--saglik {
+  border-top-color: #e53935;
+}
+
+.home-lead-article.category-line--egitim,
+.home-small-article.category-line--egitim,
+.home-mini-article.category-line--egitim {
+  border-top-color: #2563eb;
+}
+
+.home-lead-article.category-line--bilim,
+.home-small-article.category-line--bilim,
+.home-mini-article.category-line--bilim {
+  border-top-color: #7c3aed;
+}
+
+.home-lead-article.category-line--veri,
+.home-small-article.category-line--veri,
+.home-mini-article.category-line--veri {
+  border-top-color: #0891b2;
+}
+
+.home-lead-article.category-line--teknoloji,
+.home-small-article.category-line--teknoloji,
+.home-mini-article.category-line--teknoloji {
+  border-top-color: #f59e0b;
+}
+
+.home-lead-article.category-line--kultur,
+.home-small-article.category-line--kultur,
+.home-mini-article.category-line--kultur {
+  border-top-color: #be185d;
+}
+
+.home-lead-article.category-line--yasam,
+.home-small-article.category-line--yasam,
+.home-mini-article.category-line--yasam {
+  border-top-color: #16a34a;
+}
+
+.home-lead-article.category-line--diger,
+.home-small-article.category-line--diger,
+.home-mini-article.category-line--diger {
+  border-top-color: #003f3a;
 }
