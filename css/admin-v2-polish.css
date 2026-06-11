@@ -20,8 +20,8 @@ body.admin-v2-ready .admin-section {
   padding: 28px 16px 42px;
 }
 
-body.admin-v2-ready h1,
-body.admin-v2-ready .admin-section__header h2 {
+body.admin-v2-ready #adminContent h1,
+body.admin-v2-ready #adminContent .admin-section__header h2 {
   color: #003f3a;
   letter-spacing: -0.035em;
 }
