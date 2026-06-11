@@ -3,11 +3,13 @@
 ============================================ */
 
 .editorial-hero {
-  padding: 54px 0 42px;
+  padding: 56px 0 46px;
+  color: #ffffff;
   background:
-    linear-gradient(90deg, #003f3a 0 10px, transparent 10px),
-    linear-gradient(180deg, #f6fbfa 0%, #ffffff 100%);
-  border-bottom: 1px solid rgba(0, 63, 58, 0.12);
+    radial-gradient(circle at 18% 22%, rgba(115, 183, 43, 0.20), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(0, 109, 158, 0.22), transparent 30%),
+    linear-gradient(135deg, #003f3a 0%, #00524b 52%, #062f34 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .editorial-hero__inner {
@@ -20,7 +22,7 @@
 .editorial-kicker {
   display: inline-block;
   margin-bottom: 12px;
-  color: #006d9e;
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.14em;
@@ -28,7 +30,7 @@
 
 .editorial-hero h1 {
   margin: 0 0 14px;
-  color: #003f3a;
+  color: #ffffff;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2.6rem, 6vw, 5.6rem);
   line-height: 0.96;
@@ -38,28 +40,29 @@
 .editorial-hero p {
   max-width: 760px;
   margin: 0;
-  color: #415f5b;
+  color: rgba(255, 255, 255, 0.84);
   font-size: clamp(1.03rem, 1.7vw, 1.28rem);
   line-height: 1.65;
 }
 
 .editorial-hero__note {
   padding: 18px 18px 18px 22px;
-  border-left: 5px solid #003f3a;
-  background: #ffffff;
-  box-shadow: 0 12px 28px rgba(0, 63, 58, 0.08);
+  border-left: 5px solid #73b72b;
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
 }
 
 .editorial-hero__note strong {
   display: block;
   margin-bottom: 6px;
-  color: #003f3a;
+  color: #ffffff;
   font-size: 0.95rem;
 }
 
 .editorial-hero__note span {
   display: block;
-  color: #5f7471;
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.9rem;
   line-height: 1.45;
 }
