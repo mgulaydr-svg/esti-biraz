@@ -1,9 +1,18 @@
 /* ESTİ BİRAZ — Admin v2 UI helpers */
 
 (function () {
+  function isAdminRoute() {
+    const currentPath = (window.location.hash || '#/').replace(/^#/, '') || '/';
+    return currentPath.startsWith('/admin');
+  }
+
   function enhanceAdminPage() {
     const adminContent = document.getElementById('adminContent');
-    if (!adminContent) return;
+
+    if (!isAdminRoute() || !adminContent) {
+      document.body.classList.remove('admin-v2-ready');
+      return;
+    }
 
     document.body.classList.add('admin-v2-ready');
 
@@ -28,7 +37,10 @@
   }
 
   document.addEventListener('DOMContentLoaded', enhanceAdminPage);
-  window.addEventListener('hashchange', () => setTimeout(enhanceAdminPage, 80));
+
+  window.addEventListener('hashchange', () => {
+    setTimeout(enhanceAdminPage, 80);
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     const app = document.getElementById('app');
