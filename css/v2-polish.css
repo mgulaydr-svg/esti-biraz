@@ -277,3 +277,17 @@ select:focus-visible {
     line-height: 1.6;
   }
 }
+
+/* Hero başlık renklerini admin CSS sızıntısına karşı koruma */
+.home-hero h1,
+.hero h1,
+.editorial-hero h1,
+.academy-hero-v2 h1,
+.course-detail-hero h1 {
+  color: #ffffff;
+}
+
+.article-detail-hero h1,
+.lesson-detail-hero h1 {
+  color: #003f3a;
+}
