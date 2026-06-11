@@ -9,6 +9,52 @@
     return path.startsWith('/') ? path : `/${path}`;
   }
 
+   function closeOpenPopups() {
+  const selectors = [
+    '.modal',
+    '.popup',
+    '.dialog',
+    '[role="dialog"]',
+    '.completion-modal',
+    '.course-complete-modal',
+    '.lesson-complete-modal'
+  ];
+
+  document.querySelectorAll(selectors.join(',')).forEach(element => {
+    element.classList.remove(
+      'is-open',
+      'open',
+      'active',
+      'show',
+      'visible'
+    );
+
+    element.setAttribute('aria-hidden', 'true');
+
+    if (
+      element.matches('[role="dialog"]') ||
+      element.classList.contains('modal') ||
+      element.classList.contains('popup')
+    ) {
+      element.style.display = 'none';
+    }
+  });
+
+  document.body.classList.remove(
+    'modal-open',
+    'popup-open',
+    'no-scroll',
+    'overflow-hidden'
+  );
+
+  document.documentElement.classList.remove(
+    'modal-open',
+    'popup-open',
+    'no-scroll',
+    'overflow-hidden'
+  );
+}
+
   function getRouteClass(path) {
     if (path === '/') return 'route-home';
     if (path.startsWith('/makale/')) return 'route-article-detail';
@@ -89,8 +135,22 @@
   }
 
   document.addEventListener('DOMContentLoaded', runV2UI);
+  document.addEventListener('click', event => {
+     const link = event.target.closest('a[href^="#/"]');
+     if (!link) return;
+   
+     const insidePopup = link.closest(
+       '.modal, .popup, .dialog, [role="dialog"], .completion-modal, .course-complete-modal, .lesson-complete-modal'
+     );
+   
+     if (insidePopup) {
+       closeOpenPopups();
+     }
+  });
+   
   window.addEventListener('hashchange', () => {
-    window.setTimeout(runV2UI, 0);
+     closeOpenPopups();
+     window.setTimeout(runV2UI, 0);
   });
 
   const observer = new MutationObserver(() => {
