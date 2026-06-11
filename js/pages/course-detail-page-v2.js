@@ -42,7 +42,11 @@ function ebCourseDetailTemplate(course, lessons = []) {
 
   const coverImageHtml = course.coverImage
     ? `<img src="${ebEscapeHtml(course.coverImage)}" alt="${title}" loading="eager">`
-    : `<div class="course-detail-cover__placeholder">🎓</div>`;
+    : `
+      <div class="course-detail-cover__placeholder">
+        <span>ESTİ BİRAZ AKADEMİ</span>
+      </div>
+    `;
 
   return `
     <article class="course-detail-v2">
