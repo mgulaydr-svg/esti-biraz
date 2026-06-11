@@ -130,6 +130,18 @@ function renderKurs(slug) {
   }
 }
 
+function renderDers(courseSlug, lessonKey) {
+  appContainer.innerHTML = '<main class="container"><p>Ders yükleniyor...</p></main>';
+
+  if (typeof renderLessonDetailPageV2 === 'function') {
+    renderLessonDetailPageV2(courseSlug, lessonKey);
+  } else if (typeof loadLesson === 'function') {
+    loadLesson(courseSlug, lessonKey);
+  } else {
+    appContainer.innerHTML = '<main class="container"><p>Ders yüklenemedi.</p></main>';
+  }
+}
+
 function renderDers(courseSlug, lessonOrder) {
   appContainer.innerHTML = '<main class="container"><p>Ders yükleniyor...</p></main>';
   if (typeof loadLesson === 'function') loadLesson(courseSlug, parseInt(lessonOrder, 10));
@@ -240,6 +252,15 @@ function normalizePath(path) {
 function router() {
   const hash = window.location.hash || '#/';
   const path = normalizePath(hash.slice(1));
+
+  if (path.startsWith('/ders/')) {
+    const parts = path.split('/');
+    const courseSlug = decodeURIComponent(parts[2] || '');
+    const lessonKey = decodeURIComponent(parts[3] || '');
+      
+    renderDers(courseSlug, lessonKey);
+    return;
+  }
 
   if (routes[path]) {
     routes[path]();
