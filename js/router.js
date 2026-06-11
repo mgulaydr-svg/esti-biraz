@@ -76,29 +76,11 @@ function renderAkademi() {
 }
 
 function renderHakkinda() {
-  pageMeta(
-    'Hakkında',
-    'ESTİ BİRAZ platformunun amacı, kapsamı ve iletişim bilgileri.'
-  );
-  appContainer.innerHTML = `
-    <section class="container page-section">
-      <h1>Hakkında</h1>
-      <h2>ESTİ BİRAZ Nedir?</h2>
-      <p>ESTİ BİRAZ; sağlık, bilim, eğitim ve kültür alanlarında güvenilir, erişilebilir ve öğrenmeyi destekleyen içerikler sunan dijital bir platformdur.</p>
-      <p>Amacımız, karmaşık konuları anlaşılır bir dille aktarmak; makale, kurs ve ders içerikleriyle kalıcı öğrenmeyi desteklemektir.</p>
-
-      <h2>Misyonumuz</h2>
-      <ul>
-        <li>Kanıta dayalı ve anlaşılır içerik üretmek</li>
-        <li>Bilimi ve eğitimi erişilebilir hale getirmek</li>
-        <li>Öğrenmeyi makale, kurs ve etkinliklerle desteklemek</li>
-        <li>Toplum sağlığı ve eğitim kültürüne katkı sunmak</li>
-      </ul>
-
-      <h2>İletişim</h2>
-      <p>Sorularınız, önerileriniz veya iş birliği teklifleriniz için: <a href="mailto:iletisim@estibiraz.com">iletisim@estibiraz.com</a></p>
-    </section>
-  `;
+  if (typeof renderAboutPageV2 === 'function') {
+    renderAboutPageV2();
+  } else {
+    appContainer.innerHTML = '<main class="container"><h1>Hakkında</h1><p>ESTİ BİRAZ hakkında.</p></main>';
+  }
 }
 
 async function renderProfile() {
