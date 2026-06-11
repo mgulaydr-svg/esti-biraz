@@ -1,0 +1,39 @@
+/* ESTİ BİRAZ — Articles Image Fix v2 */
+
+.editorial-card__image,
+.article-card-v2__image,
+.article-card__image,
+.editorial-featured-card__image,
+.editorial-featured__image,
+.article-card__cover,
+.article-card-v2__cover {
+  background: #f7fbfa;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.editorial-card__image img,
+.article-card-v2__image img,
+.article-card__image img,
+.editorial-featured-card__image img,
+.editorial-featured__image img,
+.article-card__cover img,
+.article-card-v2__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #f7fbfa;
+  display: block;
+}
+
+.editorial-card > img,
+.article-card-v2 > img,
+.article-card > img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  object-position: center;
+  background: #f7fbfa;
+  display: block;
+}
