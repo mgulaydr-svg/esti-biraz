@@ -87,7 +87,6 @@ function ebLessonDetailTemplate(detail) {
         <main class="lesson-content">
           ${content ? content : ebLessonEmptyContentTemplate()}
 
-          ${ebLessonCompletionPanelTemplate(course, lesson, currentIndex, lessons.length)}
 
           <nav class="lesson-navigation" aria-label="Ders gezinme">
           
@@ -138,55 +137,6 @@ function ebLessonHref(course, lesson, index) {
   return `#/ders/${courseSlug}/${encodeURIComponent(key)}`;
 }
 
-function ebLessonCompletionPanelTemplate(course, lesson, currentIndex, totalLessons) {
-  const courseSlug = ebEscapeHtml(course.slug || course.id || '');
-  const lessonKey = lesson.slug || ebGetLessonOrderValue(lesson) || currentIndex + 1;
-  const storageKey = `eb_lesson_completed_${courseSlug}_${lessonKey}`;
-  const isCompleted = localStorage.getItem(storageKey) === 'true';
-
-  return `
-    <section class="lesson-completion-panel ${isCompleted ? 'is-completed' : ''}" 
-             data-course-slug="${courseSlug}" 
-             data-lesson-key="${ebEscapeHtml(String(lessonKey))}">
-      <div>
-        <span>Ders ilerlemesi</span>
-        <strong>${isCompleted ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?'}</strong>
-        <small>Ders ${currentIndex + 1}/${totalLessons}</small>
-      </div>
-
-      <button 
-        type="button" 
-        class="lesson-completion-button"
-        onclick="ebToggleLessonCompletion(this)"
-      >
-        ${isCompleted ? '✓ Tamamlandı' : 'Dersi Tamamla'}
-      </button>
-    </section>
-  `;
-}
-
-function ebToggleLessonCompletion(button) {
-  const panel = button.closest('.lesson-completion-panel');
-  if (!panel) return;
-
-  const courseSlug = panel.dataset.courseSlug;
-  const lessonKey = panel.dataset.lessonKey;
-  const storageKey = `eb_lesson_completed_${courseSlug}_${lessonKey}`;
-
-  const isCompleted = localStorage.getItem(storageKey) === 'true';
-  const nextState = !isCompleted;
-
-  localStorage.setItem(storageKey, String(nextState));
-
-  panel.classList.toggle('is-completed', nextState);
-
-  const strong = panel.querySelector('strong');
-  if (strong) {
-    strong.textContent = nextState ? 'Bu ders tamamlandı' : 'Dersi tamamladınız mı?';
-  }
-
-  button.textContent = nextState ? '✓ Tamamlandı' : 'Dersi Tamamla';
-}
 
 function ebLessonEmptyContentTemplate() {
   return `
