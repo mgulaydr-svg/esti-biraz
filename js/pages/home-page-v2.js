@@ -126,12 +126,7 @@ async function ebRenderHomeFeaturedCourses() {
 
     target.innerHTML = `
       <div class="home-course-preview-grid">
-        ${courses.map(course => {
-          if (typeof ebCreateCourseCard === 'function') {
-            return ebCreateCourseCard(course);
-          }
-          return ebCreateHomeCourseFallback(course);
-        }).join('')}
+        ${courses.map(course => ebCreateHomeCourseCard(course)).join('')}
       </div>
     `;
   } catch (error) {
@@ -207,6 +202,52 @@ function ebCreateHomeCourseFallback(course) {
       <strong>Kursa Git →</strong>
     </a>
   `;
+}
+
+function ebCreateHomeCourseCard(course) {
+  const title = ebEscapeHtml(course.title || 'Başlıksız Kurs');
+  const slug = ebEscapeHtml(course.slug || course.id || '');
+  const category = ebEscapeHtml(course.category || 'diger');
+  const categoryLabel = ebEscapeHtml(ebGetCategoryLabel(course.category));
+  const level = ebEscapeHtml(ebGetLevelLabel(course.level));
+  const instructor = ebEscapeHtml(course.instructor || 'Esti Biraz');
+  const lessonTotal = course.totalLessons || course.lessonCount || course.lessonsCount || '';
+
+  const summary = ebEscapeHtml(
+    ebTruncateText(course.description || course.summary || '', 125)
+  );
+
+  return `
+    <a href="#/kurs/${slug}" class="home-course-card category-line--${category}">
+      <div class="home-course-card__meta">
+        <span>${categoryLabel}</span>
+        ${level ? `<span>${level}</span>` : ''}
+      </div>
+
+      <h3>${title}</h3>
+
+      ${summary ? `<p>${summary}</p>` : ''}
+
+      <div class="home-course-card__footer">
+        <span>👤 ${instructor}</span>
+        ${lessonTotal ? `<span>📚 ${lessonTotal} ders</span>` : ''}
+      </div>
+
+      <strong>Kursa Git →</strong>
+    </a>
+  `;
+}
+
+function ebTruncateText(text, maxLength = 125) {
+  if (!text) return '';
+
+  const cleanText = String(text).trim();
+
+  if (cleanText.length <= maxLength) {
+    return cleanText;
+  }
+
+  return cleanText.slice(0, maxLength).trim().replace(/[.,;:!?-]$/, '') + '…';
 }
 
 function ebHomeLoadingTemplate(message) {
