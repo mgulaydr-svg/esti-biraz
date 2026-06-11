@@ -1,4 +1,4 @@
-/* ESTİ BİRAZ — Articles Image Fit Fix v2 */
+/* ESTİ BİRAZ — Articles Image Fit + Top Layout Fix v2 */
 
 (function () {
   function isArticlesPage() {
@@ -23,6 +23,14 @@
       const imageBox = img.parentElement;
       if (!imageBox) return;
 
+      link.classList.add('article-image-top-fixed');
+
+      link.style.setProperty('display', 'flex', 'important');
+      link.style.setProperty('flex-direction', 'column', 'important');
+      link.style.setProperty('grid-template-columns', '1fr', 'important');
+      link.style.setProperty('min-height', 'auto', 'important');
+
+      imageBox.style.setProperty('order', '-1', 'important');
       imageBox.style.setProperty('width', '100%', 'important');
       imageBox.style.setProperty('aspect-ratio', '16 / 9', 'important');
       imageBox.style.setProperty('overflow', 'hidden', 'important');
