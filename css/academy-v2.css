@@ -346,3 +346,41 @@
     padding: 18px 0;
   }
 }
+
+/* Akademi sayfası orta genişlik düzeltmesi */
+@media (max-width: 1180px) {
+  .academy-hero-v2__inner,
+  .academy-filter-wrap,
+  .academy-layout-v2 {
+    width: calc(100% - 36px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Bölünmüş ekran / dar masaüstü görünümünde öne çıkan kursu daha dengeli yap */
+@media (max-width: 1080px) {
+  .academy-featured-card {
+    grid-template-columns: 1fr;
+  }
+
+  .academy-featured-card__image {
+    min-height: 260px;
+  }
+
+  .academy-featured-card__body {
+    padding: 26px 0 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .academy-hero-v2__inner,
+  .academy-filter-wrap,
+  .academy-layout-v2 {
+    width: calc(100% - 28px);
+  }
+
+  .academy-featured-card__image {
+    min-height: 220px;
+  }
+}
