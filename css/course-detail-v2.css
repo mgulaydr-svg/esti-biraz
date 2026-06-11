@@ -375,3 +375,9 @@
     align-items: flex-start;
   }
 }
+
+button.course-secondary-action {
+  appearance: none;
+  font-family: inherit;
+  cursor: pointer;
+}
