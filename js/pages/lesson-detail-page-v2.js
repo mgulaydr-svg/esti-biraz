@@ -74,8 +74,9 @@ function ebLessonDetailTemplate(detail) {
       <div class="container lesson-detail-layout">
         <aside class="lesson-sidebar">
           <div class="lesson-sidebar__box">
-            <strong>Kurs içeriği</strong>
-            <span>${lessons.length} ders</span>
+            <span class="lesson-sidebar__label">KURS MÜFREDATI</span>
+            <strong>${courseTitle}</strong>
+            <small>${lessons.length} derslik öğrenme akışı</small>
           </div>
 
           <nav class="lesson-sidebar__list" aria-label="Kurs dersleri">
