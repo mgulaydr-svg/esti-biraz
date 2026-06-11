@@ -1,178 +1,226 @@
-/* ESTİ BİRAZ — Home Page v2 */
+/* ESTİ BİRAZ — Home Page v2 Editorial */
 
 async function renderHomePageV2() {
   const container = document.getElementById('app');
   if (!container) return;
 
   container.innerHTML = `
-    ${ebHomeHeroTemplate()}
-    ${ebTrustStripTemplate()}
-
-    <section class="home-section container">
-      <div class="section-header">
-        <div>
-          <span class="section-kicker">MAKALELER</span>
-          <h2>Son Yazılar</h2>
-          <p>Sağlık, eğitim, bilim, veri ve teknoloji alanlarında güncel ve anlaşılır içerikler.</p>
-        </div>
-
-        <a href="#/makaleler" class="section-link">Tüm Makaleler →</a>
-      </div>
-
-      <div id="latestArticlesGrid" class="articles-grid">
-        ${ebLoadingTemplate('Makaleler yükleniyor...')}
-      </div>
-    </section>
-
-    <section class="home-section home-section--soft">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">AKADEMİ</span>
-            <h2>Öne Çıkan Kurslar</h2>
-            <p>Bilgiyi yalnızca okumakla bırakmayın; dersler ve kurslarla yapılandırılmış öğrenmeye dönüştürün.</p>
+    <main class="home-page-v2-editorial">
+      <section class="home-hero-v2-editorial">
+        <div class="container home-hero-v2-editorial__inner">
+          <div class="home-hero-v2-editorial__brand">
+            <img src="assets/logo.png" alt="ESTİ BİRAZ" class="home-hero-v2-editorial__logo">
+            <div class="home-hero-v2-editorial__actions">
+              <a href="#/makaleler" class="home-hero-v2-editorial__primary">Makaleleri Keşfet</a>
+              <a href="#/akademi" class="home-hero-v2-editorial__secondary">Akademiye Göz At</a>
+            </div>
           </div>
 
-          <a href="#/akademi" class="section-link">Tüm Kurslar →</a>
+          <div class="home-hero-v2-editorial__text">
+            <span>Bir Yudum Bilgi, Biraz Merak.</span>
+            <h1>Sağlık, eğitim, bilim, veri ve teknoloji için güvenilir bilgi alanı.</h1>
+            <p>
+              ESTİ BİRAZ; makaleler, öğrenme içerikleri ve dijital kaynaklarla
+              bilgiyi sade, kaynaklı ve uygulanabilir hale getirir.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div id="featuredCoursesGrid" class="courses-grid">
-          ${ebLoadingTemplate('Kurslar yükleniyor...')}
+      <section class="container home-trust-v2">
+        <div class="home-trust-v2__item">
+          <strong>Kaynaklı İçerik</strong>
+          <span>Bilgi, mümkün olduğunca güvenilir kaynaklarla desteklenir.</span>
         </div>
-      </div>
-    </section>
+        <div class="home-trust-v2__item">
+          <strong>Sade Anlatım</strong>
+          <span>Karmaşık konular anlaşılır ve öğrenilebilir hale getirilir.</span>
+        </div>
+        <div class="home-trust-v2__item">
+          <strong>Eğitim Odaklı</strong>
+          <span>Makaleler, dersler ve öğrenme materyalleri birlikte düşünülür.</span>
+        </div>
+        <div class="home-trust-v2__item">
+          <strong>Veri ve Bilim</strong>
+          <span>Sağlık, teknoloji ve istatistik bakışı bir araya getirilir.</span>
+        </div>
+      </section>
+
+      <section class="container home-editorial-latest">
+        <div class="home-editorial-section-head">
+          <span>SON YAZILAR</span>
+          <h2>Editoryal seçki</h2>
+          <a href="#/makaleler">Tüm Makaleler →</a>
+        </div>
+        <div id="homeLatestArticlesV2">${ebHomeLoadingTemplate('Yazılar yükleniyor...')}</div>
+      </section>
+
+      <section class="container home-academy-preview">
+        <div class="home-editorial-section-head">
+          <span>AKADEMİ</span>
+          <h2>Öğrenme rotaları</h2>
+          <a href="#/akademi">Tüm Kurslar →</a>
+        </div>
+        <div id="homeFeaturedCoursesV2">${ebHomeLoadingTemplate('Kurslar yükleniyor...')}</div>
+      </section>
+    </main>
   `;
 
   await Promise.all([
-    ebRenderLatestArticles(),
-    ebRenderFeaturedCourses()
+    ebRenderHomeLatestArticles(),
+    ebRenderHomeFeaturedCourses()
   ]);
 }
 
-function ebHomeHeroTemplate() {
-  return `
-    <section class="hero hero-modern">
-      <div class="container hero-modern__inner">
-
-        <div class="hero-brand-side">
-          <img
-            src="assets/logo.png"
-            alt="Esti Biraz logosu"
-            class="hero-logo-large"
-          >
-
-          <div class="hero-actions">
-            <a href="#/makaleler" class="btn btn-primary hero-btn">Makaleleri Keşfet</a>
-            <a href="#/akademi" class="btn btn-secondary hero-btn">Akademiye Göz At</a>
-          </div>
-        </div>
-
-        <div class="hero-text-side">
-          <h1>Bir Yudum Bilgi,<br>Biraz Merak.</h1>
-
-          <p>
-            Sağlık, eğitim, bilim, veri ve teknoloji alanlarında
-            güvenilir makaleler, öğrenme içerikleri ve dijital kaynaklar.
-          </p>
-        </div>
-
-      </div>
-    </section>
-  `;
-}
-
-function ebTrustStripTemplate() {
-  return `
-    <section class="trust-strip container">
-      <div class="trust-card">
-        <div class="trust-icon">📚</div>
-        <div>
-          <strong>Kaynaklı İçerik</strong>
-          <span>Güvenilir bilgiye dayalı yazılar.</span>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon">✨</div>
-        <div>
-          <strong>Sade Anlatım</strong>
-          <span>Karmaşık konular anlaşılır hale gelir.</span>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon">🎓</div>
-        <div>
-          <strong>Eğitim Odaklı</strong>
-          <span>Makaleler, dersler ve öğrenme notları.</span>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon">📊</div>
-        <div>
-          <strong>Veri ve Bilim</strong>
-          <span>Sağlık, teknoloji ve istatistik bakışı.</span>
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-async function ebRenderLatestArticles() {
-  const grid = document.getElementById('latestArticlesGrid');
-  if (!grid) return;
+async function ebRenderHomeLatestArticles() {
+  const target = document.getElementById('homeLatestArticlesV2');
+  if (!target) return;
 
   try {
-    const articles = await ebGetLatestArticles(3);
+    const articles = typeof ebGetPublishedArticles === 'function'
+      ? await ebGetPublishedArticles(6)
+      : [];
 
     if (!articles.length) {
-      grid.innerHTML = ebEmptyStateTemplate('Henüz yayınlanmış makale yok.');
+      target.innerHTML = ebHomeEmptyTemplate('Henüz yayınlanmış makale yok.');
       return;
     }
 
-    grid.innerHTML = articles
-      .map((article, index) => ebCreateArticleCard(article, { featured: index === 0 }))
-      .join('');
+    const lead = articles[0];
+    const side = articles.slice(1, 3);
+    const rest = articles.slice(3, 6);
+
+    target.innerHTML = `
+      <div class="home-editorial-grid">
+        ${ebCreateHomeLeadArticle(lead)}
+        <div class="home-editorial-side">
+          ${side.map(article => ebCreateHomeSmallArticle(article)).join('')}
+        </div>
+      </div>
+
+      ${rest.length ? `
+        <div class="home-editorial-more">
+          ${rest.map(article => ebCreateHomeMiniArticle(article)).join('')}
+        </div>
+      ` : ''}
+    `;
   } catch (error) {
-    console.error('❌ Ana sayfa makaleleri yüklenemedi:', error);
-    grid.innerHTML = ebEmptyStateTemplate('Makaleler yüklenirken bir hata oluştu.');
+    console.error('❌ Ana sayfa yazıları yüklenemedi:', error);
+    target.innerHTML = ebHomeEmptyTemplate('Yazılar yüklenirken bir hata oluştu.');
   }
 }
 
-async function ebRenderFeaturedCourses() {
-  const grid = document.getElementById('featuredCoursesGrid');
-  if (!grid) return;
+async function ebRenderHomeFeaturedCourses() {
+  const target = document.getElementById('homeFeaturedCoursesV2');
+  if (!target) return;
 
   try {
-    const courses = await ebGetFeaturedCourses(3);
+    const courses = typeof ebGetFeaturedCourses === 'function'
+      ? await ebGetFeaturedCourses(3)
+      : [];
 
     if (!courses.length) {
-      grid.innerHTML = ebEmptyStateTemplate('Henüz öne çıkan kurs yok.');
+      target.innerHTML = ebHomeEmptyTemplate('Henüz yayınlanmış kurs yok.');
       return;
     }
 
-    grid.innerHTML = courses
-      .map(course => ebCreateCourseCard(course))
-      .join('');
+    target.innerHTML = `
+      <div class="home-course-preview-grid">
+        ${courses.map(course => {
+          if (typeof ebCreateCourseCard === 'function') {
+            return ebCreateCourseCard(course);
+          }
+          return ebCreateHomeCourseFallback(course);
+        }).join('')}
+      </div>
+    `;
   } catch (error) {
     console.error('❌ Ana sayfa kursları yüklenemedi:', error);
-    grid.innerHTML = ebEmptyStateTemplate('Kurslar yüklenirken bir hata oluştu.');
+    target.innerHTML = ebHomeEmptyTemplate('Kurslar yüklenirken bir hata oluştu.');
   }
 }
 
-function ebLoadingTemplate(message) {
+function ebCreateHomeLeadArticle(article) {
+  const title = ebEscapeHtml(article.title || 'Başlıksız Makale');
+  const summary = ebEscapeHtml(article.summary || '');
+  const slug = ebEscapeHtml(article.slug || article.id || '');
+  const category = ebEscapeHtml(article.category || 'diger');
+  const categoryLabel = ebEscapeHtml(ebGetCategoryLabel(article.category));
+  const image = article.coverImage
+    ? `<img src="${ebEscapeHtml(article.coverImage)}" alt="${title}" loading="lazy">`
+    : `<div class="home-article-placeholder">📝</div>`;
+
   return `
-    <div class="loading-state">
+    <a href="#/makale/${slug}" class="home-lead-article category-line--${category}">
+      <div class="home-lead-article__image">${image}</div>
+      <div class="home-lead-article__body">
+        <span>${categoryLabel}</span>
+        <h3>${title}</h3>
+        ${summary ? `<p>${summary}</p>` : ''}
+        <strong>Devamını Oku →</strong>
+      </div>
+    </a>
+  `;
+}
+
+function ebCreateHomeSmallArticle(article) {
+  const title = ebEscapeHtml(article.title || 'Başlıksız Makale');
+  const summary = ebEscapeHtml(article.summary || '');
+  const slug = ebEscapeHtml(article.slug || article.id || '');
+  const category = ebEscapeHtml(article.category || 'diger');
+  const categoryLabel = ebEscapeHtml(ebGetCategoryLabel(article.category));
+
+  return `
+    <a href="#/makale/${slug}" class="home-small-article category-line--${category}">
+      <span>${categoryLabel}</span>
+      <h3>${title}</h3>
+      ${summary ? `<p>${summary}</p>` : ''}
+      <strong>Oku →</strong>
+    </a>
+  `;
+}
+
+function ebCreateHomeMiniArticle(article) {
+  const title = ebEscapeHtml(article.title || 'Başlıksız Makale');
+  const slug = ebEscapeHtml(article.slug || article.id || '');
+  const category = ebEscapeHtml(article.category || 'diger');
+  const categoryLabel = ebEscapeHtml(ebGetCategoryLabel(article.category));
+
+  return `
+    <a href="#/makale/${slug}" class="home-mini-article category-line--${category}">
+      <span>${categoryLabel}</span>
+      <strong>${title}</strong>
+    </a>
+  `;
+}
+
+function ebCreateHomeCourseFallback(course) {
+  const title = ebEscapeHtml(course.title || 'Başlıksız Kurs');
+  const slug = ebEscapeHtml(course.slug || course.id || '');
+  const summary = ebEscapeHtml(course.description || course.summary || '');
+
+  return `
+    <a href="#/kurs/${slug}" class="home-course-fallback-card">
+      <span>AKADEMİ</span>
+      <h3>${title}</h3>
+      ${summary ? `<p>${summary}</p>` : ''}
+      <strong>Kursa Git →</strong>
+    </a>
+  `;
+}
+
+function ebHomeLoadingTemplate(message) {
+  return `
+    <div class="home-state-v2">
       <div class="loading-state__spinner"></div>
       <span>${ebEscapeHtml(message)}</span>
     </div>
   `;
 }
 
-function ebEmptyStateTemplate(message) {
+function ebHomeEmptyTemplate(message) {
   return `
-    <div class="empty-state">
+    <div class="home-state-v2 home-state-v2--empty">
       <strong>Bilgi</strong>
       <span>${ebEscapeHtml(message)}</span>
     </div>

@@ -1,0 +1,66 @@
+/* ESTİ BİRAZ — v2 Layout Unifier */
+
+@media (max-width: 1180px) {
+  .home-hero-v2-editorial__inner,
+  .home-trust-v2,
+  .home-editorial-latest,
+  .home-academy-preview,
+  .editorial-hero__inner,
+  .editorial-filter-wrap,
+  .editorial-layout,
+  .article-detail-hero__inner,
+  .article-detail-v2 > .container,
+  .academy-hero-v2__inner,
+  .academy-filter-wrap,
+  .academy-layout-v2,
+  .course-detail-hero__inner,
+  .course-detail-main,
+  .lesson-detail-hero__inner,
+  .lesson-detail-layout,
+  .about-hero-v2__inner,
+  .about-v2__layout,
+  .about-values-v2,
+  .not-found-v2__inner {
+    width: calc(100% - 36px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .home-hero-v2-editorial__inner,
+  .home-trust-v2,
+  .home-editorial-latest,
+  .home-academy-preview,
+  .editorial-hero__inner,
+  .editorial-filter-wrap,
+  .editorial-layout,
+  .article-detail-hero__inner,
+  .article-detail-v2 > .container,
+  .academy-hero-v2__inner,
+  .academy-filter-wrap,
+  .academy-layout-v2,
+  .course-detail-hero__inner,
+  .course-detail-main,
+  .lesson-detail-hero__inner,
+  .lesson-detail-layout,
+  .about-hero-v2__inner,
+  .about-v2__layout,
+  .about-values-v2,
+  .not-found-v2__inner {
+    width: calc(100% - 28px);
+  }
+}
+
+.home-hero-v2-editorial h1,
+.editorial-hero h1,
+.academy-hero-v2 h1,
+.course-detail-hero h1,
+.about-hero-v2 h1 {
+  color: #ffffff;
+}
+
+.article-detail-hero h1,
+.lesson-detail-hero h1 {
+  color: #003f3a;
+}
