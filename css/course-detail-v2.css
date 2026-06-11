@@ -133,11 +133,20 @@
   height: 320px;
   display: grid;
   place-items: center;
-  color: #ffffff;
-  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.82);
   background:
-    radial-gradient(circle at 25% 20%, rgba(115, 183, 43, 0.22), transparent 35%),
-    linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+    radial-gradient(circle at 25% 20%, rgba(115, 183, 43, 0.18), transparent 34%),
+    radial-gradient(circle at 80% 25%, rgba(0, 109, 158, 0.18), transparent 30%),
+    linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+}
+
+.course-detail-cover__placeholder span {
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
 }
 
 .course-detail-main {
