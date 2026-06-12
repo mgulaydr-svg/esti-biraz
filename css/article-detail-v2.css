@@ -387,3 +387,77 @@
 .lesson-sidebar__item em {
   margin-top: -2px;
 }
+
+/* Makale detay mobil taşma düzeltmesi */
+
+.article-detail-v2,
+.article-detail-main,
+.article-detail-content,
+.article-detail-content * {
+  box-sizing: border-box;
+}
+
+.article-detail-main,
+.article-detail-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.article-detail-content {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.article-detail-content p,
+.article-detail-content li,
+.article-detail-content blockquote,
+.article-detail-content h2,
+.article-detail-content h3,
+.article-detail-content h4 {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.article-detail-content img,
+.article-detail-content video,
+.article-detail-content iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.article-detail-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.article-detail-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.article-detail-content code {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .article-detail-main {
+    display: block;
+    width: calc(100% - 28px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .article-detail-content {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.04rem;
+    line-height: 1.78;
+  }
+
+  .article-detail-content p {
+    margin-bottom: 1.25em;
+  }
+}
