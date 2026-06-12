@@ -1,0 +1,164 @@
+/* ============================================
+   ESTİ BİRAZ — Card Layout Stabilizer v2
+   JS müdahalesi olmadan ana sayfa + makaleler kartlarını dengeler
+============================================ */
+
+/* Önce eski aşırı hizalama baskılarını yumuşat */
+.home-lead-article,
+.home-small-article,
+.home-mini-article,
+.home-course-card,
+.home-course-fallback-card,
+#app a[href^="#/makale/"] {
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+}
+
+/* Ana sayfa düzeni */
+.home-editorial-grid {
+  align-items: start !important;
+  gap: 22px !important;
+}
+
+.home-editorial-side {
+  align-content: start !important;
+  gap: 22px !important;
+}
+
+.home-lead-article {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.home-lead-article__image {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  max-height: 240px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #f7fbfa !important;
+}
+
+.home-lead-article__image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #f7fbfa !important;
+}
+
+.home-lead-article__body {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+
+.home-small-article,
+.home-mini-article,
+.home-course-card,
+.home-course-fallback-card {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+
+/* Makaleler sayfası ana grid */
+.editorial-layout,
+.editorial-grid,
+.articles-grid,
+.article-grid {
+  align-items: start !important;
+  gap: 22px !important;
+}
+
+/* Sağ sütun kartları içerik kadar yükseklik alsın */
+.editorial-side,
+.articles-side {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-auto-rows: auto !important;
+  gap: 22px !important;
+  align-content: start !important;
+  align-items: start !important;
+}
+
+/* Makaleler sayfasındaki tüm makale kartları */
+#app a[href^="#/makale/"] {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+}
+
+/* Makale kart görsel kutuları */
+#app a[href^="#/makale/"] img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 220px !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #f7fbfa !important;
+  display: block !important;
+}
+
+/* Görselin bulunduğu olası kapsayıcılar */
+.article-card__image,
+.article-card-v2__image,
+.editorial-card__image,
+.editorial-featured-card__image,
+.editorial-featured__image,
+.featured-article__image,
+.featured-card__image,
+.article-card__cover,
+.article-card-v2__cover {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  max-height: 220px !important;
+  overflow: hidden !important;
+  background: #f7fbfa !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Kart metin gövdeleri */
+.article-card__body,
+.article-card-v2__body,
+.editorial-card__body,
+.editorial-featured-card__body,
+.featured-card__body {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+}
+
+/* Oku linkleri tek davranışta kalsın, kartı aşağı itmesin */
+#app a[href^="#/makale/"] strong {
+  margin-top: 8px !important;
+  padding-top: 0 !important;
+}
+
+/* Mobilde her şey tek sütun */
+@media (max-width: 760px) {
+  .home-editorial-grid,
+  .editorial-layout,
+  .editorial-grid,
+  .articles-grid,
+  .article-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-lead-article__image,
+  .article-card__image,
+  .article-card-v2__image,
+  .editorial-card__image,
+  .editorial-featured-card__image,
+  .editorial-featured__image,
+  .featured-article__image,
+  .featured-card__image,
+  .article-card__cover,
+  .article-card-v2__cover {
+    max-height: 210px !important;
+  }
+}
