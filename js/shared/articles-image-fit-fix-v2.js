@@ -1,4 +1,4 @@
-/* ESTİ BİRAZ — Articles Image Fit + Safe Top Layout Fix v2 */
+/* ESTİ BİRAZ — Articles Image Fit + Compact Layout Fix v2 */
 
 (function () {
   function isArticlesPage() {
@@ -11,59 +11,110 @@
     );
   }
 
+  function applyImportantStyle(element, property, value) {
+    if (!element) return;
+    element.style.setProperty(property, value, 'important');
+  }
+
+  function compactArticleContainers(articleLinks) {
+    const containers = new Set();
+
+    articleLinks.forEach(link => {
+      if (link.parentElement) containers.add(link.parentElement);
+      if (link.parentElement?.parentElement) containers.add(link.parentElement.parentElement);
+    });
+
+    containers.forEach(container => {
+      if (!container || container.id === 'app') return;
+
+      const articleCount = container.querySelectorAll('a[href^="#/makale/"]').length;
+      if (articleCount < 1) return;
+
+      applyImportantStyle(container, 'align-items', 'start');
+      applyImportantStyle(container, 'align-content', 'start');
+      applyImportantStyle(container, 'justify-content', 'start');
+      applyImportantStyle(container, 'gap', '22px');
+      applyImportantStyle(container, 'row-gap', '22px');
+    });
+  }
+
   function fixArticleImages() {
     if (!isArticlesPage()) return;
 
-    const articleLinks = document.querySelectorAll('#app a[href^="#/makale/"]');
+    const articleLinks = Array.from(
+      document.querySelectorAll('#app a[href^="#/makale/"]')
+    );
+
+    compactArticleContainers(articleLinks);
 
     articleLinks.forEach(link => {
+      applyImportantStyle(link, 'height', 'auto');
+      applyImportantStyle(link, 'min-height', '0');
+      applyImportantStyle(link, 'align-self', 'start');
+      applyImportantStyle(link, 'justify-content', 'flex-start');
+      applyImportantStyle(link, 'margin-bottom', '0');
+
       const img = link.querySelector('img');
-      if (!img) return;
+
+      if (!img) {
+        applyImportantStyle(link, 'padding-top', '18px');
+        applyImportantStyle(link, 'padding-bottom', '18px');
+        return;
+      }
 
       const imageBox = img.parentElement;
       if (!imageBox) return;
 
       link.classList.add('article-image-top-fixed');
 
-      /*
-        Eski grid/flex yapısını güvenli biçimde tek sütuna alıyoruz.
-        Ama metin gövdesini kaybetmemek için çocuk elemanları ayrıca düzenliyoruz.
-      */
-      link.style.setProperty('display', 'flex', 'important');
-      link.style.setProperty('flex-direction', 'column', 'important');
-      link.style.setProperty('grid-template-columns', '1fr', 'important');
-      link.style.setProperty('height', 'auto', 'important');
-      link.style.setProperty('min-height', 'auto', 'important');
-      link.style.setProperty('overflow', 'hidden', 'important');
+      applyImportantStyle(link, 'display', 'flex');
+      applyImportantStyle(link, 'flex-direction', 'column');
+      applyImportantStyle(link, 'grid-template-columns', '1fr');
+      applyImportantStyle(link, 'gap', '0');
+      applyImportantStyle(link, 'height', 'auto');
+      applyImportantStyle(link, 'min-height', '0');
+      applyImportantStyle(link, 'overflow', 'hidden');
 
-      imageBox.style.setProperty('order', '0', 'important');
-      imageBox.style.setProperty('width', '100%', 'important');
-      imageBox.style.setProperty('height', 'auto', 'important');
-      imageBox.style.setProperty('min-height', '0', 'important');
-      imageBox.style.setProperty('aspect-ratio', '16 / 9', 'important');
-      imageBox.style.setProperty('overflow', 'hidden', 'important');
-      imageBox.style.setProperty('background', '#f7fbfa', 'important');
-      imageBox.style.setProperty('flex', '0 0 auto', 'important');
+      applyImportantStyle(imageBox, 'order', '0');
+      applyImportantStyle(imageBox, 'width', '100%');
+      applyImportantStyle(imageBox, 'height', 'auto');
+      applyImportantStyle(imageBox, 'min-height', '0');
+      applyImportantStyle(imageBox, 'max-height', '220px');
+      applyImportantStyle(imageBox, 'aspect-ratio', '16 / 9');
+      applyImportantStyle(imageBox, 'overflow', 'hidden');
+      applyImportantStyle(imageBox, 'background', '#f7fbfa');
+      applyImportantStyle(imageBox, 'flex', '0 0 auto');
+      applyImportantStyle(imageBox, 'margin', '0');
 
-      img.style.setProperty('width', '100%', 'important');
-      img.style.setProperty('height', '100%', 'important');
-      img.style.setProperty('object-fit', 'contain', 'important');
-      img.style.setProperty('object-position', 'center', 'important');
-      img.style.setProperty('background', '#f7fbfa', 'important');
-      img.style.setProperty('display', 'block', 'important');
+      applyImportantStyle(img, 'width', '100%');
+      applyImportantStyle(img, 'height', '100%');
+      applyImportantStyle(img, 'max-height', '220px');
+      applyImportantStyle(img, 'object-fit', 'contain');
+      applyImportantStyle(img, 'object-position', 'center');
+      applyImportantStyle(img, 'background', '#f7fbfa');
+      applyImportantStyle(img, 'display', 'block');
 
       Array.from(link.children).forEach(child => {
         if (child === imageBox) return;
 
-        child.style.setProperty('order', '1', 'important');
-        child.style.setProperty('display', 'block', 'important');
-        child.style.setProperty('width', '100%', 'important');
-        child.style.setProperty('height', 'auto', 'important');
-        child.style.setProperty('min-height', '0', 'important');
-        child.style.setProperty('opacity', '1', 'important');
-        child.style.setProperty('visibility', 'visible', 'important');
-        child.style.setProperty('position', 'relative', 'important');
-        child.style.setProperty('flex', '0 0 auto', 'important');
+        applyImportantStyle(child, 'order', '1');
+        applyImportantStyle(child, 'display', 'block');
+        applyImportantStyle(child, 'width', '100%');
+        applyImportantStyle(child, 'height', 'auto');
+        applyImportantStyle(child, 'min-height', '0');
+        applyImportantStyle(child, 'margin-top', '0');
+        applyImportantStyle(child, 'padding-top', '18px');
+        applyImportantStyle(child, 'padding-bottom', '18px');
+        applyImportantStyle(child, 'opacity', '1');
+        applyImportantStyle(child, 'visibility', 'visible');
+        applyImportantStyle(child, 'position', 'relative');
+        applyImportantStyle(child, 'flex', '0 0 auto');
+      });
+
+      const textBlocks = link.querySelectorAll('h1, h2, h3, p, span, strong');
+      textBlocks.forEach(el => {
+        applyImportantStyle(el, 'opacity', '1');
+        applyImportantStyle(el, 'visibility', 'visible');
       });
     });
   }
