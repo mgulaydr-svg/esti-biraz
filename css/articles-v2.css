@@ -421,3 +421,29 @@
 .article-image-top-fixed img {
   max-height: 280px;
 }
+
+/* Makaleler sayfası: görsel üstte, metin altta güvenli kart yapısı */
+
+.article-image-top-fixed {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: auto !important;
+}
+
+.article-image-top-fixed > *:not(:first-child) {
+  width: 100%;
+}
+
+.article-image-top-fixed img {
+  max-height: 280px;
+}
+
+.article-image-top-fixed h2,
+.article-image-top-fixed h3,
+.article-image-top-fixed p,
+.article-image-top-fixed span,
+.article-image-top-fixed strong {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
