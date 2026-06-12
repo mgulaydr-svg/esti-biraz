@@ -152,7 +152,7 @@ function ebCreateHomeLeadArticle(article) {
         <span>${categoryLabel}</span>
         <h3>${title}</h3>
         ${summary ? `<p>${summary}</p>` : ''}
-        <strong>Devamını Oku →</strong>
+        <strong>Oku →</strong>
       </div>
     </a>
   `;
