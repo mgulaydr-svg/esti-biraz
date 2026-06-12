@@ -412,3 +412,12 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
 }
+
+/* Makaleler kartlarında görsel üstte, metin altta */
+.article-image-top-fixed {
+  overflow: hidden;
+}
+
+.article-image-top-fixed img {
+  max-height: 280px;
+}
