@@ -1,4 +1,4 @@
-/* ESTİ BİRAZ — Articles Image Fit + Layout Final Fix v2 */
+/* ESTİ BİRAZ — Articles Image Fit + Compact Layout Final v2 */
 
 (function () {
   function isArticlesPage() {
@@ -46,7 +46,7 @@
       setStyle(mainGrid, 'display', 'grid');
       setStyle(mainGrid, 'grid-template-columns', 'minmax(0, 1.55fr) minmax(280px, 0.85fr)');
       setStyle(mainGrid, 'gap', '22px');
-      setStyle(mainGrid, 'align-items', 'stretch');
+      setStyle(mainGrid, 'align-items', 'start');
     }
 
     if (second && third && second.parentElement === third.parentElement) {
@@ -54,9 +54,10 @@
 
       setStyle(rightColumn, 'display', 'grid');
       setStyle(rightColumn, 'grid-template-columns', '1fr');
-      setStyle(rightColumn, 'grid-template-rows', '1fr 1fr');
+      setStyle(rightColumn, 'grid-template-rows', 'auto auto');
       setStyle(rightColumn, 'gap', '22px');
-      setStyle(rightColumn, 'align-content', 'stretch');
+      setStyle(rightColumn, 'align-content', 'start');
+      setStyle(rightColumn, 'align-items', 'start');
     }
   }
 
@@ -65,9 +66,9 @@
 
     setStyle(link, 'display', 'flex');
     setStyle(link, 'flex-direction', 'column');
-    setStyle(link, 'height', '100%');
+    setStyle(link, 'height', 'auto');
     setStyle(link, 'min-height', '0');
-    setStyle(link, 'align-self', 'stretch');
+    setStyle(link, 'align-self', 'start');
     setStyle(link, 'justify-content', 'flex-start');
     setStyle(link, 'margin', '0');
     setStyle(link, 'overflow', 'hidden');
@@ -83,12 +84,13 @@
       link.classList.add('article-image-top-fixed');
 
       setStyle(link, 'grid-template-columns', '1fr');
+      setStyle(link, 'gap', '0');
 
       setStyle(imageBox, 'order', '0');
       setStyle(imageBox, 'width', '100%');
       setStyle(imageBox, 'height', 'auto');
       setStyle(imageBox, 'min-height', '0');
-      setStyle(imageBox, 'max-height', index === 0 ? '220px' : '180px');
+      setStyle(imageBox, 'max-height', index === 0 ? '210px' : '170px');
       setStyle(imageBox, 'aspect-ratio', '16 / 9');
       setStyle(imageBox, 'overflow', 'hidden');
       setStyle(imageBox, 'background', '#f7fbfa');
@@ -100,7 +102,7 @@
 
       setStyle(img, 'width', '100%');
       setStyle(img, 'height', '100%');
-      setStyle(img, 'max-height', index === 0 ? '220px' : '180px');
+      setStyle(img, 'max-height', index === 0 ? '210px' : '170px');
       setStyle(img, 'object-fit', 'contain');
       setStyle(img, 'object-position', 'center center');
       setStyle(img, 'background', '#f7fbfa');
@@ -116,12 +118,12 @@
       setStyle(child, 'width', '100%');
       setStyle(child, 'height', 'auto');
       setStyle(child, 'min-height', '0');
-      setStyle(child, 'padding-top', '18px');
-      setStyle(child, 'padding-bottom', '18px');
+      setStyle(child, 'padding-top', '16px');
+      setStyle(child, 'padding-bottom', '16px');
       setStyle(child, 'opacity', '1');
       setStyle(child, 'visibility', 'visible');
       setStyle(child, 'position', 'relative');
-      setStyle(child, 'flex', '1 1 auto');
+      setStyle(child, 'flex', '0 0 auto');
     });
 
     const readLinks = Array.from(link.querySelectorAll('strong')).filter(strong => {
@@ -131,8 +133,8 @@
 
     readLinks.forEach(strong => {
       strong.textContent = 'Oku →';
-      setStyle(strong, 'margin-top', 'auto');
-      setStyle(strong, 'padding-top', '12px');
+      setStyle(strong, 'margin-top', '8px');
+      setStyle(strong, 'padding-top', '0');
     });
   }
 
@@ -161,6 +163,7 @@
 
         setStyle(grid, 'grid-template-columns', '1fr');
         setStyle(grid, 'grid-template-rows', 'auto');
+        setStyle(grid, 'align-items', 'start');
       });
 
       articleLinks.forEach(link => {
