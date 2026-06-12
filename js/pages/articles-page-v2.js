@@ -152,7 +152,7 @@ function ebCreateEditorialLeadCard(article) {
 
         ${summary ? `<p>${summary}</p>` : ''}
 
-        <strong>Devamını Oku →</strong>
+        <strong>Oku →</strong>
       </div>
     </a>
   `;
@@ -212,7 +212,7 @@ function ebCreateEditorialListCard(article) {
 
         ${summary ? `<p>${summary}</p>` : ''}
 
-        <strong>Devamını Oku →</strong>
+        <strong>Oku →</strong>
       </div>
     </a>
   `;
