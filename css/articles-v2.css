@@ -436,7 +436,7 @@
 }
 
 .article-image-top-fixed img {
-  max-height: 280px;
+  max-height: 240px;
 }
 
 .article-image-top-fixed h2,
@@ -446,4 +446,64 @@
 .article-image-top-fixed strong {
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+/* Makaleler sayfası kart sıkılaştırma */
+
+body.route-articles .editorial-grid,
+body.route-articles .home-editorial-grid {
+  align-items: start;
+}
+
+body.route-articles .editorial-side,
+body.route-articles .home-editorial-side {
+  align-content: start;
+}
+
+body.route-articles a[href^="#/makale/"] {
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+}
+
+/* Büyük kart */
+body.route-articles .article-image-top-fixed {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+body.route-articles .article-image-top-fixed img {
+  max-height: 240px;
+}
+
+/* Büyük kart metin alanı */
+body.route-articles .article-image-top-fixed > *:not(:first-child) {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+
+/* Sağdaki küçük kartlar */
+body.route-articles .home-small-article,
+body.route-articles .editorial-card,
+body.route-articles .article-card,
+body.route-articles .article-card-v2 {
+  min-height: 0 !important;
+  height: auto !important;
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+
+/* Küçük kart metin aralıkları */
+body.route-articles .home-small-article h3,
+body.route-articles .editorial-card h3,
+body.route-articles .article-card h3,
+body.route-articles .article-card-v2 h3 {
+  margin-bottom: 10px !important;
+}
+
+body.route-articles .home-small-article p,
+body.route-articles .editorial-card p,
+body.route-articles .article-card p,
+body.route-articles .article-card-v2 p {
+  margin-bottom: 10px !important;
 }
