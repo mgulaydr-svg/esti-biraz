@@ -1,4 +1,4 @@
-/* ESTİ BİRAZ — Articles Image Fit + Compact Layout Fix v2 */
+/* ESTİ BİRAZ — Articles Image Fit + Layout Final Fix v2 */
 
 (function () {
   function isArticlesPage() {
@@ -11,121 +11,172 @@
     );
   }
 
-  function applyImportantStyle(element, property, value) {
+  function setStyle(element, property, value) {
     if (!element) return;
     element.style.setProperty(property, value, 'important');
   }
 
-  function compactArticleContainers(articleLinks) {
-    const containers = new Set();
-
-    articleLinks.forEach(link => {
-      if (link.parentElement) containers.add(link.parentElement);
-      if (link.parentElement?.parentElement) containers.add(link.parentElement.parentElement);
-    });
-
-    containers.forEach(container => {
-      if (!container || container.id === 'app') return;
-
-      const articleCount = container.querySelectorAll('a[href^="#/makale/"]').length;
-      if (articleCount < 1) return;
-
-      applyImportantStyle(container, 'align-items', 'start');
-      applyImportantStyle(container, 'align-content', 'start');
-      applyImportantStyle(container, 'justify-content', 'start');
-      applyImportantStyle(container, 'gap', '22px');
-      applyImportantStyle(container, 'row-gap', '22px');
-    });
+  function getArticleLinks() {
+    return Array.from(document.querySelectorAll('#app a[href^="#/makale/"]'));
   }
 
-  function fixArticleImages() {
-    if (!isArticlesPage()) return;
+  function findSharedParent(a, b) {
+    if (!a || !b) return null;
 
-    const articleLinks = Array.from(
-      document.querySelectorAll('#app a[href^="#/makale/"]')
-    );
+    let parent = a.parentElement;
 
-    compactArticleContainers(articleLinks);
+    while (parent && parent !== document.body) {
+      if (parent.contains(b)) return parent;
+      parent = parent.parentElement;
+    }
 
-    articleLinks.forEach(link => {
-      applyImportantStyle(link, 'height', 'auto');
-      applyImportantStyle(link, 'min-height', '0');
-      applyImportantStyle(link, 'align-self', 'start');
-      applyImportantStyle(link, 'justify-content', 'flex-start');
-      applyImportantStyle(link, 'margin-bottom', '0');
+    return null;
+  }
 
-      const img = link.querySelector('img');
+  function fixMainArticlesLayout(articleLinks) {
+    if (articleLinks.length < 2) return;
 
-      if (!img) {
-        applyImportantStyle(link, 'padding-top', '18px');
-        applyImportantStyle(link, 'padding-bottom', '18px');
-        return;
-      }
+    const first = articleLinks[0];
+    const second = articleLinks[1];
+    const third = articleLinks[2];
 
+    const mainGrid = findSharedParent(first, second);
+
+    if (mainGrid && mainGrid.id !== 'app') {
+      setStyle(mainGrid, 'display', 'grid');
+      setStyle(mainGrid, 'grid-template-columns', 'minmax(0, 1.55fr) minmax(280px, 0.85fr)');
+      setStyle(mainGrid, 'gap', '22px');
+      setStyle(mainGrid, 'align-items', 'stretch');
+    }
+
+    if (second && third && second.parentElement === third.parentElement) {
+      const rightColumn = second.parentElement;
+
+      setStyle(rightColumn, 'display', 'grid');
+      setStyle(rightColumn, 'grid-template-columns', '1fr');
+      setStyle(rightColumn, 'grid-template-rows', '1fr 1fr');
+      setStyle(rightColumn, 'gap', '22px');
+      setStyle(rightColumn, 'align-content', 'stretch');
+    }
+  }
+
+  function fixArticleCard(link, index) {
+    const img = link.querySelector('img');
+
+    setStyle(link, 'display', 'flex');
+    setStyle(link, 'flex-direction', 'column');
+    setStyle(link, 'height', '100%');
+    setStyle(link, 'min-height', '0');
+    setStyle(link, 'align-self', 'stretch');
+    setStyle(link, 'justify-content', 'flex-start');
+    setStyle(link, 'margin', '0');
+    setStyle(link, 'overflow', 'hidden');
+
+    if (!img) {
+      setStyle(link, 'padding-top', '18px');
+      setStyle(link, 'padding-bottom', '18px');
+    }
+
+    if (img) {
       const imageBox = img.parentElement;
-      if (!imageBox) return;
 
       link.classList.add('article-image-top-fixed');
 
-      applyImportantStyle(link, 'display', 'flex');
-      applyImportantStyle(link, 'flex-direction', 'column');
-      applyImportantStyle(link, 'grid-template-columns', '1fr');
-      applyImportantStyle(link, 'gap', '0');
-      applyImportantStyle(link, 'height', 'auto');
-      applyImportantStyle(link, 'min-height', '0');
-      applyImportantStyle(link, 'overflow', 'hidden');
+      setStyle(link, 'grid-template-columns', '1fr');
 
-      applyImportantStyle(imageBox, 'order', '0');
-      applyImportantStyle(imageBox, 'width', '100%');
-      applyImportantStyle(imageBox, 'height', 'auto');
-      applyImportantStyle(imageBox, 'min-height', '0');
-      applyImportantStyle(imageBox, 'max-height', '220px');
-      applyImportantStyle(imageBox, 'aspect-ratio', '16 / 9');
-      applyImportantStyle(imageBox, 'overflow', 'hidden');
-      applyImportantStyle(imageBox, 'background', '#f7fbfa');
-      applyImportantStyle(imageBox, 'flex', '0 0 auto');
-      applyImportantStyle(imageBox, 'margin', '0');
+      setStyle(imageBox, 'order', '0');
+      setStyle(imageBox, 'width', '100%');
+      setStyle(imageBox, 'height', 'auto');
+      setStyle(imageBox, 'min-height', '0');
+      setStyle(imageBox, 'max-height', index === 0 ? '220px' : '180px');
+      setStyle(imageBox, 'aspect-ratio', '16 / 9');
+      setStyle(imageBox, 'overflow', 'hidden');
+      setStyle(imageBox, 'background', '#f7fbfa');
+      setStyle(imageBox, 'display', 'flex');
+      setStyle(imageBox, 'align-items', 'center');
+      setStyle(imageBox, 'justify-content', 'center');
+      setStyle(imageBox, 'flex', '0 0 auto');
+      setStyle(imageBox, 'margin', '0');
 
-      applyImportantStyle(img, 'width', '100%');
-      applyImportantStyle(img, 'height', '100%');
-      applyImportantStyle(img, 'max-height', '220px');
-      applyImportantStyle(img, 'object-fit', 'contain');
-      applyImportantStyle(img, 'object-position', 'center');
-      applyImportantStyle(img, 'background', '#f7fbfa');
-      applyImportantStyle(img, 'display', 'block');
+      setStyle(img, 'width', '100%');
+      setStyle(img, 'height', '100%');
+      setStyle(img, 'max-height', index === 0 ? '220px' : '180px');
+      setStyle(img, 'object-fit', 'contain');
+      setStyle(img, 'object-position', 'center center');
+      setStyle(img, 'background', '#f7fbfa');
+      setStyle(img, 'display', 'block');
+    }
 
-      Array.from(link.children).forEach(child => {
-        if (child === imageBox) return;
+    Array.from(link.children).forEach(child => {
+      if (img && child === img.parentElement) return;
 
-        applyImportantStyle(child, 'order', '1');
-        applyImportantStyle(child, 'display', 'block');
-        applyImportantStyle(child, 'width', '100%');
-        applyImportantStyle(child, 'height', 'auto');
-        applyImportantStyle(child, 'min-height', '0');
-        applyImportantStyle(child, 'margin-top', '0');
-        applyImportantStyle(child, 'padding-top', '18px');
-        applyImportantStyle(child, 'padding-bottom', '18px');
-        applyImportantStyle(child, 'opacity', '1');
-        applyImportantStyle(child, 'visibility', 'visible');
-        applyImportantStyle(child, 'position', 'relative');
-        applyImportantStyle(child, 'flex', '0 0 auto');
-      });
-
-      const textBlocks = link.querySelectorAll('h1, h2, h3, p, span, strong');
-      textBlocks.forEach(el => {
-        applyImportantStyle(el, 'opacity', '1');
-        applyImportantStyle(el, 'visibility', 'visible');
-      });
+      setStyle(child, 'order', '1');
+      setStyle(child, 'display', 'flex');
+      setStyle(child, 'flex-direction', 'column');
+      setStyle(child, 'width', '100%');
+      setStyle(child, 'height', 'auto');
+      setStyle(child, 'min-height', '0');
+      setStyle(child, 'padding-top', '18px');
+      setStyle(child, 'padding-bottom', '18px');
+      setStyle(child, 'opacity', '1');
+      setStyle(child, 'visibility', 'visible');
+      setStyle(child, 'position', 'relative');
+      setStyle(child, 'flex', '1 1 auto');
     });
+
+    const readLinks = Array.from(link.querySelectorAll('strong')).filter(strong => {
+      const text = (strong.textContent || '').trim().toLowerCase();
+      return text.includes('oku');
+    });
+
+    readLinks.forEach(strong => {
+      strong.textContent = 'Oku →';
+      setStyle(strong, 'margin-top', 'auto');
+      setStyle(strong, 'padding-top', '12px');
+    });
+  }
+
+  function fixArticleImagesAndLayout() {
+    if (!isArticlesPage()) return;
+
+    const articleLinks = getArticleLinks();
+    if (!articleLinks.length) return;
+
+    fixMainArticlesLayout(articleLinks);
+
+    articleLinks.forEach((link, index) => {
+      fixArticleCard(link, index);
+    });
+
+    if (window.innerWidth <= 760) {
+      const possibleGrids = new Set();
+
+      articleLinks.forEach(link => {
+        if (link.parentElement) possibleGrids.add(link.parentElement);
+        if (link.parentElement?.parentElement) possibleGrids.add(link.parentElement.parentElement);
+      });
+
+      possibleGrids.forEach(grid => {
+        if (!grid || grid.id === 'app') return;
+
+        setStyle(grid, 'grid-template-columns', '1fr');
+        setStyle(grid, 'grid-template-rows', 'auto');
+      });
+
+      articleLinks.forEach(link => {
+        setStyle(link, 'height', 'auto');
+      });
+    }
   }
 
   function run() {
     clearTimeout(window.__ebArticleImageFixTimer);
-    window.__ebArticleImageFixTimer = setTimeout(fixArticleImages, 150);
+    window.__ebArticleImageFixTimer = setTimeout(fixArticleImagesAndLayout, 180);
   }
 
   document.addEventListener('DOMContentLoaded', run);
   window.addEventListener('hashchange', run);
+  window.addEventListener('resize', run);
 
   document.addEventListener('DOMContentLoaded', () => {
     const app = document.getElementById('app');
