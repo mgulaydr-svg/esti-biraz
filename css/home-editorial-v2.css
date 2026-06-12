@@ -446,3 +446,74 @@
 .home-course-card.category-line--diger {
   border-top-color: #003f3a;
 }
+
+/* Ana sayfa kart sıkılaştırma */
+
+.home-editorial-grid,
+.home-course-preview-grid,
+.home-editorial-more {
+  align-items: start;
+}
+
+.home-editorial-side {
+  align-content: start;
+}
+
+.home-lead-article,
+.home-small-article,
+.home-mini-article,
+.home-course-card,
+.home-course-fallback-card {
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start !important;
+}
+
+/* Ana sayfa büyük makale görseli */
+.home-lead-article__image {
+  max-height: 240px;
+}
+
+.home-lead-article__image img {
+  max-height: 240px;
+}
+
+/* Büyük kart metin alanı */
+.home-lead-article__body {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+/* Sağdaki / alttaki küçük makale kartları */
+.home-small-article,
+.home-mini-article {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.home-small-article h3,
+.home-mini-article strong {
+  margin-bottom: 10px;
+}
+
+.home-small-article p {
+  margin-bottom: 10px;
+}
+
+/* Ana sayfa kurs kartları */
+.home-course-card,
+.home-course-fallback-card {
+  min-height: 0 !important;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.home-course-card h3,
+.home-course-fallback-card h3 {
+  margin-bottom: 10px;
+}
+
+.home-course-card p,
+.home-course-fallback-card p {
+  margin-bottom: 10px;
+}
