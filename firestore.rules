@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ══════════════════════════════════════════════
+    //  YARDIMCI FONKSİYONLAR (GÜVENLİK KATMANI)
+    // ══════════════════════════════════════════════
+    
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdminOrEditor() {
+      return isLoggedIn() && 
+        (getUserData().role == 'admin' || getUserData().role == 'editor');
+    }
+    
+    function isOwner(userId) {
+      return isLoggedIn() && request.auth.uid == userId;
+    }
+
+    // ══════════════════════════════════════════════
+    //  KOLEKSİYON KURALLARI
+    // ══════════════════════════════════════════════
+
+    // Makaleler (articles)
+    match /articles/{articleId} {
+      allow read: if resource.data.status == 'published' || isAdminOrEditor();
+      allow write: if isAdminOrEditor();
+    }
+
+    // Kurslar ve Müfredat (courses & lessons subcollection)
+    match /courses/{courseId} {
+      allow read: if resource.data.status == 'published' || isAdminOrEditor();
+      allow write: if isAdminOrEditor();
+      
+      match /lessons/{lessonId} {
+        // Üst kurs yayınlanmışsa veya yetkili kullanıcıysa ders listesi okunabilir
+        allow read: if get(/databases/$(database)/documents/courses/$(courseId)).data.status == 'published' || isAdminOrEditor();
+        allow write: if isAdminOrEditor();
+      }
+    }
+
+    // Kullanıcı Profilleri (users)
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdminOrEditor();
+      // Yetki Yükseltme (Privilege Escalation) Koruması: Kayıt esnasında sadece 'reader' rolüne izin verilir
+      allow create: if isOwner(userId) && request.resource.data.role == 'reader';
+      // Profil güncellerken rolün değiştirilmesi kısıtlanır, sadece yetkili admin rol atayabilir
+      allow update: if isOwner(userId) && request.resource.data.role == resource.data.role || (isLoggedIn() && getUserData().role == 'admin');
+      allow delete: if isOwner(userId) || (isLoggedIn() && getUserData().role == 'admin');
+    }
+
+    // Kurs Kayıtları ve İlerleme Durumları (enrollments)
+    match /enrollments/{enrollmentId} {
+      allow read: if isAdminOrEditor() || (isLoggedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isLoggedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isLoggedIn() && (resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) || isAdminOrEditor();
+      allow delete: if isAdminOrEditor() || (isLoggedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // Makale Sayaçları ve İstatistikleri (articleStats)
+    match /articleStats/{slug} {
+      allow read: if true;
+      // Anonim sürveyans ve hit sayacı artırımı için herkese açık güncelleme izni
+      allow create, update: if true;
+    }
+
+    // Anonim / Otantik Beğeniler (likes)
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create, delete: if true;
+    }
+
+    // Ziyaretçi Yorumları (comments)
+    match /comments/{commentId} {
+      allow read: if resource.data.approved == true || isAdminOrEditor();
+      allow create: if true; // Eğitim modüllerine geri bildirim için herkese açık yorum izni
+      allow update, delete: if isAdminOrEditor();
+    }
+  }
+}
