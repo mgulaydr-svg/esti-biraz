@@ -569,9 +569,11 @@ async function saveLesson(courseId, lessonId) {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
+  // saveLesson içindeki type === 'text' bloğunu bununla değiştir:
   if (type === 'text') {
-    lessonData.content = document.getElementById('lessonContent').value.trim();
-    lessonData.videoUrl = '';
+    lessonData.content = document.getElementById('lessonContent').innerHTML; // .value.trim() olan kısım .innerHTML yapıldı
+    lessonData.mediaUrl = '';
+    lessonData.duration = 0;
   } else {
     lessonData.videoUrl = document.getElementById('lessonMediaUrl').value.trim();
     lessonData.content = '';
