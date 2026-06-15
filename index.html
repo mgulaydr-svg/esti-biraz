@@ -4,25 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ESTİ BİRAZ — Sağlık, bilim ve eğitim platformu. Makaleler, kurslar ve daha fazlası.">
-  <meta name="theme-color" content="#2563EB">
+  <meta name="theme-color" content="#052962">
 
   <!-- Open Graph -->
   <meta property="og:title" content="ESTİ BİRAZ">
   <meta property="og:description" content="Sağlık, bilim ve eğitim platformu">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/images/og-cover.jpg">
 
   <!-- Favicon -->
-  <link rel="icon" href="assets/icons/favicon.ico">
-  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" href="assets/esti-biraz-logo.svg" type="image/svg+xml">
   <link rel="icon" type="image/png" href="assets/favicon.png">
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Georgia:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- Stil Dosyaları -->
+  <!-- Stil Dosyaları (1.0 base + 1.1 look adaptation) -->
   <link rel="stylesheet" href="css/main.css?v=1.8">
   <link rel="stylesheet" href="css/home-v2.css">
   <link rel="stylesheet" href="css/magazin.css?v=1.8">
@@ -41,52 +39,53 @@
   <link rel="stylesheet" href="css/home-editorial-v2.css">
   <link rel="stylesheet" href="css/v2-layout-unifier.css">
   <link rel="stylesheet" href="css/lesson-completion-v2.css">
-  <!-- <link rel="stylesheet" href="css/card-alignment-final-v2.css"> -->
-  <!-- <link rel="stylesheet" href="css/card-layout-stabilizer-v2.css"> -->
-  <!-- <link rel="stylesheet" href="css/card-equal-height-final-v2.css"> -->
   <link rel="stylesheet" href="css/card-system-final-v2.css">
   
-
+  <!-- 1.1 Look Adaptation (Guardian style - modern masthead, cards, colors, typography) -->
+  <link rel="stylesheet" href="css/1.1-look-adaptation.css">
+  
   <title>ESTİ BİRAZ</title>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     HEADER / NAVİGASYON
-═══════════════════════════════════════════ -->
-<header class="header" id="header">
-  <div class="container header__inner">
-
-    <!-- Logo (Parça 1.8 — Resim + metin fallback) -->
-    <a href="#/" class="header__logo" aria-label="Esti Biraz ana sayfa">
-      <img src="assets/logo.png" alt="" class="header__logo-img">
-      <span class="header__logo-text">Esti Biraz</span>
-    </a>
-
-    <!-- Ana Menü -->
-    <nav class="header__nav" id="mainNav">
-      <a href="#/" class="nav-link active">Ana Sayfa</a>
-      <a href="#/makaleler" class="nav-link">Makaleler</a>
-      <a href="#/akademi" class="nav-link">Akademi</a>
-      <a href="#/hakkinda" class="nav-link">Hakkında</a>
-    </nav>
-
-    <!-- Sağ Taraf: Auth / Profil Alanı (Parça 1.8) -->
-    <div class="header__actions" id="headerAuth">
-      <!-- JS tarafından doldurulacak (updateHeaderAuth fonksiyonu) -->
-      <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">
-        Giriş Yap
-      </button>
+<!-- 1.1 STYLE TOP STRIP + MASTHEAD (exact structure from 1.1) -->
+<header class="site-header" data-site-header>
+  <section class="top-strip" aria-label="Üst bilgi">
+    <div class="container top-strip__inner">
+      <time id="todayLabel" datetime="2026-06-15">15 Haziran 2026</time>
+      <span>Sağlık • Bilim • Eğitim • Veri</span>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Koyu/açık görünümü değiştir">◐</button>
     </div>
+  </section>
 
-    <!-- Mobil Hamburger -->
-    <button class="header__hamburger" id="hamburger" aria-label="Menüyü aç">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+  <section class="masthead">
+    <div class="container masthead__inner">
+      <a class="brand" href="#/" aria-label="ESTİ BİRAZ ana sayfa">
+        <img class="brand__mark" src="assets/esti-biraz-logo.svg" alt="" width="62" height="62" />
+        <span class="brand__text">
+          <strong>ESTİ BİRAZ</strong>
+          <small>Sağlık, bilim, eğitim ve veri odaklı bilgi platformu</small>
+        </span>
+      </a>
+      <form class="search" id="searchForm" role="search" onsubmit="return false;">
+        <label class="sr-only" for="quickSearch">Sitede ara</label>
+        <input id="quickSearch" type="search" placeholder="Yazı, ders, konu ara…" autocomplete="off" />
+        <button type="submit">Ara</button>
+      </form>
+      <div class="account-actions" id="headerAuth">
+        <button class="ghost-button" id="btnLogin" type="button" onclick="login()">Giriş Yap</button>
+      </div>
+    </div>
+  </section>
 
-  </div>
+  <nav class="section-nav" aria-label="Ana gezinme">
+    <div class="container section-nav__inner">
+      <a href="#/">Ana Sayfa</a>
+      <a href="#/makaleler">Makaleler</a>
+      <a href="#/akademi">Akademi</a>
+      <a href="#/hakkinda">Hakkında</a>
+    </div>
+  </nav>
 </header>
 
 <!-- ═══════════════════════════════════════════
@@ -99,44 +98,27 @@
   </div>
 </main>
 
-<!-- ═══════════════════════════════════════════
-     FOOTER (Parça 1.8 — Logo entegrasyonu)
-═══════════════════════════════════════════ -->
-<footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__brand">
-      <img src="assets/logo.png" alt="ESTİ BİRAZ" class="footer__logo"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-      <span class="footer__logo-fallback" style="display:none;">
-        <span class="logo-icon">🚀</span>
-        <span class="logo-text">ESTİ BİRAZ</span>
-      </span>
-      <p class="footer__tagline">Sağlık, bilim ve eğitim platformu.</p>
+<!-- 1.1 exact footer -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <strong>ESTİ BİRAZ</strong>
+      <p>Sağlık, bilim, eğitim ve veri odaklı bilgi platformu.</p>
     </div>
-    <div class="footer__links">
-      <div class="footer__col">
-        <h4>Platform</h4>
-        <a href="#/magazin">Makaleler</a>
-        <a href="#/akademi">Akademi</a>
-        <a href="#/hakkinda">Hakkında</a>
-      </div>
-      <div class="footer__col">
-        <h4>Yasal</h4>
-        <a href="#/gizlilik">Gizlilik Politikası</a>
-        <a href="#/kullanim-sartlari">Kullanım Şartları</a>
-      </div>
+    <div>
+      <span>Platform</span>
+      <a href="#/makaleler" style="color:rgba(255,255,255,.85);display:block;margin:2px 0;">Makaleler</a>
+      <a href="#/akademi" style="color:rgba(255,255,255,.85);display:block;margin:2px 0;">Akademi</a>
+      <a href="#/hakkinda" style="color:rgba(255,255,255,.85);display:block;margin:2px 0;">Hakkında</a>
     </div>
-    <p class="footer__copy">© 2026 ESTİ BİRAZ. Tüm hakları saklıdır.</p>
+    <div>
+      <span>Yasal</span>
+      <a href="#/gizlilik" style="color:rgba(255,255,255,.85);display:block;margin:2px 0;">Gizlilik Politikası</a>
+      <a href="#/kullanim-sartlari" style="color:rgba(255,255,255,.85);display:block;margin:2px 0;">Kullanım Şartları</a>
+    </div>
   </div>
+  <div style="text-align:center;margin-top:16px;color:rgba(255,255,255,0.6);font-size:0.8rem;">© 2026 ESTİ BİRAZ. 1.0 yapısı + 1.1 görünümü.</div>
 </footer>
-
-<!-- ═══════════════════════════════════════════
-     SCRİPTLER
-═══════════════════════════════════════════ -->
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <!-- Uygulama Scriptleri -->
 <script src="js/firebase-config.js"></script>
@@ -166,13 +148,58 @@
 <script src="js/pages/course-detail-page-v2.js"></script>
 <script src="js/pages/lesson-detail-page-v2.js"></script>
 <script src="js/pages/not-found-page-v2.js"></script>
-  <script src="js/pages/about-page-v2.js"></script>
-  
+<script src="js/pages/about-page-v2.js"></script>
 <script src="js/firestore-data.js"></script>
 <script src="js/router.js"></script>
 <script src="js/shared/ui.js"></script>
 <script src="js/shared/v2-ui.js"></script>
-<!-- <script src="js/shared/articles-image-fit-fix-v2.js"></script> -->
 <script src="js/shared/lesson-completion-v2.js"></script>
+
+<!-- Theme toggle and quick search for 1.1 look -->
+<script>
+(function() {
+  // Theme toggle
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      html.dataset.theme = next;
+      localStorage.setItem('esti-biraz:theme', next);
+    });
+    const saved = localStorage.getItem('esti-biraz:theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+  }
+
+  // Quick search (simple redirect to articles page + filter simulation)
+  const qs = document.getElementById('quickSearch');
+  if (qs) {
+    qs.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const term = qs.value.trim();
+        if (term) {
+          window.location.hash = '#/makaleler';
+          // Give the page time to render then try to trigger filter if possible
+          setTimeout(() => {
+            const input = document.querySelector('#searchInput, input[type="search"]');
+            if (input) {
+              input.value = term;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          }, 600);
+        }
+      }
+    });
+  }
+
+  // Set today's date in top strip
+  const todayEl = document.getElementById('todayLabel');
+  if (todayEl) {
+    const d = new Date();
+    todayEl.textContent = d.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
+    todayEl.dateTime = d.toISOString().slice(0,10);
+  }
+})();
+</script>
 </body>
 </html>
