@@ -2,6 +2,26 @@
    ESTİ BİRAZ — Yönetim Paneli (admin.js) - TAM SÜRÜM
    ============================================ */
 
+// Doğrudan Input'a Cloudinary Yüklemesi Yapar
+function uploadDirectCoverImage(inputId, previewId) {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    document.getElementById(previewId).innerHTML = '⏳ Yükleniyor...';
+    try {
+      const res = await uploadToCloudinary(file);
+      document.getElementById(inputId).value = res.url;
+      document.getElementById(previewId).innerHTML = `<img src="${res.url}" style="max-height:140px; border-radius:12px; margin-top:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">`;
+    } catch(err) {
+      document.getElementById(previewId).innerHTML = '❌ Hata: ' + err.message;
+    }
+  };
+  fileInput.click();
+}
+
 // ══════════════════════════════════════════════
 //  1. MAKALE YÖNETİMİ
 // ══════════════════════════════════════════════
