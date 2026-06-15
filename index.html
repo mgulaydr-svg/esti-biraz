@@ -1,18 +1,12 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="light">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ESTİ BİRAZ — Sağlık, bilim ve eğitim platformu. Makaleler, kurslar ve zengin ders modülleri.">
+  <meta name="description" content="ESTİ BİRAZ — Sağlık, bilim ve eğitim platformu.">
   <meta name="theme-color" content="#052962">
 
-  <meta property="og:title" content="ESTİ BİRAZ">
-  <meta property="og:description" content="Sağlık, bilim ve eğitim platformu">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/images/og-cover.jpg">
-
   <link rel="icon" href="assets/icons/favicon.ico">
-  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="assets/favicon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,103 +19,48 @@
 </head>
 <body>
 
-  <section class="top-strip" aria-label="Üst Şerit">
-    <div class="container top-strip__inner">
-      <span>Sağlık • Bilim • Eğitim • Veri</span>
-      <button class="ghost-button" id="themeToggle" style="padding: 2px 10px; font-size: 0.85rem; background: rgba(255,255,255,0.1); color:#fff; border-color: rgba(255,255,255,0.2);">Koyu Tema ◐</button>
-    </div>
-  </section>
+<header class="header" id="header">
+  <div class="container header__inner" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0;">
+    <a href="#/" class="header__logo" aria-label="Esti Biraz ana sayfa" style="display: flex; align-items: center; gap: 12px; font-weight: 900; font-family: Georgia, serif; font-size: 1.5rem;">
+      <img src="assets/logo.png" alt="" class="header__logo-img" style="width: 42px; height: 42px; border-radius: 50%;">
+      Esti Biraz
+    </a>
 
-  <header class="masthead">
-    <div class="container masthead__inner">
-      
-      <a href="#/" class="brand" aria-label="Esti Biraz Ana Sayfa">
-        <img src="assets/logo.png" alt="Esti Biraz Marka Logosu" class="brand__mark" onerror="this.style.display='none';">
-        <div class="brand__text">
-          <strong>Esti Biraz</strong>
-          <small>Sağlık, Bilim ve Eğitim</small>
-        </div>
-      </a>
-
-      <div class="search">
-        <input type="text" id="globalSearchInput" placeholder="Makale, ders veya kategori ara..." aria-label="Arama Kutusu">
-        <button type="button" id="globalSearchBtn">Ara</button>
-      </div>
-
-      <div class="account-actions" id="headerAuth">
-        <button class="ghost-button" id="btnLogin" onclick="login()">Giriş Yap</button>
-      </div>
-
-    </div>
-  </header>
-
-  <nav class="section-nav">
-    <div class="container section-nav__inner" id="mainNav">
+    <nav class="header__nav section-nav__inner" id="mainNav" style="display: flex; gap: 16px;">
       <a href="#/" class="active">Ana Sayfa</a>
       <a href="#/makaleler">Makaleler</a>
       <a href="#/akademi">Akademi</a>
       <a href="#/hakkinda">Hakkında</a>
+    </nav>
+
+    <div class="header__actions" id="headerAuth">
+      <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">Giriş Yap</button>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <main id="app">
-    <div class="container" style="padding: 80px 0; text-align: center;">
-      <p style="font-weight: 800; color: var(--guardian-blue-soft);">İçerikler yükleniyor, lütfen bekleyin...</p>
-    </div>
-  </main>
+<main class="main" id="app">
+  <div class="container" style="padding: 60px 0; text-align: center;">
+    <p style="font-weight: 800; color: #123f7a;">Yükleniyor...</p>
+  </div>
+</main>
 
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <h4 style="color: var(--guardian-yellow);">ESTİ BİRAZ</h4>
-        <p>Sağlık meslek eğitiminde modern, güvenilir, veri odaklı makale ve dijital öğrenme modülleri platformu.</p>
-      </div>
-      <div>
-        <h4>Gezinti</h4>
-        <a href="#/makaleler">Yazılar & Makaleler</a>
-        <a href="#/akademi">Eğitim Akademisi</a>
-        <a href="#/hakkinda">Hakkımızda</a>
-      </div>
-      <div>
-        <h4>Yasal Mevzuat</h4>
-        <a href="#/gizlilik">Gizlilik Politikası</a>
-        <a href="#/kullanim-sartlari">Kullanım Şartları</a>
-        <p style="margin-top: 16px; font-size: 0.8rem; color: rgba(255,255,255,0.4);">© 2026 ESTİ BİRAZ. Tüm hakları saklıdır.</p>
-      </div>
-    </div>
-  </footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/cloudinary-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/image-upload.js"></script>
+<script src="js/seo.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/article-interactions.js"></script>
+<script src="js/article-submit.js"></script>
+<script src="js/article-detail.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/firestore-data.js"></script>
+<script src="js/router.js"></script>
 
-  <script src="js/firebase-config.js"></script>
-  <script src="js/cloudinary-config.js"></script>
-
-  <script src="js/auth.js"></script>
-  <script src="js/seo.js"></script>
-  <script src="js/image-upload.js"></script>
-  <script src="js/editor.js"></script>
-  
-  <script src="js/article-detail.js"></script>
-  <script src="js/article-interactions.js"></script>
-  <script src="js/article-submit.js"></script>
-
-  <script src="js/admin.js"></script>
-  <script src="js/firestore-data.js"></script>
-  
-  <script src="js/router.js"></script>
-
-  <script>
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        themeToggle.textContent = newTheme === 'dark' ? 'Açık Tema ☼' : 'Koyu Tema ◐';
-      });
-    }
-  </script>
 </body>
 </html>
