@@ -112,27 +112,34 @@ async function showArticleForm(articleId = null) {
         </div>
 
         <div class="admin-form-grid">
-          <label>Kategori *
-            <select id="articleCategory" required>
-              <option value="">Seçiniz</option>
-              <option value="saglik" ${article.category === 'saglik' ? 'selected' : ''}>Sağlık</option>
-              <option value="bilim" ${article.category === 'bilim' ? 'selected' : ''}>Bilim</option>
-              <option value="egitim" ${article.category === 'egitim' ? 'selected' : ''}>Eğitim</option>
-              <option value="teknoloji" ${article.category === 'teknoloji' ? 'selected' : ''}>Teknoloji</option>
-            </select>
-          </label>
-          <label>Yazar *
-            <input type="text" id="articleAuthor" value="${article.author || ''}" required>
-          </label>
-        </div>
+           <label>Kategori (Seçebilir veya yeni yazabilirsiniz) *
+             <input type="text" id="articleCategory" list="categoryList" value="${article.category || ''}" required placeholder="Örn: saglik, yapay-zeka...">
+             <datalist id="categoryList">
+               <option value="saglik">Sağlık</option>
+               <option value="bilim">Bilim</option>
+               <option value="egitim">Eğitim</option>
+               <option value="teknoloji">Teknoloji</option>
+             </datalist>
+           </label>
+           <label>Yazar *
+             <input type="text" id="articleAuthor" value="${article.author || ''}" required>
+           </label>
+         </div>
 
         <label>Kısa Özet *
           <textarea id="articleSummary" required placeholder="Kart üzerinde görünecek kısa açıklama...">${article.summary || ''}</textarea>
         </label>
 
-        <label>Kapak Görseli URL
-          <input type="url" id="articleCoverImage" value="${article.coverImage || ''}" placeholder="https://...">
-        </label>
+       <div class="form-group">
+          <label>Kapak Görseli</label>
+          <div style="display:flex; gap:12px;">
+            <input type="url" id="articleCoverImage" value="${article.coverImage || ''}" class="form-input" placeholder="https://...">
+            <button type="button" class="btn btn--outline" onclick="uploadDirectCoverImage('articleCoverImage', 'articleCoverPreview')">📁 Bilgisayardan Seç</button>
+          </div>
+          <div id="articleCoverPreview">
+            ${article.coverImage ? `<img src="${article.coverImage}" style="max-height:140px; border-radius:12px; margin-top:12px;">` : ''}
+          </div>
+        </div>
 
         <label>Makale İçeriği *
           <div class="block-editor">
@@ -311,21 +318,23 @@ async function showCourseForm(courseId = null) {
         </label>
 
         <div class="admin-form-grid">
-          <label>Kategori
-            <select id="courseCategory">
-              <option value="">Seçiniz</option>
-              <option value="saglik" ${course.category === 'saglik' ? 'selected' : ''}>Sağlık</option>
-              <option value="bilim" ${course.category === 'bilim' ? 'selected' : ''}>Bilim</option>
-              <option value="egitim" ${course.category === 'egitim' ? 'selected' : ''}>Eğitim</option>
-            </select>
-          </label>
-          <label>Durum
-            <select id="courseStatus">
-              <option value="draft" ${course.status === 'draft' ? 'selected' : ''}>Taslak</option>
-              <option value="published" ${course.status === 'published' ? 'selected' : ''}>Yayında</option>
-            </select>
-          </label>
-        </div>
+           <label>Kategori (Seçebilir veya yeni yazabilirsiniz)
+             <input type="text" id="courseCategory" list="courseCategoryList" value="${course.category || ''}" placeholder="Örn: saglik, beslenme...">
+             <datalist id="courseCategoryList">
+               <option value="saglik">Sağlık</option>
+               <option value="bilim">Bilim</option>
+               <option value="egitim">Eğitim</option>
+               <option value="beslenme">Beslenme</option>
+               <option value="gebelik">Gebelik</option>
+             </datalist>
+           </label>
+           <label>Durum
+             <select id="courseStatus">
+               <option value="draft" ${course.status === 'draft' ? 'selected' : ''}>Taslak</option>
+               <option value="published" ${course.status === 'published' ? 'selected' : ''}>Yayında</option>
+             </select>
+           </label>
+         </div>
 
         <div class="admin-form-grid">
           <label>Seviye
@@ -340,9 +349,16 @@ async function showCourseForm(courseId = null) {
           </label>
         </div>
 
-        <label>Kapak Resmi URL
-          <input type="url" id="courseCoverImage" value="${course.coverImage || ''}">
-        </label>
+        <div class="form-group">
+          <label>Kapak Görseli</label>
+          <div style="display:flex; gap:12px;">
+            <input type="url" id="articleCoverImage" value="${article.coverImage || ''}" class="form-input" placeholder="https://...">
+            <button type="button" class="btn btn--outline" onclick="uploadDirectCoverImage('articleCoverImage', 'articleCoverPreview')">📁 Bilgisayardan Seç</button>
+          </div>
+          <div id="articleCoverPreview">
+            ${article.coverImage ? `<img src="${article.coverImage}" style="max-height:140px; border-radius:12px; margin-top:12px;">` : ''}
+          </div>
+        </div>
 
         <label class="checkbox-label" style="display: flex; gap: 8px; align-items: center; margin-top: 12px; font-weight: 700;">
           <input type="checkbox" id="courseFeatured" ${course.featured ? 'checked' : ''} style="width: auto;">
