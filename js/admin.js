@@ -494,9 +494,16 @@ async function showLessonForm(courseId, lessonId = null) {
         </div>
 
         <div id="textFields" style="display:none;">
-          <label>Ders İçeriği (HTML/Metin)
-            <textarea id="lessonContent" rows="6">${lesson.content || ''}</textarea>
-          </label>
+          <label>Ders İçeriği (Zengin Metin) *</label>
+          <div class="block-editor">
+            <div class="block-editor__tools" id="lessonEditorToolbar">
+              <button type="button" class="toolbar-btn" data-command="bold"><b>B</b></button>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2">H2</button>
+              <button type="button" class="toolbar-btn" data-command="insertImage">🖼️ Resim</button>
+              <button type="button" class="toolbar-btn" data-command="insertEmbed">🎥 Video/PDF</button>
+            </div>
+            <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${lesson.content || ''}</div>
+          </div>
         </div>
 
         <label class="checkbox-label" style="display: flex; gap: 8px; align-items: center; font-weight: 700;">
@@ -512,6 +519,7 @@ async function showLessonForm(courseId, lessonId = null) {
     </div>
   `;
   toggleLessonFields();
+  setTimeout(() => setupEditor('lessonEditorToolbar', 'lessonContent'), 100);
 }
 
 function toggleLessonFields() {
