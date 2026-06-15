@@ -531,27 +531,66 @@ function convertToEmbedUrl(url) {
 }
 
 async function toggleLessonComplete(enrollmentId, lessonOrder, totalLessons, courseSlug, isLastLesson) {
+  const user = firebase.auth().currentUser;
+  if (!user) return alert('İlerleme kaydetmek için giriş yapmalısınız.');
+
   const btn = document.getElementById('completeLessonBtn');
-  btn.disabled = true; btn.textContent = '⏳...';
+  if (!btn) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Kaydediliyor...';
+
   try {
     const enrollRef = db.collection('enrollments').doc(enrollmentId);
-    const doc = await enrollRef.get();
-    let completed = doc.data().completedLessons || [];
-    
-    if (completed.includes(lessonOrder)) completed = completed.filter(o => o !== lessonOrder);
-    else completed.push(lessonOrder);
-    
-    const progress = Math.round((completed.length / totalLessons) * 100);
-    await enrollRef.update({ completedLessons: completed, progressPercent: progress });
-    
-    if (!completed.includes(lessonOrder)) {
-      btn.textContent = '☐ Dersi Tamamla'; btn.className = 'primary-button'; btn.disabled = false;
+    const enrollDoc = await enrollRef.get();
+    if (!enrollDoc.exists) return;
+
+    const data = enrollDoc.data();
+    let completedLessons = data.completedLessons || [];
+    const alreadyCompleted = completedLessons.includes(lessonOrder);
+
+    if (alreadyCompleted) {
+      completedLessons = completedLessons.filter(o => o !== lessonOrder);
     } else {
-      btn.textContent = '✅ Tamamlandı'; btn.className = 'ghost-button';
-      if (!isLastLesson) setTimeout(() => window.location.hash = `#/ders/${courseSlug}/${lessonOrder + 1}`, 1000);
-      else btn.disabled = false;
+      if (!completedLessons.includes(lessonOrder)) completedLessons.push(lessonOrder);
     }
-  } catch (error) { console.error(error); btn.disabled = false; }
+
+    // Yüzdeyi maksimum 100'de sabitle
+    const uniqueCompleted = [...new Set(completedLessons)];
+    const progressPercent = totalLessons > 0 
+      ? Math.min(100, Math.round((uniqueCompleted.length / totalLessons) * 100)) 
+      : 0;
+
+    await enrollRef.update({
+      completedLessons: uniqueCompleted,
+      progressPercent: progressPercent,
+      lastAccessedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (alreadyCompleted) {
+      btn.textContent = '☐ Dersi Tamamla';
+      btn.classList.remove('btn--completed');
+      btn.disabled = false;
+    } else {
+      btn.textContent = '✅ Tamamlandı!';
+      btn.classList.add('btn--completed');
+      
+      if (progressPercent === 100) {
+        showCourseCompleteModal(courseSlug);
+        return;
+      }
+
+      if (!isLastLesson) {
+        btn.textContent = '✅ Sonraki derse geçiliyor...';
+        setTimeout(() => window.location.hash = `#/ders/${courseSlug}/${lessonOrder + 1}`, 1500);
+      } else {
+        btn.disabled = false;
+      }
+    }
+  } catch (error) {
+    btn.disabled = false;
+    alert('Hata oluştu: ' + error.message);
+  }
 }
 
 // ══════════════════════════════════════════════
