@@ -51,11 +51,16 @@ function renderMakaleler() {
 }
 
 function renderAkademi() {
-  pageMeta('Akademi', 'ESTİ BİRAZ Akademi; sağlık, eğitim, bilim, veri ve teknoloji alanlarında yapılandırılmış öğrenme içerikleri.');
+  pageMeta(
+    'Akademi',
+    'ESTİ BİRAZ Akademi; sağlık, eğitim, bilim, veri ve teknoloji alanlarında yapılandırılmış öğrenme içerikleri.'
+  );
+
+  // Doğru fonksiyon ismi olan loadAllCourses çağrılıyor
   if (typeof loadAllCourses === 'function') {
     loadAllCourses();
   } else {
-    appContainer.innerHTML = '<div class="container" style="padding: 40px; text-align: center;">Akademi sayfası yüklenemedi.</div>';
+    appContainer.innerHTML = '<p>Akademi sayfası yüklenemedi.</p>';
   }
 }
 
