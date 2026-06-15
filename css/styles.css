@@ -264,3 +264,23 @@ a { color: inherit; text-decoration: none; }
   gap: 12px;
   margin-bottom: 12px;
 }
+
+/* YAPISIK BUTON VE PILL DÜZELTMELERİ */
+.account-actions, .button-row, .lesson-item__actions, .lesson-player__nav, .admin-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px !important;
+}
+
+.article-card__category, .course-card__topline, .badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--guardian-yellow) !important;
+  color: #08111f !important;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--brand-amber) 30%, transparent);
+}
