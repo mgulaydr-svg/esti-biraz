@@ -2,11 +2,12 @@
    ESTİ BİRAZ — Zengin Metin Editörü v2 (editor.js)
    ============================================ */
 
-function setupEditor() {
-  const toolbar = document.getElementById('editorToolbar');
-  const editor = document.getElementById('articleContent');
+function setupEditor(toolbarId = 'editorToolbar', contentId = 'articleContent') {
+  const toolbar = document.getElementById(toolbarId);
+  const editor = document.getElementById(contentId);
   if (!toolbar || !editor) return;
 
+  // Tüm buton dinleyicileri
   toolbar.addEventListener('click', (e) => {
     const btn = e.target.closest('.toolbar-btn');
     if (!btn) return;
@@ -20,95 +21,86 @@ function setupEditor() {
         if (url) document.execCommand('createLink', false, url);
         break;
       case 'insertImage':
-        if(typeof insertImageToEditor === 'function') insertImageToEditor();
+        if(typeof insertImageToEditor === 'function') insertImageToEditor(editor); 
+        break;
+      case 'insertEmbed':
+        const embedUrl = prompt('YouTube Video veya PDF linki girin:');
+        if (embedUrl) {
+          let html = '';
+          if (embedUrl.includes('youtube.com') || embedUrl.includes('youtu.be')) {
+             const ytMatch = embedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+             if (ytMatch) html = `<figure class="content-embed content-embed--video"><iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe><figcaption>Video</figcaption></figure><p><br></p>`;
+          } else if (embedUrl.endsWith('.pdf')) {
+             html = `<figure class="content-embed content-embed--pdf"><iframe src="${embedUrl}" width="100%" height="600px"></iframe><figcaption>PDF Dokümanı</figcaption></figure><p><br></p>`;
+          }
+          if(html) document.execCommand('insertHTML', false, html);
+        }
         break;
       case 'formatBlock':
         document.execCommand('formatBlock', false, value);
         break;
-      case 'insertBlockquote':
-        document.execCommand('formatBlock', false, 'BLOCKQUOTE');
-        break;
-      case 'insertCode':
-        insertCodeBlock();
-        break;
-      case 'insertTable':
-        insertTable();
-        break;
-      case 'insertHR':
-        document.execCommand('insertHorizontalRule', false, null);
-        break;
-      
-      // 🎓 YENİ: EĞİTİM BLOKLARI
-      case 'insertCallout':
-        const type = prompt('Kutu Tipi (warning=kırmızı, success=yeşil, data=teal, exam=sarı):', 'warning') || 'warning';
-        const title = prompt('Kutu Başlığı:');
-        const text = prompt('Açıklama:');
-        if(title && text) {
-          document.execCommand('insertHTML', false, `<div class="content-callout content-callout--${type}"><strong>${escapeHTML(title)}</strong><p>${escapeHTML(text)}</p></div><p><br></p>`);
-        }
-        break;
-      case 'insertQuiz':
-        const q = prompt('Soru Metni:');
-        const a1 = prompt('Yanlış Seçenek:');
-        const a2 = prompt('Doğru Seçenek:');
-        if(q && a1 && a2) {
-          const html = `<div class="content-quiz"><strong>${escapeHTML(q)}</strong><div class="content-quiz__options"><button data-result="wrong">${escapeHTML(a1)}</button><button data-result="correct">${escapeHTML(a2)}</button></div></div><p><br></p>`;
-          document.execCommand('insertHTML', false, html);
-        }
-        break;
-      case 'insertMatching':
-        const term1 = prompt('Terim 1:'); const desc1 = prompt('Açıklama 1:');
-        const term2 = prompt('Terim 2:'); const desc2 = prompt('Açıklama 2:');
-        if(term1 && term2) {
-          const html = `<div class="content-matching"><h4>Eşleştirme Tablosu</h4><div class="content-matching__grid"><span>${escapeHTML(term1)}</span><strong>${escapeHTML(desc1)}</strong><span>${escapeHTML(term2)}</span><strong>${escapeHTML(desc2)}</strong></div></div><p><br></p>`;
-          document.execCommand('insertHTML', false, html);
-        }
-        break;
-
       default:
         document.execCommand(command, false, value);
     }
     editor.focus();
-    updateToolbarState();
   });
 
-  editor.addEventListener('keyup', updateToolbarState);
-  editor.addEventListener('mouseup', updateToolbarState);
+  // Resim/Obje silme desteği (Backspace & Delete)
+  editor.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        // Eğer imleç bir figure (resim/video) içindeyse onu tamamen sil
+        const figure = range.commonAncestorContainer.nodeType === 1 
+          ? range.commonAncestorContainer.closest('figure') 
+          : range.commonAncestorContainer.parentElement.closest('figure');
+        
+        if (figure) {
+          figure.remove();
+          e.preventDefault();
+        }
+      }
+    }
+  });
 
-  // 🖼️ YENİ: SÜRÜKLE BIRAK İLE OTOMATİK CLOUDINARY YÜKLEME
+  // Sürükle Bırak (Resimler İçin)
   editor.addEventListener('drop', async (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      await handleEditorImageUpload(file);
+      await handleEditorImageUpload(file, editor);
     }
   });
+}
 
-  // 🖼️ YENİ: CTRL+V İLE OTOMATİK CLOUDINARY YÜKLEME
-  editor.addEventListener('paste', async (e) => {
-    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    let hasImage = false;
-    
-    for (let item of items) {
-      if (item.type.indexOf('image/') === 0) {
-        e.preventDefault();
-        hasImage = true;
-        const file = item.getAsFile();
-        await handleEditorImageUpload(file);
-        break; 
-      }
+// Editöre resim yükleme ana fonksiyonu
+async function handleEditorImageUpload(file, editor) {
+  const placeholderId = 'img-load-' + Date.now();
+  document.execCommand('insertHTML', false, `<div id="${placeholderId}" style="color:var(--brand-teal); font-weight:800; padding:10px; border:1px dashed var(--brand-teal);">⏳ Görsel yükleniyor...</div><p><br></p>`);
+  
+  try {
+    const result = await uploadToCloudinary(file);
+    const placeholder = document.getElementById(placeholderId);
+    if (placeholder) {
+      placeholder.outerHTML = `<figure class="content-image"><img src="${result.url}" alt="Yüklenen Görsel" style="border-radius:14px; width:100%;"><figcaption>Görsel Açıklaması</figcaption></figure>`;
     }
-    
-    // Eğer resim yoksa normal metni temizleyerek yapıştır
-    if (!hasImage) {
-      const html = e.clipboardData.getData('text/html');
-      if (html) {
-        e.preventDefault();
-        const clean = sanitizeHTML(html);
-        document.execCommand('insertHTML', false, clean);
-      }
-    }
+  } catch (err) {
+    const placeholder = document.getElementById(placeholderId);
+    if (placeholder) placeholder.outerHTML = `<p style="color:red;">❌ Görsel yüklenemedi.</p>`;
+  }
+}
+
+// Cloudinary Insert
+async function insertImageToEditor(editor) {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (file) await handleEditorImageUpload(file, editor);
   });
+  fileInput.click();
 }
 
 /**
