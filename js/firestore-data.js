@@ -42,37 +42,32 @@ function createArticleCard(article) {
 /**
  * Kurs kartı oluşturur (tekrar kullanılabilir)
  */
-function createCourseCard(courseId, course) {
+/**
+ * Kurs kartı HTML'i oluşturur (styles.css ile tam uyumlu)
+ */
+function createCourseCard(id, course) {
   if (!course || !course.title) return '';
 
   const totalLessons = course.totalLessons || course.lessonCount || 0;
   const level = getLevelLabel(course.level);
 
-  // Açıklamayı 90 karakterle sınırla
+  // Kart boyutlarını eşitlemek için açıklamayı kırpıyoruz
   const shortDesc = course.description && course.description.length > 90 
     ? course.description.substring(0, 90) + '...' 
     : (course.description || '');
 
   return `
-    <a href="#/kurs/${course.slug}" class="course-card">
-      <div class="course-card__image" style="margin: -22px -22px 16px -22px; border-bottom: 1px solid var(--line);">
-        ${course.coverImage
-          ? `<img src="${course.coverImage}" alt="${course.title}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">`
-          : `<div class="course-card__placeholder" style="height:180px; background:var(--paper-soft); display:flex; align-items:center; justify-content:center; font-size:3rem;">🎓</div>`}
+    <div class="course-card" onclick="window.location.hash='#/kurs/${course.slug}'" style="cursor: pointer;">
+      ${level ? `<span class="course-card__topline">${level}</span>` : ''}
+      <h3>${course.title}</h3>
+      <p>${shortDesc}</p>
+      <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:space-between; color:var(--muted); font-size:0.9rem; font-weight:700;">
+        <span>👨‍🏫 ${course.instructor || 'Esti Biraz'}</span>
+        <span>📚 ${totalLessons} Ders</span>
       </div>
-      <div class="course-card__body">
-        <span class="course-card__topline">${level}</span>
-        <h3 class="course-card__title" style="margin-top: 8px;">${course.title}</h3>
-        <p class="course-card__desc">${shortDesc}</p>
-        <div class="course-card__footer" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem;">
-          <span>👨‍🏫 ${course.instructor || ''}</span>
-          <span>📚 ${totalLessons} Ders</span>
-        </div>
-      </div>
-    </a>
+    </div>
   `;
 }
-
 // ══════════════════════════════════════════════
 //  ANA SAYFA YÜKLEME
 // ══════════════════════════════════════════════
@@ -138,26 +133,42 @@ async function loadLatestArticles() {
   }
 }
 
-async function loadFeaturedCourses() {
+/**
+ * Öne çıkan kursları çeker (ana sayfa için)
+ */
+async function loadFeaturedCourses(limit = 3) {
   const container = document.getElementById('featuredCourses');
   if (!container) return;
 
   try {
-    const snapshot = await db.collection('courses').where('featured', '==', true).limit(2).get();
-    if (snapshot.empty) return;
+    const snapshot = await db.collection('courses')
+      .where('featured', '==', true)
+      .limit(limit)
+      .get();
+
+    if (snapshot.empty) {
+      container.innerHTML = '<p class="empty-state">Henüz öne çıkan kurs bulunmuyor.</p>';
+      return;
+    }
+
+    const coursesHtml = snapshot.docs
+      .map(doc => createCourseCard(doc.id, doc.data()))
+      .join('');
 
     container.innerHTML = `
-      <div class="data-panel">
-        <div>
-          <span class="eyebrow">AKADEMİ SEÇKİSİ</span>
-          <h2>Öne Çıkan Kurslar</h2>
-          <p style="color: var(--muted); margin-bottom: 20px;">Kendinizi geliştirebileceğiniz en popüler eğitim modüllerimiz.</p>
-          <button class="primary-button" onclick="window.location.hash='#/akademi'">Tüm Kursları Gör</button>
+      <section class="featured-courses" style="padding-top: 32px;">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">AKADEMİ SEÇKİSİ</span>
+              <h2>Öne Çıkan Kurslar</h2>
+            </div>
+            <a href="#/akademi" style="font-weight: 800; color: var(--brand-teal);">Tümünü Gör →</a>
+          </div>
+          <div class="course-grid"> ${coursesHtml}
+          </div>
         </div>
-        <div class="course-grid">
-          ${snapshot.docs.map(doc => createCourseCard(doc.data())).join('')}
-        </div>
-      </div>
+      </section>
     `;
   } catch (error) {
     console.error('❌ Kurslar yüklenemedi:', error);
@@ -288,26 +299,49 @@ async function loadArticle(slug) {
 //  AKADEMİ VE KURSLAR
 // ══════════════════════════════════════════════
 
+/**
+ * Tüm kursları çeker (akademi sayfası için)
+ */
 async function loadAllCourses() {
   const container = document.getElementById('app');
+
   container.innerHTML = `
-    <div class="container" style="padding: 40px 0;">
-      <div class="section-heading">
-        <div>
-          <h2>Akademi</h2>
-          <p>Bilgiyi keşfet, kendini geliştir.</p>
+    <section class="akademi-page">
+      <div class="container" style="padding: 40px 0;">
+        <div class="section-heading">
+          <div>
+            <h2>🎓 Akademi</h2>
+            <p>Bilgiyi keşfet, kendini geliştir.</p>
+          </div>
+        </div>
+        <div class="course-grid" id="coursesGrid"> <div class="loading-state">Kurslar yükleniyor...</div>
         </div>
       </div>
-      <div class="course-grid" id="coursesGrid"><p style="color: var(--muted);">Yükleniyor...</p></div>
-    </div>
+    </section>
   `;
+
   try {
-    const snapshot = await db.collection('courses').where('status', '==', 'published').orderBy('publishedAt', 'desc').get();
+    const snapshot = await db.collection('courses')
+      .where('status', '==', 'published')
+      .orderBy('publishedAt', 'desc')
+      .get();
+
     const grid = document.getElementById('coursesGrid');
-    if (snapshot.empty) { grid.innerHTML = '<p>Henüz kurs eklenmemiş.</p>'; return; }
-    grid.innerHTML = snapshot.docs.map(doc => createCourseCard(doc.data())).join('');
+    if (!grid) return;
+
+    if (snapshot.empty) {
+      grid.innerHTML = '<p class="empty-state">Henüz kurs eklenmemiş. Yakında burada olacak! 🚀</p>';
+      return;
+    }
+
+    grid.innerHTML = snapshot.docs
+      .map(doc => createCourseCard(doc.id, doc.data()))
+      .join('');
+
   } catch (error) {
-    console.error(error);
+    console.error('❌ Kurslar yüklenemedi:', error);
+    const grid = document.getElementById('coursesGrid');
+    if (grid) grid.innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
   }
 }
 
