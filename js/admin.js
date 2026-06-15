@@ -494,15 +494,29 @@ async function showLessonForm(courseId, lessonId = null) {
         </div>
 
         <div id="textFields" style="display:none;">
-          <label>Ders İçeriği (Zengin Metin) *</label>
-          <div class="block-editor">
-            <div class="block-editor__tools" id="lessonEditorToolbar">
-              <button type="button" class="toolbar-btn" data-command="bold"><b>B</b></button>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2">H2</button>
-              <button type="button" class="toolbar-btn" data-command="insertImage">🖼️ Resim</button>
-              <button type="button" class="toolbar-btn" data-command="insertEmbed">🎥 Video/PDF</button>
+          <div class="form-group">
+            <label>Ders İçeriği (Zengin Metin Editörü) *</label>
+            <div class="block-editor" style="margin-top: 8px;">
+              <div class="block-editor__tools" id="lessonEditorToolbar">
+                <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
+                <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
+                <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+                <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2">H2</button>
+                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3">H3</button>
+                <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+                <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
+                <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
+                <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
+                <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
+                <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+                <button type="button" class="toolbar-btn" data-command="insertCallout" title="Vurgu Kutusu">💡 Kutu</button>
+                <button type="button" class="toolbar-btn" data-command="insertQuiz" title="Çoktan Seçmeli Soru">❓ Soru</button>
+                <button type="button" class="toolbar-btn" data-command="insertMatching" title="Eşleştirme Modülü">🔄 Eşleştir</button>
+                <button type="button" class="toolbar-btn" data-command="insertEmbed" title="PDF veya YouTube Embed">🎥 Embed</button>
+              </div>
+              <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 300px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none; margin-top: 8px;">${lesson.content || ''}</div>
             </div>
-            <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${lesson.content || ''}</div>
           </div>
         </div>
 
@@ -519,7 +533,13 @@ async function showLessonForm(courseId, lessonId = null) {
     </div>
   `;
   toggleLessonFields();
-  setTimeout(() => setupEditor('lessonEditorToolbar', 'lessonContent'), 100);
+  
+  // Ders formu için zengin metin editörünü özel ID'lerle tetikliyoruz
+  setTimeout(() => {
+    if (typeof setupEditor === 'function') {
+      setupEditor('lessonEditorToolbar', 'lessonContent');
+    }
+  }, 150);
 }
 
 function toggleLessonFields() {
