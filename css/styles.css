@@ -221,3 +221,46 @@ a { color: inherit; text-decoration: none; }
   .article-card { grid-column: span 12 !important; }
   .data-panel { flex-direction: column; }
 }
+
+/* ==========================================================================
+   DÜZELTMELER: Buton Boşlukları ve Sarı Kategori Hapları (Pills)
+   ========================================================================== */
+
+/* Kategorileri standart "Sarı Pill" Görünümüne Zorla */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--guardian-yellow) !important;
+  color: #08111f !important;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid color-mix(in srgb, var(--brand-amber) 30%, transparent);
+}
+
+/* Ders Oynatıcıdaki Butonların Yapışıklığını Gider */
+.lesson-player__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Dikey boşluk */
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.lesson-player__nav {
+  display: flex;
+  gap: 12px; /* Yatay boşluk */
+  flex-wrap: wrap;
+}
+
+/* Yorum formundaki yan yana duran inputların daralmasını engelle */
+.comment-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
