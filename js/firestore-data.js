@@ -41,11 +41,19 @@ function createArticleCard(article) {
 
 function createCourseCard(course) {
   const level = getLevelLabel(course.level);
+  
+  // 1. Açıklamayı burada kontrol edip kısaltıyoruz:
+  const shortDesc = course.description && course.description.length > 90 
+    ? course.description.substring(0, 90) + '...' 
+    : (course.description || '');
+
   return `
     <div class="course-card" onclick="window.location.hash='#/kurs/${course.slug}'" style="cursor: pointer;">
       ${level ? `<span class="course-card__topline">${level}</span>` : ''}
       <h3>${course.title}</h3>
-      <p>${course.description || ''}</p>
+      
+      <p class="course-card__desc">${shortDesc}</p>
+      
       <div style="margin-top:auto; padding-top:16px; color:var(--muted); font-size:0.9rem;">
         <span>👨‍🏫 ${course.instructor || ''}</span> · <span>📚 ${course.lessonCount || 0} Ders</span>
       </div>
