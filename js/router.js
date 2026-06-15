@@ -60,15 +60,29 @@ function renderAkademi() {
 }
 
 function renderHakkinda() {
-  pageMeta('Hakkında', 'ESTİ BİRAZ hakkında detaylı bilgi.');
+  pageMeta('Hakkında', 'ESTİ BİRAZ ve Ekosistem Uygulamaları');
   appContainer.innerHTML = `
-    <div class="container" style="padding: 60px 0; max-width: 800px;">
-      <div class="admin-panel">
-        <h1 style="font-family: var(--serif); margin-top: 0; color: var(--guardian-blue);">Hakkında</h1>
-        <div class="rich-content">
-          <p>ESTİ BİRAZ, sağlık meslek lisesi öğrencileri, eğitimciler ve meraklı bireyler için tasarlanmış bağımsız bir bilgi platformudur.</p>
-          <p>Amacımız; sağlık, bilim ve teknoloji alanındaki verileri herkesin anlayabileceği sade bir dille sunmaktır.</p>
-        </div>
+    <div class="container" style="padding: 60px 0; max-width: 900px;">
+      <div class="admin-panel" style="margin-bottom: 40px; text-align: center; border-color: var(--brand-teal);">
+        <h1 style="font-family: var(--serif); color: var(--guardian-blue); margin-top:0;">Hakkımızda</h1>
+        <p style="font-size: 1.1rem; color: var(--muted);">ESTİ BİRAZ, sağlık meslek lisesi öğrencileri, eğitimciler ve alanında uzmanlaşmak isteyen profesyoneller için tasarlanmış bağımsız bir eğitim platformudur.</p>
+      </div>
+
+      <h2 style="font-family: var(--serif); color: var(--brand-teal); margin-bottom: 24px;">🧩 Ekosistemdeki Diğer Uygulamalarımız</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        
+        <a href="https://mgulaydr-svg.github.io/akilli-kartlar" target="_blank" class="article-card" style="text-align:center; padding: 32px; text-decoration:none; display:flex; flex-direction:column; align-items:center;">
+          <img src="assets/ChatGPT Image 15 Haz 2026 11_46_33.jpg" alt="Akıllı Kartlar" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <h3 style="color: var(--guardian-blue); margin: 0 0 12px; font-size: 1.5rem;">Akıllı Kartlar</h3>
+          <p style="color: var(--muted); margin:0; font-size: 0.95rem;">Hızlı tekrarlar ve ezber gerektiren sağlık terimleri için interaktif çalışma kartları sistemi.</p>
+        </a>
+
+        <a href="https://mgulaydr-svg.github.io/sorularla-calisma" target="_blank" class="article-card" style="text-align:center; padding: 32px; text-decoration:none; display:flex; flex-direction:column; align-items:center;">
+          <img src="assets/ChatGPT Image 15 Haz 2026 10_12_29.png" alt="Sorularla Çalışma" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <h3 style="color: var(--brand-blue); margin: 0 0 12px; font-size: 1.5rem;">Sorularla Çalışma</h3>
+          <p style="color: var(--muted); margin:0; font-size: 0.95rem;">Sınavlara hazırlık ve konu pekiştirme için özel olarak tasarlanmış çoktan seçmeli test ekosistemi.</p>
+        </a>
+
       </div>
     </div>
   `;
