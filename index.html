@@ -19,25 +19,33 @@
 </head>
 <body>
 
-<header class="header" id="header">
-  <div class="container header__inner" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0;">
-    <a href="#/" class="header__logo" aria-label="Esti Biraz ana sayfa" style="display: flex; align-items: center; gap: 12px; font-weight: 900; font-family: Georgia, serif; font-size: 1.5rem;">
-      <img src="assets/logo.png" alt="" class="header__logo-img" style="width: 42px; height: 42px; border-radius: 50%;">
-      Esti Biraz
+<header class="masthead">
+  <div class="container masthead__inner">
+    <a href="#/" class="brand" aria-label="Esti Biraz Ana Sayfa">
+      <img src="assets/logo.png" alt="Esti Biraz Marka Logosu" class="brand__mark" onerror="this.style.display='none';">
+      <div class="brand__text">
+        <strong>Esti Biraz</strong>
+        <small>Sağlık, Bilim ve Eğitim</small>
+      </div>
     </a>
-
-    <nav class="header__nav section-nav__inner" id="mainNav" style="display: flex; gap: 16px;">
-      <a href="#/" class="active">Ana Sayfa</a>
-      <a href="#/makaleler">Makaleler</a>
-      <a href="#/akademi">Akademi</a>
-      <a href="#/hakkinda">Hakkında</a>
-    </nav>
-
-    <div class="header__actions" id="headerAuth">
-      <button class="btn btn--primary btn--sm" id="btnLogin" onclick="login()">Giriş Yap</button>
+    <div class="search">
+      <input type="text" id="globalSearchInput" placeholder="Makale, ders veya kategori ara...">
+      <button type="button" id="globalSearchBtn">Ara</button>
+    </div>
+    <div class="account-actions" id="headerAuth">
+      <button class="ghost-button" id="btnLogin" onclick="login()">Giriş Yap</button>
     </div>
   </div>
 </header>
+
+<nav class="section-nav">
+  <div class="container section-nav__inner" id="mainNav">
+    <a href="#/" class="active">Ana Sayfa</a>
+    <a href="#/makaleler">Makaleler</a>
+    <a href="#/akademi">Akademi</a>
+    <a href="#/hakkinda">Hakkında</a>
+  </div>
+</nav>
 
 <main class="main" id="app">
   <div class="container" style="padding: 60px 0; text-align: center;">
