@@ -617,7 +617,7 @@ async function loadProfile() {
     const enrollSnapshot = await db.collection('enrollments').where('userId', '==', user.uid).get();
     const enrollments = enrollSnapshot.docs.map(d => d.data());
     const totalCourses = enrollments.length;
-    const completedCourses = enrollments.filter(e => e.progressPercent === 100).length;
+    const completedCourses = enrollments.filter(e => e.progressPercent >= 100).length;
 
     container.innerHTML = `
       <div class="container" style="padding: 40px 0;">
