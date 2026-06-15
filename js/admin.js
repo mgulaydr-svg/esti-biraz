@@ -113,13 +113,21 @@ async function showArticleForm(articleId = null) {
         <label>Makale İçeriği *
           <div class="block-editor">
             <div class="block-editor__tools" id="editorToolbar">
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="bold">B</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic">I</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline">U</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="formatBlock" data-value="H2">H2</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="formatBlock" data-value="H3">H3</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink">🔗</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertImage">🖼️</button>
+              <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
+              <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
+              <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+              <span class="toolbar-divider"></span>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Başlık 2">H2</button>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Başlık 3">H3</button>
+              <span class="toolbar-divider"></span>
+              <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
+              <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
+              <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
+              <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
+              <span class="toolbar-divider"></span>
+              <button type="button" class="toolbar-btn" data-command="insertCallout" title="Vurgu Kutusu (Uyarı/Bilgi)">💡 Kutu</button>
+              <button type="button" class="toolbar-btn" data-command="insertQuiz" title="Çoktan Seçmeli Soru">❓ Soru</button>
+              <button type="button" class="toolbar-btn" data-command="insertMatching" title="Eşleştirme Modülü">🔄 Eşleştir</button>
             </div>
             <div class="editor-content" id="articleContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${article.content || ''}</div>
           </div>
