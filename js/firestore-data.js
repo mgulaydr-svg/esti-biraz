@@ -39,25 +39,37 @@ function createArticleCard(article) {
   `;
 }
 
-function createCourseCard(course) {
+/**
+ * Kurs kartı oluşturur (tekrar kullanılabilir)
+ */
+function createCourseCard(courseId, course) {
+  if (!course || !course.title) return '';
+
+  const totalLessons = course.totalLessons || course.lessonCount || 0;
   const level = getLevelLabel(course.level);
-  
-  // 1. Açıklamayı burada kontrol edip kısaltıyoruz:
+
+  // Açıklamayı 90 karakterle sınırla
   const shortDesc = course.description && course.description.length > 90 
     ? course.description.substring(0, 90) + '...' 
     : (course.description || '');
 
   return `
-    <div class="course-card" onclick="window.location.hash='#/kurs/${course.slug}'" style="cursor: pointer;">
-      ${level ? `<span class="course-card__topline">${level}</span>` : ''}
-      <h3>${course.title}</h3>
-      
-      <p class="course-card__desc">${shortDesc}</p>
-      
-      <div style="margin-top:auto; padding-top:16px; color:var(--muted); font-size:0.9rem;">
-        <span>👨‍🏫 ${course.instructor || ''}</span> · <span>📚 ${course.lessonCount || 0} Ders</span>
+    <a href="#/kurs/${course.slug}" class="course-card">
+      <div class="course-card__image" style="margin: -22px -22px 16px -22px; border-bottom: 1px solid var(--line);">
+        ${course.coverImage
+          ? `<img src="${course.coverImage}" alt="${course.title}" loading="lazy" style="width:100%; height:180px; object-fit:cover;">`
+          : `<div class="course-card__placeholder" style="height:180px; background:var(--paper-soft); display:flex; align-items:center; justify-content:center; font-size:3rem;">🎓</div>`}
       </div>
-    </div>
+      <div class="course-card__body">
+        <span class="course-card__topline">${level}</span>
+        <h3 class="course-card__title" style="margin-top: 8px;">${course.title}</h3>
+        <p class="course-card__desc">${shortDesc}</p>
+        <div class="course-card__footer" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem;">
+          <span>👨‍🏫 ${course.instructor || ''}</span>
+          <span>📚 ${totalLessons} Ders</span>
+        </div>
+      </div>
+    </a>
   `;
 }
 
