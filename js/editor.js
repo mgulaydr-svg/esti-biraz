@@ -175,8 +175,18 @@ function insertCalloutBlock(editor) {
   const text = prompt('Kutu İçeriği:');
   if (!title || !text) return;
 
-  const html = `<div class="content-callout content-callout--${type}"><strong>💡 ${escapeHTML(title)}</strong><p style="margin:4px 0 0;">${escapeHTML(text)}</p></div><p><br></p>`;
-  document.execCommand('insertHTML', false, html);
+  // ALTIN KURAL UYGULANDI: Dış div'e contenteditable="false", içerideki div'e "true" verildi.
+  const html = `
+    <div class="content-callout content-callout--${type}" contenteditable="false" style="margin: 20px 0; display: block;">
+      <strong style="display: block; margin-bottom: 8px; user-select: none;">💡 ${escapeHTML(title)}</strong>
+      <div class="callout-content" contenteditable="true" style="outline: none; display: block;">
+        <p style="margin: 0; padding: 0; text-indent: 0;">${escapeHTML(text)}</p>
+      </div>
+    </div>
+    <p><br></p>
+  `;
+  
+  document.execCommand('insertHTML', false, html.replace(/\n\s+/g, '')); // Boşlukları temizleyerek basar
 }
 
 function insertQuizBlock(editor) {
