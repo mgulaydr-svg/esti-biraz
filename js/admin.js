@@ -156,9 +156,11 @@ async function showArticleForm(articleId = null) {
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertOrderedList" title="Numaralı Liste" onmousedown="event.preventDefault();">🔢 Sayı</button>
      
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-     <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<p>" title="Normal Düz Metin" onmousedown="event.preventDefault();">P</button>
-     <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<h2>" title="Ana Başlık" onmousedown="event.preventDefault();">H2</button>
-     <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<h3>" title="Alt Başlık" onmousedown="event.preventDefault();">H3</button>
+     <button type="button" class="toolbar-btn" title="Normal Düz Metin" onmousedown="event.preventDefault(); document.execCommand('formatBlock', false, 'P') || document.execCommand('formatBlock', false, '<p>');">P</button>
+
+     <button type="button" class="toolbar-btn" title="Ana Başlık" onmousedown="event.preventDefault(); document.execCommand('formatBlock', false, 'H2') || document.execCommand('formatBlock', false, '<h2>');">H2</button>
+
+     <button type="button" class="toolbar-btn" title="Alt Başlık" onmousedown="event.preventDefault(); document.execCommand('formatBlock', false, 'H3') || document.execCommand('formatBlock', false, '<h3>');">H3</button>
      
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle" onmousedown="event.preventDefault();">🔗</button>
