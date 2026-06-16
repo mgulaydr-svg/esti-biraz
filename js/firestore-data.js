@@ -419,8 +419,11 @@ async function loadArticle(slug) {
 /**
  * Tüm kursları çeker (akademi sayfası için)
  */
-async function loadAllCourses() {
+async function loadAllCourses(category = 'all') {
   const container = document.getElementById('app');
+  
+  // Kurs kategorileri
+  const categories = ['saglik', 'bilim', 'egitim', 'beslenme', 'gebelik'];
 
   container.innerHTML = `
     <section class="akademi-page">
@@ -431,34 +434,40 @@ async function loadAllCourses() {
             <p>Bilgiyi keşfet, kendini geliştir.</p>
           </div>
         </div>
-        <div class="course-grid" id="coursesGrid"> <div class="loading-state">Kurslar yükleniyor...</div>
+
+        <div class="magazin-filters" id="courseCategoryFilters">
+          <button class="filter-btn ${category === 'all' ? 'active' : ''}" onclick="loadAllCourses('all')">Tümü</button>
+          ${categories.map(cat => `
+            <button class="filter-btn ${category === cat ? 'active' : ''}" onclick="loadAllCourses('${cat}')">${getCategoryLabel(cat)}</button>
+          `).join('')}
+        </div>
+
+        <div class="course-grid" id="coursesGrid">
+          <div class="loading-state">Kurslar yükleniyor...</div>
         </div>
       </div>
     </section>
   `;
 
   try {
-    const snapshot = await db.collection('courses')
-      .where('status', '==', 'published')
-      .orderBy('publishedAt', 'desc')
-      .get();
-
+    let q = db.collection('courses').where('status', '==', 'published');
+    if (category !== 'all') {
+      q = q.where('category', '==', category);
+    }
+    
+    const snapshot = await q.orderBy('publishedAt', 'desc').get();
     const grid = document.getElementById('coursesGrid');
     if (!grid) return;
 
     if (snapshot.empty) {
-      grid.innerHTML = '<p class="empty-state">Henüz kurs eklenmemiş. Yakında burada olacak! 🚀</p>';
+      grid.innerHTML = '<p class="empty-state">Bu kategoride henüz kurs bulunmuyor. Yakında burada olacak! 🚀</p>';
       return;
     }
 
-    grid.innerHTML = snapshot.docs
-      .map(doc => createCourseCard(doc.id, doc.data()))
-      .join('');
-
+    grid.innerHTML = snapshot.docs.map(doc => createCourseCard(doc.id, doc.data())).join('');
   } catch (error) {
     console.error('❌ Kurslar yüklenemedi:', error);
-    const grid = document.getElementById('coursesGrid');
-    if (grid) grid.innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
+    document.getElementById('coursesGrid').innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
   }
 }
 
