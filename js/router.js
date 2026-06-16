@@ -78,13 +78,13 @@ function renderHakkinda() {
       <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
 
         <a href="https://mgulaydr-svg.github.io/akilli-kartlar" target="_blank" class="article-card" style="flex: 1 1 300px; max-width: 400px; text-align:center; padding: 32px; text-decoration:none; display:flex; flex-direction:column; align-items:center; box-sizing: border-box;">
-          <img src="assets/ChatGPT Image 15 Haz 2026 11_46_33.jpg" alt="Akıllı Kartlar" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: auto;">
+          <img src="assets/akilli-kartlar.png" alt="Akıllı Kartlar" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: auto;">
           <h3 style="color: var(--guardian-blue); margin: 0 0 12px; font-size: 1.5rem;">Akıllı Kartlar</h3>
           <p style="color: var(--muted); margin:0; font-size: 0.95rem;">Hızlı tekrarlar ve ezber gerektiren sağlık terimleri için interaktif çalışma kartları sistemi.</p>
         </a>
 
         <a href="https://mgulaydr-svg.github.io/sorularla-calisma" target="_blank" class="article-card" style="flex: 1 1 300px; max-width: 400px; text-align:center; padding: 32px; text-decoration:none; display:flex; flex-direction:column; align-items:center; box-sizing: border-box;">
-          <img src="assets/ChatGPT Image 15 Haz 2026 10_12_29.png" alt="Sorularla Çalışma" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: auto;">
+          <img src="assets/sorularla-calisma.png" alt="Sorularla Çalışma" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: auto;">
           <h3 style="color: var(--brand-blue); margin: 0 0 12px; font-size: 1.5rem;">Sorularla Çalışma</h3>
           <p style="color: var(--muted); margin:0; font-size: 0.95rem;">Sınavlara hazırlık ve konu pekiştirme için özel olarak tasarlanmış çoktan seçmeli test ekosistemi.</p>
         </a>
