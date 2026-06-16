@@ -302,7 +302,8 @@ async function showCourseForm(courseId = null) {
       <div class="admin-panel__head">
         <h3 style="margin:0;">${courseId ? 'Kursu Düzenle' : 'Yeni Kurs'}</h3>
       </div>
-      <form class="admin-form" onsubmit="event.preventDefault(); saveCourse('${courseId || ''}');">
+      
+      <form class="admin-form" onsubmit="event.preventDefault(); saveCourse('${courseId ? courseId : ''}');">
         
         <div class="admin-form-grid">
           <label>Kurs Başlığı *
@@ -352,11 +353,11 @@ async function showCourseForm(courseId = null) {
         <div class="form-group">
           <label>Kapak Görseli</label>
           <div style="display:flex; gap:12px;">
-            <input type="url" id="articleCoverImage" value="${article.coverImage || ''}" class="form-input" placeholder="https://...">
-            <button type="button" class="btn btn--outline" onclick="uploadDirectCoverImage('articleCoverImage', 'articleCoverPreview')">📁 Bilgisayardan Seç</button>
+            <input type="url" id="courseCoverImage" value="${course.coverImage || ''}" class="form-input" placeholder="https://...">
+            <button type="button" class="btn btn--outline" onclick="uploadDirectCoverImage('courseCoverImage', 'courseCoverPreview')">📁 Bilgisayardan Seç</button>
           </div>
-          <div id="articleCoverPreview">
-            ${article.coverImage ? `<img src="${article.coverImage}" style="max-height:140px; border-radius:12px; margin-top:12px;">` : ''}
+          <div id="courseCoverPreview">
+            ${course.coverImage ? `<img src="${course.coverImage}" style="max-height:140px; border-radius:12px; margin-top:12px;">` : ''}
           </div>
         </div>
 
@@ -373,7 +374,6 @@ async function showCourseForm(courseId = null) {
     </div>
   `;
 }
-
 async function saveCourse(courseId) {
   const title = document.getElementById('courseTitle').value.trim();
   const slug = document.getElementById('courseSlug').value.trim();
