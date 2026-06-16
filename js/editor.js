@@ -157,15 +157,30 @@ function insertTable(editor) {
   const cols = parseInt(prompt('Sütun sayısı:', '3'), 10);
   if (!rows || !cols || isNaN(rows) || isNaN(cols)) return;
 
-  let tableHTML = '<figure class="content-table"><div class="content-table__scroll"><table><thead><tr>';
-  for (let j = 0; j < cols; j++) tableHTML += `<th>Başlık ${j + 1}</th>`;
-  tableHTML += '</tr></thead><tbody>';
-  for (let i = 0; i < rows; i++) {
-    tableHTML += '<tr>';
-    for (let j = 0; j < cols; j++) tableHTML += '<td>Veri</td>';
-    tableHTML += '</tr>';
+  // TABLO ZIRHLAMA: contenteditable="false" (dış kutu), contenteditable="true" (hücreler)
+  let tableHTML = `
+    <div class="table-wrapper" contenteditable="false" style="margin: 20px 0; overflow-x: auto; display: block;">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid var(--line);">
+        <thead>
+          <tr>`;
+  
+  for (let j = 0; j < cols; j++) {
+    tableHTML += `<th contenteditable="true" style="border: 1px solid var(--line); padding: 12px; background: var(--paper-soft); outline: none;">Başlık ${j + 1}</th>`;
   }
-  tableHTML += '</tbody></table></div></figure><p><br></p>';
+  
+  tableHTML += `</tr></thead><tbody>`;
+  
+  for (let i = 0; i < rows; i++) {
+    tableHTML += `<tr>`;
+    for (let j = 0; j < cols; j++) {
+      // Hücreler düzenlenebilir (true), dış yapı kilitli (false)
+      tableHTML += `<td contenteditable="true" style="border: 1px solid var(--line); padding: 12px; outline: none;">Veri</td>`;
+    }
+    tableHTML += `</tr>`;
+  }
+  
+  tableHTML += `</tbody></table></div><p><br></p>`;
+  
   document.execCommand('insertHTML', false, tableHTML);
 }
 
