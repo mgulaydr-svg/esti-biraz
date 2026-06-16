@@ -429,3 +429,17 @@ html[data-theme='dark'] .pill {
   max-width: 400px; /* Çok geniş ekranda aşırı uzamasını önler */
   box-sizing: border-box;
 }
+
+/* ==========================================================================
+   DÜZELTMELER: Profil Sayfası Alt Boşluk
+   ========================================================================== */
+
+/* Profil sayfası ile footer arasına nefes alma boşluğu ekler */
+.profile-page {
+  padding-bottom: 80px; 
+}
+
+/* Veya doğrudan kurslar alanının altına ekstra itme gücü verir */
+.profile-courses {
+  margin-bottom: 60px;
+}
