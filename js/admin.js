@@ -148,8 +148,9 @@ async function showArticleForm(articleId = null) {
               <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic" title="İtalik"><i>I</i></button>
               <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline" title="Altı Çizili"><u>U</u></button>
               <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="formatBlock" data-value="H2">H2</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="formatBlock" data-value="H3">H3</button>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin">P</button>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık">H2</button>
+              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık">H3</button>
               <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
               <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle">🔗</button>
               <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertImage" title="Görsel Ekle">🖼️</button>
@@ -538,8 +539,9 @@ async function showLessonForm(courseId, lessonId = null) {
                 <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
                 <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2">H2</button>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3">H3</button>
+                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin">P</button>
+                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık">H2</button>
+                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık">H3</button>
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
                 <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
                 <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
