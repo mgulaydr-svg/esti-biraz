@@ -394,3 +394,38 @@ html[data-theme='dark'] .pill {
 
 /* 4. Ders Sayfasındaki Butonların Yapışıklığını Düzeltme */
 .lesson-player__nav, .button-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+/* ==========================================================================
+   DÜZELTMELER: Filtre Renkleri ve Hakkında Sayfası Mobil Düzen
+   ========================================================================== */
+
+/* 1. Kategori Filtre Butonları (Açık Yeşil ve Koyu Yeşil Vurgu) */
+.magazin-filters .filter-btn {
+  background: color-mix(in srgb, var(--brand-teal) 10%, transparent) !important;
+  color: var(--brand-teal) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-teal) 20%, transparent) !important;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.magazin-filters .filter-btn:hover,
+.magazin-filters .filter-btn.active {
+  background: var(--brand-teal) !important;
+  color: #fff !important;
+  border-color: var(--brand-teal) !important;
+}
+
+/* 2. Hakkında Sayfası Ekosistem Kartları Ortalaması */
+.about-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  justify-items: center; /* Ortalamayı sağlar */
+}
+.about-cards-grid .article-card {
+  width: 100%;
+  max-width: 400px; /* Çok geniş ekranda aşırı uzamasını önler */
+  box-sizing: border-box;
+}
