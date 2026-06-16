@@ -154,9 +154,9 @@ async function showArticleForm(articleId = null) {
       
       <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
       
-      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin" onmousedown="event.preventDefault();">P</button>
-      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık" onmousedown="event.preventDefault();">H2</button>
-      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık" onmousedown="event.preventDefault();">H3</button>
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<p>" title="Normal Düz Metin" onmousedown="event.preventDefault();">P</button>
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<h2>" title="Ana Başlık" onmousedown="event.preventDefault();">H2</button>
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="<h3>" title="Alt Başlık" onmousedown="event.preventDefault();">H3</button>
       
       <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
       
