@@ -67,14 +67,14 @@ function renderAkademi() {
 function renderHakkinda() {
   pageMeta('Hakkında', 'ESTİ BİRAZ ve Ekosistem Uygulamaları');
   appContainer.innerHTML = `
-    <div class="container" style="padding: 60px 0; max-width: 900px;">
+    <div class="container" style="padding: 60px 0; max-width: 900px; text-align: center;">
       <div class="admin-panel" style="margin-bottom: 40px; text-align: center; border-color: var(--brand-teal);">
         <h1 style="font-family: var(--serif); color: var(--guardian-blue); margin-top:0;">Hakkımızda</h1>
         <p style="font-size: 1.1rem; color: var(--muted);">ESTİ BİRAZ, sağlık meslek lisesi öğrencileri, eğitimciler ve alanında uzmanlaşmak isteyen profesyoneller için tasarlanmış bağımsız bir eğitim platformudur.</p>
       </div>
 
       <h2 style="font-family: var(--serif); color: var(--brand-teal); margin-bottom: 24px;">🧩 Ekosistemdeki Diğer Uygulamalarımız</h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+      <div class="about-cards-grid">
         
         <a href="https://mgulaydr-svg.github.io/akilli-kartlar" target="_blank" class="article-card" style="text-align:center; padding: 32px; text-decoration:none; display:flex; flex-direction:column; align-items:center;">
           <img src="assets/ChatGPT Image 15 Haz 2026 11_46_33.jpg" alt="Akıllı Kartlar" style="max-height: 140px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
