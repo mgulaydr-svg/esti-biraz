@@ -419,10 +419,14 @@ async function loadArticle(slug) {
 /**
  * Tüm kursları çeker (akademi sayfası için)
  */
+/**
+ * Tüm kursları akademi sayfasında filtreli olarak listeler
+ */
 async function loadAllCourses(category = 'all') {
   const container = document.getElementById('app');
+  if (!container) return;
   
-  // Kurs kategorileri
+  // Sabit kategori listemiz
   const categories = ['saglik', 'bilim', 'egitim', 'beslenme', 'gebelik'];
 
   container.innerHTML = `
@@ -451,24 +455,33 @@ async function loadAllCourses(category = 'all') {
 
   try {
     let q = db.collection('courses').where('status', '==', 'published');
+    
     if (category !== 'all') {
       q = q.where('category', '==', category);
     }
     
-    const snapshot = await q.orderBy('publishedAt', 'desc').get();
+    // NOT: Eğer eski kurslarında 'publishedAt' alanı boş olan varsa sorgu hata vermesin diye 
+    // indeksleme bittikten sonra en güvenli sıralama olan 'createdAt' alanını kullanıyoruz.
+    const snapshot = await q.orderBy('createdAt', 'desc').get();
     const grid = document.getElementById('coursesGrid');
     if (!grid) return;
 
     if (snapshot.empty) {
-      grid.innerHTML = '<p class="empty-state">Bu kategoride henüz kurs bulunmuyor. Yakında burada olacak! 🚀</p>';
+      grid.innerHTML = '<p class="empty-state">Bu kategoride henüz kurs bulunmuyor. Yakında eklenecek! 🚀</p>';
       return;
     }
 
+    // Kartları basarken styles.css sınıflarını kullanan fonksiyonu çağırıyoruz
     grid.innerHTML = snapshot.docs.map(doc => createCourseCard(doc.id, doc.data())).join('');
+    
   } catch (error) {
-    console.error('❌ Kurslar yüklenemedi:', error);
-    document.getElementById('coursesGrid').innerHTML = '<p class="error-state">Kurslar yüklenirken hata oluştu.</p>';
+    console.error('❌ Kurslar listelenirken hata oluştu:', error);
+    const grid = document.getElementById('coursesGrid');
+    if (grid) {
+      grid.innerHTML = '<p class="error-state">Kurslar yüklenirken bir hata oluştu. Lütfen indeks durumunu kontrol edin.</p>';
+    }
   }
+}
 }
 
 async function loadCourse(slug) {
