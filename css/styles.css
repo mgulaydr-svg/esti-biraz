@@ -443,3 +443,23 @@ html[data-theme='dark'] .pill {
 .profile-courses {
   margin-bottom: 60px;
 }
+
+/* ==========================================================================
+   DÜZELTMELER: Ders Sayfası Alt Buton Yapışıklığı
+   ========================================================================== */
+
+/* Tamamlandı ve Sonraki butonlarının kapsayıcısı */
+.lesson-player__actions, 
+.lesson-player__nav {
+  display: flex !important;
+  flex-wrap: wrap !important; /* Sığmazsa alt satıra at */
+  gap: 16px !important; /* Butonlar arasına her yönden 16px boşluk koy */
+  align-items: center !important;
+  margin-top: 24px !important;
+}
+
+/* Tamamla butonu özelinde ek güvenlik (kapsayıcı yoksa bile çalışır) */
+#completeLessonBtn {
+  margin-bottom: 12px !important;
+  margin-right: 8px !important;
+}
