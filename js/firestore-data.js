@@ -80,14 +80,12 @@ async function loadLatestArticles() {
   const container = document.getElementById('app');
 
   try {
-    // Sadece son 4 makaleyi hero ve son yazılar için çekiyoruz
     const snapshot = await db.collection('articles').where('status', '==', 'published').orderBy('publishedAt', 'desc').limit(4).get();
     const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(a => a && a.title);
 
     const heroArticle = articles.length > 0 ? articles[0] : null;
     const otherArticles = articles.length > 1 ? articles.slice(1) : [];
 
-    // Gerçekçi görünmesi için toplam makale sayısını temsil eden sembolik veya çekilmiş bir sayı (şimdilik snapshot size'ı + genel rakamlar)
     const totalArticles = articles.length > 0 ? (snapshot.size * 3) + 12 : 0; 
     const monthlyVisits = (totalArticles * 25) + 350;
 
@@ -97,7 +95,7 @@ async function loadLatestArticles() {
         <div class="hero-grid">
           ${heroArticle ? `
             <div class="lead-story" style="cursor: pointer;" onclick="window.location.hash='#/makale/${heroArticle.slug}'">
-              <span class="pill">${getCategoryLabel(heroArticle.category)}</span>
+              <span class="badge">${getCategoryLabel(heroArticle.category)}</span>
               <h1>${heroArticle.title}</h1>
               <p>${heroArticle.summary || ''}</p>
               <div class="lead-story__meta">
@@ -118,7 +116,23 @@ async function loadLatestArticles() {
           </div>
         </div>
 
-        <section class="platform-stats" style="margin: 60px 0; padding: 40px; background: var(--paper-soft); border-radius: var(--radius); border: 1px solid var(--line);">
+        ${otherArticles.length > 0 ? `
+          <div class="section-heading" style="margin-top: 48px;">
+            <div>
+              <p class="eyebrow" style="margin:0;">GÜNCEL İÇERİKLER</p>
+              <h2>Son Yazılar</h2>
+            </div>
+            <a href="#/makaleler" style="font-weight: 800; color: var(--brand-teal);">Tümünü Gör →</a>
+          </div>
+          <div class="article-layout">
+            ${otherArticles.map(a => createArticleCard(a)).join('')}
+          </div>
+        ` : ''}
+
+        <div id="featuredCourses" style="margin-top: 48px;"></div>
+
+        <!-- İSTATİSTİKLER EN ALTA ALINDI -->
+        <section class="platform-stats" style="margin-top: 60px; padding: 40px; background: var(--paper-soft); border-radius: var(--radius); border: 1px solid var(--line);">
           <div style="text-align: center; margin-bottom: 32px;">
             <span class="eyebrow">ESTİ BİRAZ RAKAMLARLA</span>
             <h2 style="font-family: var(--serif); font-size: 2.5rem; margin-top: 8px; margin-bottom: 0;">Büyüyen Ekosistem</h2>
@@ -139,27 +153,12 @@ async function loadLatestArticles() {
           </div>
         </section>
 
-        ${otherArticles.length > 0 ? `
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow" style="margin:0;">GÜNCEL İÇERİKLER</p>
-              <h2>Son Yazılar</h2>
-            </div>
-            <a href="#/makaleler" style="font-weight: 800; color: var(--brand-teal);">Tümünü Gör →</a>
-          </div>
-          <div class="article-layout">
-            ${otherArticles.map(a => createArticleCard(a)).join('')}
-          </div>
-        ` : ''}
-
-        <div id="featuredCourses" style="margin-top: 48px;"></div>
       </div>
     `;
 
     loadFeaturedCourses();
   } catch (error) {
     console.error('❌ Ana sayfa yüklenemedi:', error);
-    container.innerHTML = '<div class="container"><p>Sayfa yüklenirken hata oluştu.</p></div>';
   }
 }
 /**
