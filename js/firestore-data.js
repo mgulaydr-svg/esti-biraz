@@ -422,11 +422,13 @@ async function loadArticle(slug) {
 /**
  * Tüm kursları akademi sayfasında filtreli olarak listeler
  */
+/**
+ * Tüm kursları akademi sayfasında filtreli olarak listeler
+ */
 async function loadAllCourses(category = 'all') {
   const container = document.getElementById('app');
   if (!container) return;
   
-  // Sabit kategori listemiz
   const categories = ['saglik', 'bilim', 'egitim', 'beslenme', 'gebelik'];
 
   container.innerHTML = `
@@ -460,8 +462,6 @@ async function loadAllCourses(category = 'all') {
       q = q.where('category', '==', category);
     }
     
-    // NOT: Eğer eski kurslarında 'publishedAt' alanı boş olan varsa sorgu hata vermesin diye 
-    // indeksleme bittikten sonra en güvenli sıralama olan 'createdAt' alanını kullanıyoruz.
     const snapshot = await q.orderBy('createdAt', 'desc').get();
     const grid = document.getElementById('coursesGrid');
     if (!grid) return;
@@ -471,7 +471,6 @@ async function loadAllCourses(category = 'all') {
       return;
     }
 
-    // Kartları basarken styles.css sınıflarını kullanan fonksiyonu çağırıyoruz
     grid.innerHTML = snapshot.docs.map(doc => createCourseCard(doc.id, doc.data())).join('');
     
   } catch (error) {
@@ -482,7 +481,7 @@ async function loadAllCourses(category = 'all') {
     }
   }
 }
-}
+// DİKKAT: Kodu yapıştırdıktan sonra hemen bu satırın altında fazladan bir "}" kalıp kalmadığını kontrol et.
 
 async function loadCourse(slug) {
   const container = document.getElementById('app');
