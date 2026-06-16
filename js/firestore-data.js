@@ -49,17 +49,17 @@ function createCourseCard(id, course) {
   if (!course || !course.title) return '';
 
   const totalLessons = course.totalLessons || course.lessonCount || 0;
-  const level = getLevelLabel(course.level);
+  // Seviye yerine Kategoriyi badge olarak basıyoruz
+  const categoryBadge = course.category ? `<span class="badge badge--${course.category}">${getCategoryLabel(course.category)}</span>` : '';
 
-  // Kart boyutlarını eşitlemek için açıklamayı kırpıyoruz
   const shortDesc = course.description && course.description.length > 90 
     ? course.description.substring(0, 90) + '...' 
     : (course.description || '');
 
   return `
     <div class="course-card" onclick="window.location.hash='#/kurs/${course.slug}'" style="cursor: pointer;">
-      ${level ? `<span class="course-card__topline">${level}</span>` : ''}
-      <h3>${course.title}</h3>
+      ${categoryBadge}
+      <h3 style="margin-top: 12px;">${course.title}</h3>
       <p>${shortDesc}</p>
       <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:space-between; color:var(--muted); font-size:0.9rem; font-weight:700;">
         <span>👨‍🏫 ${course.instructor || 'Esti Biraz'}</span>
