@@ -489,3 +489,37 @@ html[data-theme='dark'] .pill {
   color: #fff;
   border-color: var(--brand-teal);
 }
+
+/* ==========================================================================
+   DÜZELTMELER: Metin Editörü Sabit Araç Çubuğu ve Butonlar
+   ========================================================================== */
+
+.block-editor__tools {
+  position: sticky;
+  top: 60px; /* Üst menünün (header) altında kalması için boşluk */
+  z-index: 100;
+  background: var(--paper-soft);
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Seçmeyi kolaylaştıran hafif gölge */
+}
+
+.toolbar-btn {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--guardian-blue);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover {
+  background: var(--brand-teal);
+  color: #fff;
+  border-color: var(--brand-teal);
+}
