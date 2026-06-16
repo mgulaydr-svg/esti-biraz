@@ -347,6 +347,7 @@ html[data-theme='dark'] .pill {
   display: flex; gap: 24px; align-items: center; 
   background: var(--paper-soft); padding: 32px; 
   border-radius: var(--radius); border: 1px solid var(--line);
+  margin-top: 40px; /* ⬅️ YENİ: Menüden uzaklaştıran üst boşluk eklendi */
   margin-bottom: 32px; flex-wrap: wrap;
 }
 .profile-header__avatar { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #fff; box-shadow: var(--shadow); }
