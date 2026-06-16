@@ -902,13 +902,8 @@ async function loadProfile() {
               <p class="profile-header__joined">📅 Katılım: ${joinDate}</p>
             </div>
             <div class="profile-header__actions">
-              <button class="btn btn--outline btn--sm" onclick="logout()">
-                🚪 Çıkış Yap
-              </button>
-              <button class="btn btn--sm" onclick="deleteAccount()" 
-                      style="color:var(--color-text-muted); font-size:var(--font-size-xs); margin-top:var(--space-2);">
-                🗑️ Hesabımı Sil
-              </button>
+              <button class="ghost-button" style="padding: 8px 16px; margin-bottom: 8px;" onclick="logout()">🚪 Çıkış Yap</button>
+              <button class="ghost-button danger-button" style="padding: 8px 16px;" onclick="deleteAccount()">🗑️ Hesabımı Sil</button>
             </div>
           </div>
 
