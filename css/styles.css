@@ -524,3 +524,34 @@ html[data-theme='dark'] .pill {
   color: #fff;
   border-color: var(--brand-teal);
 }
+
+/* ==========================================================================
+   DÜZELTMELER: Editör İçi Başlık ve Paragraf Boyutları
+   ========================================================================== */
+
+/* H2 - Ana Başlık (En Büyük) */
+.editor-content h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--guardian-blue);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* H3 - Alt Başlık (Orta Boy) */
+.editor-content h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--guardian-blue);
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+/* P - Normal Düz Metin */
+.editor-content p {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.7;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
