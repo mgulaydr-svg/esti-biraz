@@ -141,29 +141,40 @@ async function showArticleForm(articleId = null) {
           </div>
         </div>
 
-        <label>Makale İçeriği *
-          <div class="block-editor">
-            <div class="block-editor__tools" id="editorToolbar">
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="bold" title="Kalın"><b>B</b></button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic" title="İtalik"><i>I</i></button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline" title="Altı Çizili"><u>U</u></button>
-              <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin">P</button>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık">H2</button>
-              <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık">H3</button>
-              <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle">🔗</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertImage" title="Görsel Ekle">🖼️</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle">📊</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
-              <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCallout" title="Vurgu Kutusu (Uyarı/Bilgi)">💡 Kutu</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertQuiz" title="Çoktan Seçmeli Soru">❓ Soru</button>
-              <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertMatching" title="Eşleştirme Modülü">🔄 Eşleştir</button>
-            </div>
-            <div class="editor-content" id="articleContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${article.content || ''}</div>
-          </div>
-        </label>
+        <div class="form-group" style="margin-top: 24px; margin-bottom: 24px;">
+  <!-- Zıplamayı çözen kısım: Label artık editörü sarmıyor, sadece başlık olarak duruyor -->
+  <label style="display: block; margin-bottom: 8px; font-weight: 700;">Makale İçeriği *</label>
+  
+  <div class="block-editor">
+    <div class="block-editor__tools" id="editorToolbar">
+      <!-- Seçimin kaybolmasını engelleyen kısım: onmousedown="event.preventDefault();" -->
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="bold" title="Kalın" onmousedown="event.preventDefault();"><b>B</b></button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic" title="İtalik" onmousedown="event.preventDefault();"><i>I</i></button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline" title="Altı Çizili" onmousedown="event.preventDefault();"><u>U</u></button>
+      
+      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+      
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin" onmousedown="event.preventDefault();">P</button>
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık" onmousedown="event.preventDefault();">H2</button>
+      <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık" onmousedown="event.preventDefault();">H3</button>
+      
+      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+      
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle" onmousedown="event.preventDefault();">🔗</button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertImage" title="Görsel Ekle" onmousedown="event.preventDefault();">🖼️</button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊</button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
+      
+      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+      
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCallout" title="Vurgu Kutusu (Uyarı/Bilgi)" onmousedown="event.preventDefault();">💡 Kutu</button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertQuiz" title="Çoktan Seçmeli Soru" onmousedown="event.preventDefault();">❓ Soru</button>
+      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertMatching" title="Eşleştirme Modülü" onmousedown="event.preventDefault();">🔄 Eşleştir</button>
+    </div>
+    
+    <div class="editor-content" id="articleContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${article.content || ''}</div>
+  </div>
+</div>
 
         <label class="checkbox-label" style="display: flex; gap: 8px; align-items: center; margin-top: 12px; font-weight: 700;">
           <input type="checkbox" id="articleFeatured" ${article.featured ? 'checked' : ''} style="width: auto;">
