@@ -210,41 +210,67 @@ async function loadFeaturedCourses(limit = 3) {
 let allArticlesCache = [];
 let currentCategory = 'all';
 
-async function loadAllArticles() {
-  const container = document.getElementById('app');
+// Türkçe karakterleri koruyan kategori isimlendirici yardımcı fonksiyon
+function getCategoryLabel(cat) {
+  const map = {
+    'saglik': 'Sağlık',
+    'bilim': 'Bilim',
+    'egitim': 'Eğitim',
+    'teknoloji': 'Teknoloji',
+    'beslenme': 'Beslenme',
+    'gebelik': 'Gebelik'
+  };
+  return map[cat] || (cat ? cat.toUpperCase() : 'GENEL');
+}
 
+async function loadAllArticles(category = 'all') {
+  const container = document.getElementById('app');
+  
+  // Filtrelerin anında yüklenmesi için sabit liste
+  const categories = ['saglik', 'bilim', 'egitim', 'teknoloji', 'beslenme', 'gebelik'];
+  
   container.innerHTML = `
     <div class="container" style="padding: 40px 0;">
       <div class="section-heading">
         <div>
-          <h2>Makaleler</h2>
-          <p>Sağlık, eğitim, bilim ve teknoloji alanındaki yazıları tek bir yerde keşfedin.</p>
-        </div>
-        <div class="search" style="width: 100%; max-width: 300px;">
-          <input type="text" id="articleSearchInput" placeholder="Makale ara..." style="color: var(--ink);">
+          <h2>📰 Makaleler</h2>
+          <p>En güncel yazılarımızı keşfedin.</p>
         </div>
       </div>
-
+      
       <div class="magazin-filters" id="categoryFilters">
-          <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Tümü</button>
-          ${[...new Set(allArticlesCache.map(a => a.category).filter(Boolean))].map(cat => `
-            <button class="filter-btn ${currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat.toUpperCase()}</button>
-          `).join('')}
-        </div>
+        <button class="filter-btn ${category === 'all' ? 'active' : ''}" onclick="loadAllArticles('all')">Tümü</button>
+        ${categories.map(cat => `
+          <button class="filter-btn ${category === cat ? 'active' : ''}" onclick="loadAllArticles('${cat}')">${getCategoryLabel(cat)}</button>
+        `).join('')}
+      </div>
 
       <div class="article-layout" id="articlesGrid">
-        <p style="grid-column: 1/-1; text-align: center; color: var(--muted);">Yükleniyor...</p>
+        <div class="loading-state">Makaleler yükleniyor...</div>
       </div>
     </div>
   `;
 
-  if (allArticlesCache.length === 0) {
-    const snapshot = await db.collection('articles').where('status', '==', 'published').orderBy('publishedAt', 'desc').get();
-    allArticlesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  }
+  try {
+    let q = db.collection('articles').where('status', '==', 'published');
+    if (category !== 'all') {
+      q = q.where('category', '==', category);
+    }
+    
+    const snapshot = await q.orderBy('publishedAt', 'desc').get();
+    const grid = document.getElementById('articlesGrid');
+    if (!grid) return;
 
-  setupMagazinEvents();
-  renderArticles();
+    if (snapshot.empty) {
+      grid.innerHTML = '<p class="empty-state">Bu kategoride henüz makale bulunmuyor.</p>';
+      return;
+    }
+
+    grid.innerHTML = snapshot.docs.map(doc => createArticleCard({ id: doc.id, ...doc.data() })).join('');
+  } catch (error) {
+    console.error('❌ Makaleler yüklenemedi:', error);
+    document.getElementById('articlesGrid').innerHTML = '<p class="error-state">Yüklenirken hata oluştu.</p>';
+  }
 }
 
 function setupMagazinEvents() {
