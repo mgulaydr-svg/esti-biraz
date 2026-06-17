@@ -587,3 +587,52 @@ html[data-theme='dark'] .pill {
   margin-top: 0;
   margin-bottom: 1em;
 }
+
+/* ==========================================================================
+   METİN EDİTÖRÜ: İdeal Tipografi ve Mobil Uyum
+   ========================================================================== */
+
+/* Masaüstü Varsayılan Boyutlar */
+.editor-content { font-size: 1rem; line-height: 1.8; color: var(--text); }
+.editor-content p { margin-top: 0; margin-bottom: 1.2em; }
+.editor-content h2 { font-size: 1.7rem; font-weight: 800; color: var(--guardian-blue); margin: 1.5em 0 0.5em; }
+.editor-content h3 { font-size: 1.3rem; font-weight: 700; color: var(--guardian-blue); margin: 1.2em 0 0.5em; }
+
+/* Mobilde Yazıları Otomatik Küçült */
+@media (max-width: 768px) {
+  .editor-content { font-size: 0.95rem; }
+  .editor-content h2 { font-size: 1.4rem; }
+  .editor-content h3 { font-size: 1.15rem; }
+}
+
+/* Tabloların Mobilde Taşmasını Engelleme Sistemi */
+.content-table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Ekrana sığmazsa içine scroll çubuğu koyar */
+  -webkit-overflow-scrolling: touch;
+  margin: 1.5em 0;
+}
+.content-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 450px; /* Sütunlar ezilmesin diye minimum genişlik */
+}
+.content-table-wrapper th, 
+.content-table-wrapper td {
+  border: 1px solid var(--line);
+  padding: 12px;
+  text-align: left;
+}
+.content-table-wrapper th {
+  background: var(--paper-soft);
+  font-weight: 700;
+}
+
+/* Görsellerin Ekrandan Taşmasını Engelle */
+.editor-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 1.5em auto;
+}
