@@ -660,3 +660,11 @@ html[data-theme='dark'] .pill {
   .editor-content h2 { font-size: 1.5rem; }
   .editor-content h3 { font-size: 1.25rem; }
 }
+
+/* Tablo içi yazıları sabitleme ve nefes aldırma */
+.editor-content table td,
+.editor-content table th {
+  font-size: 0.95rem !important; /* Ana metinden bir tık daha küçük, ideal tablo boyutu */
+  line-height: 1.5;
+  padding: 12px 10px; /* İçeriklerin hücre duvarlarına yapışmasını engeller */
+}
