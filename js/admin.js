@@ -164,7 +164,7 @@ async function showArticleForm(articleId = null) {
      
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle" onmousedown="event.preventDefault();">🔗</button>
-     <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertImage" title="Görsel Ekle" onmousedown="event.preventDefault();">🖼️</button>
+     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('articleContent'));">🖼️ Görsel</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
      
