@@ -201,7 +201,13 @@ async function saveArticleInline(articleId) {
   const author = document.getElementById('articleAuthor').value.trim();
   const summary = document.getElementById('articleSummary').value.trim();
   const coverImage = document.getElementById('articleCoverImage').value.trim();
-  const content = document.getElementById('articleContent').innerHTML;
+  // Editördeki ham HTML'i al
+  const rawContent = document.getElementById('articleContent').innerHTML;
+
+  // DOMPurify ile içindeki tüm zararlı scriptleri ve bozuk kodları temizle
+  const safeContent = DOMPurify.sanitize(rawContent);
+
+  // Firebase'e safeContent değişkenini gönder (content yerine)
   const featured = document.getElementById('articleFeatured').checked;
 
   if (!title || !slug || !category || !content) {
