@@ -968,3 +968,37 @@ async function loadProfile() {
     container.innerHTML = '<p class="error-state">Profil yüklenirken hata oluştu.</p>';
   }
 }
+
+/* ==========================================================================
+   GECE / GÜNDÜZ MODU (DARK MODE) YÖNETİMİ
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const htmlElement = document.documentElement; // <html> etiketini hedefler
+
+  // 1. Ziyaretçi siteye girdiğinde eski tercihini hafızadan (localStorage) oku
+  const savedTheme = localStorage.getItem('esti_theme');
+  if (savedTheme === 'dark') {
+    htmlElement.setAttribute('data-theme', 'dark');
+    if (themeToggleBtn) themeToggleBtn.textContent = '☀️'; // Butonu güneşe çevir
+  }
+
+  // 2. Butona tıklandığında temayı değiştir ve hafızaya kaydet
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = htmlElement.getAttribute('data-theme');
+      
+      if (currentTheme === 'dark') {
+        // Gündüze dön
+        htmlElement.removeAttribute('data-theme');
+        localStorage.setItem('esti_theme', 'light');
+        themeToggleBtn.textContent = '🌙';
+      } else {
+        // Geceye geç
+        htmlElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('esti_theme', 'dark');
+        themeToggleBtn.textContent = '☀️';
+      }
+    });
+  }
+});
