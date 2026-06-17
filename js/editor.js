@@ -157,33 +157,29 @@ function insertTable(editor) {
   const cols = parseInt(prompt('Sütun sayısı:', '3'), 10);
   if (!rows || !cols || isNaN(rows) || isNaN(cols)) return;
 
-  // TABLO ZIRHLAMA: contenteditable="false" (dış kutu), contenteditable="true" (hücreler)
+  // Kilitleri (contenteditable="false") kaldırdık. 
+  // Sadece mobil taşkınlık koruması için content-table-wrapper div'i içine aldık.
   let tableHTML = `
-    <div class="table-wrapper" contenteditable="false" style="margin: 20px 0; overflow-x: auto; display: block;">
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid var(--line);">
-        <thead>
-          <tr>`;
-  
-  for (let j = 0; j < cols; j++) {
-    tableHTML += `<th contenteditable="true" style="border: 1px solid var(--line); padding: 12px; background: var(--paper-soft); outline: none;">Başlık ${j + 1}</th>`;
-  }
-  
-  tableHTML += `</tr></thead><tbody>`;
-  
+    <div class="content-table-wrapper">
+      <table>
+        <tbody>
+  `;
   for (let i = 0; i < rows; i++) {
     tableHTML += `<tr>`;
     for (let j = 0; j < cols; j++) {
-      // Hücreler düzenlenebilir (true), dış yapı kilitli (false)
-      tableHTML += `<td contenteditable="true" style="border: 1px solid var(--line); padding: 12px; outline: none;">Veri</td>`;
+      // Başlık satırı için <th>, diğerleri için <td>
+      if (i === 0) {
+        tableHTML += `<th>Başlık</th>`;
+      } else {
+        tableHTML += `<td>Veri</td>`;
+      }
     }
     tableHTML += `</tr>`;
   }
-  
   tableHTML += `</tbody></table></div><p><br></p>`;
   
   document.execCommand('insertHTML', false, tableHTML);
 }
-
 function insertCalloutBlock(editor) {
   const type = prompt('Kutu Tipi (warning = kırmızı, success = yeşil, data = petrol, exam = kehribar):', 'warning') || 'warning';
   const title = prompt('Kutu Başlığı:');
