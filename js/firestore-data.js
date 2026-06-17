@@ -326,6 +326,7 @@ async function loadArticle(slug) {
   try {
     const snapshot = await db.collection('articles')
       .where('slug', '==', slug)
+      .where('status', '==', 'published') // ⬅️ İŞTE HAYAT KURTARAN YENİ SATIR BURASI
       .limit(1)
       .get();
 
@@ -486,7 +487,7 @@ async function loadAllCourses(category = 'all') {
 async function loadCourse(slug) {
   const container = document.getElementById('app');
   try {
-    const snapshot = await db.collection('courses').where('slug', '==', slug).limit(1).get();
+    const snapshot = await db.collection('courses').where('slug', '==', slug).where('status', '==', 'published').limit(1).get();
     if (snapshot.empty) return;
     const courseDoc = snapshot.docs[0];
     const course = courseDoc.data();
