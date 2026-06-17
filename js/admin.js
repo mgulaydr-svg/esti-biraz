@@ -674,3 +674,58 @@ async function deleteLesson(courseId, lessonId, title) {
     alert('Ders silinirken hata: ' + error.message);
   }
 }
+
+// Görseli Cloudinary'ye yükleyip editöre URL olarak basan fonksiyon
+function insertImageWithCloudinary(editor) {
+  // Gizli bir dosya seçme penceresi oluştur
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', CLOUDINARY_CONFIG.allowedTypes.join(','));
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Dosya boyutu kontrolü (5MB limiti)
+    if (file.size > CLOUDINARY_CONFIG.maxFileSize) {
+      alert('Seçtiğiniz görsel 5MB\'dan büyük olamaz!');
+      return;
+    }
+
+    // Yükleme sırasında kullanıcıya bilgi ver
+    const loadingText = prompt('Görsel Cloudinary\'ye yükleniyor, lütfen bekleyin...', 'Yükleniyor...');
+    if (loadingText === null) return; // İptal edilirse çık
+
+    try {
+      // Cloudinary API'sinin beklediği FormData yapısını hazırlıyoruz
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+      formData.append('folder', CLOUDINARY_CONFIG.folder);
+
+      // Cloudinary API'sine doğrudan tarayıcıdan istek atıyoruz
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Cloudinary yükleme işlemi başarısız oldu.');
+      }
+
+      const data = await response.json();
+      
+      // Cloudinary'den gelen güvenli, optimize edilmiş görsel linkini alıyoruz
+      const downloadURL = data.secure_url;
+      
+      // Linki editörün içine tertemiz bir <img> etiketi olarak basıyoruz
+      document.execCommand('insertImage', false, downloadURL);
+      
+      console.log('✅ Görsel başarıyla Cloudinary\'ye yüklendi:', downloadURL);
+    } catch (error) {
+      console.error('❌ Cloudinary yükleme hatası:', error);
+      alert('Görsel yüklenirken bir hata oluştu.');
+    }
+  };
+}
