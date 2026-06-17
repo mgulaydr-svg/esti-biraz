@@ -637,6 +637,17 @@ html[data-theme='dark'] .pill {
   margin: 1.5em auto;
 }
 
+/* Resim ve Tabloları seçilebilir yap */
+.editor-content img, 
+.editor-content .table-wrapper {
+  cursor: move; /* Taşıma imleci */
+  border: 1px dashed transparent;
+}
+.editor-content img:hover, 
+.editor-content .table-wrapper:hover {
+  border: 1px dashed var(--brand-teal); /* Üzerine gelince çerçeve belirsin */
+}
+
 /* Masaüstü Varsayılan Boyutlar (Daha Ferah) */
 .editor-content { font-size: 1.15rem; line-height: 1.8; color: var(--text); }
 .editor-content p { margin-top: 0; margin-bottom: 1.2em; }
