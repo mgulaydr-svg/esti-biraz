@@ -157,7 +157,11 @@ function insertTable(editor) {
   const cols = parseInt(prompt('Sütun sayısı:', '3'), 10);
   if (!rows || !cols || isNaN(rows) || isNaN(cols)) return;
 
-  // Kilitleri (contenteditable="false") kaldırdık. 
+  // insertTable içindeki tableHTML'in hemen başına bunu ekle:
+     // Tablonun sağ üstüne bir "Sil" butonu koyalım
+     tableHTML = `<div style="position:relative;"><button onclick="this.parentElement.remove()" style="position:absolute; top:-25px; right:0; cursor:pointer;">Tabloyu Sil ❌</button>` + tableHTML;
+   
+   // Kilitleri (contenteditable="false") kaldırdık. 
   // Sadece mobil taşkınlık koruması için content-table-wrapper div'i içine aldık.
   let tableHTML = `
     <div class="content-table-wrapper">
@@ -180,6 +184,8 @@ function insertTable(editor) {
   
   document.execCommand('insertHTML', false, tableHTML);
 }
+
+
 function insertCalloutBlock(editor) {
   const type = prompt('Kutu Tipi (warning = kırmızı, success = yeşil, data = petrol, exam = kehribar):', 'warning') || 'warning';
   const title = prompt('Kutu Başlığı:');
