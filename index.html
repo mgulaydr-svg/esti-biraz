@@ -35,12 +35,16 @@
       <button type="button" id="globalSearchBtn">Ara</button>
     </div>
 
-    <div class="account-actions" id="headerAuth">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      
       <button id="themeToggle" class="ghost-button" title="Gece/Gündüz Modu" style="font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border: none; background: transparent;">
         🌙
       </button>
+
+      <div class="account-actions" id="headerAuth">
+        <button class="ghost-button" id="btnLogin" onclick="login()">Giriş Yap</button>
+      </div>
       
-      <button class="ghost-button" id="btnLogin" onclick="login()">Giriş Yap</button>
     </div>
 
   </div>
