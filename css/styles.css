@@ -713,3 +713,8 @@ html[data-theme='dark'] .pill {
   text-decoration: underline !important; /* Altı her zaman çizili olsun */
   font-weight: 600;
 }
+
+/* İlgili Makaleler alanı ile Footer (sayfa sonu) arasını açar */
+#relatedArticles {
+  margin-bottom: 80px;
+}
