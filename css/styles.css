@@ -668,3 +668,15 @@ html[data-theme='dark'] .pill {
   line-height: 1.5;
   padding: 12px 10px; /* İçeriklerin hücre duvarlarına yapışmasını engeller */
 }
+
+/* Kapak görseli ve altındaki bilgilerin arasını açar */
+.article-detail__cover {
+  margin-bottom: 24px;
+  border-radius: 8px; /* Resmin köşelerini hafif yuvarlatarak şıklaştırır */
+  overflow: hidden;
+}
+
+.article-detail__cover img {
+  width: 100%;
+  display: block; /* Alt kısımdaki gizli boşlukları yok eder */
+}
