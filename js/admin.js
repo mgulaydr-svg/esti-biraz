@@ -225,7 +225,7 @@ async function saveArticleInline(articleId) {
   const rawContent = document.getElementById('articleContent').innerHTML;
 
   // DOMPurify ile içindeki tüm zararlı scriptleri ve bozuk kodları temizle
-  const safeContent = DOMPurify.sanitize(rawContent, {
+  const content = DOMPurify.sanitize(rawContent, {
     ADD_TAGS: ['iframe'],
     ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'src']
   });
