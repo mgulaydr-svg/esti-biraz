@@ -785,3 +785,10 @@ html[data-theme='dark'] .pill {
   cursor: pointer;
   user-select: none;
 }
+
+/* Ders (rich-content) okuma ekranındaki paragraf aralarını editördeki gibi daralt */
+.rich-content p {
+  margin-top: 0 !important;
+  margin-bottom: 16px !important; /* İdeal okuma boşluğu */
+  line-height: 1.6 !important;
+}
