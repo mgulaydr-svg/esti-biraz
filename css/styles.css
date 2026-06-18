@@ -684,27 +684,28 @@ html[data-theme='dark'] .pill {
 /* Tablo Genel Yapısı */
 .editor-content table {
   width: 100% !important;
-  border-collapse: collapse;
-  margin: 1.5em 0;
-  background-color: transparent; /* Bütün tablonun gri olmasını engeller */
+  border-collapse: collapse !important;
+  margin: 1.5em 0 !important;
+  background-color: transparent !important; 
 }
 
 /* Sadece Üst Satır (Başlıklar) */
 .editor-content table th {
-  background-color: var(--paper-soft); /* Sadece üst satır gri */
-  color: var(--guardian-blue);
-  font-weight: 700;
-  text-align: left;
-  border: 1px solid var(--line);
-  padding: 12px 10px;
+  background-color: var(--paper-soft) !important;
+  color: var(--guardian-blue) !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  border: 1px solid var(--line) !important;
+  padding: 12px 10px !important;
 }
 
 /* Tablonun Geri Kalanı (Veriler) */
 .editor-content table td {
-  background-color: transparent; /* Geri kalanı düz / temanın rengi */
-  border: 1px solid var(--line);
-  padding: 12px 10px;
+  background-color: transparent !important;
+  border: 1px solid var(--line) !important;
+  padding: 12px 10px !important;
 }
+
 
 /* Editör içindeki linkleri belirginleştir */
 .editor-content a {
