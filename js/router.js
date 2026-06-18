@@ -253,3 +253,50 @@ window.switchAdminTab = switchAdminTab;
 window.router = router;
 window.addEventListener('hashchange', router);
 window.addEventListener('DOMContentLoaded', router);
+
+/* ==========================================================================
+   GÖRSEL BÜYÜTME (LIGHTBOX) MEKANİZMASI (Global)
+   ========================================================================== */
+// Sayfa iskeleti hazır olduğunda çalışması için
+setTimeout(() => {
+  // 1. Lightbox HTML iskeletini sayfanın sonuna görünmez şekilde ekle (Eğer daha önce eklenmediyse)
+  if (!document.getElementById('imageLightbox')) {
+    const lightboxHTML = `
+      <div id="imageLightbox" class="image-lightbox">
+        <span class="close-btn">&times;</span>
+        <img id="lightboxImg" src="" alt="Büyütülmüş Görsel">
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', lightboxHTML);
+  }
+
+  const lightbox = document.getElementById('imageLightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+
+  if (lightbox && lightboxImg) {
+    // 2. Sayfadaki herhangi bir yere tıklandığında ne olacağını dinle
+    document.body.addEventListener('click', (e) => {
+      // A) Tıklanan şey bir görsele aitse ve makale/ders içeriğinin içindeyse -> BÜYÜT
+      if (e.target.tagName === 'IMG' && e.target.closest('.editor-content, .article-detail__content, #courseContent, #lessonContent')) {
+        lightboxImg.src = e.target.src;
+        lightbox.classList.add('active');
+      }
+    });
+
+    // 3. Arka plandaki karanlık alana veya çarpı (X) işaretine tıklayınca -> KAPAT
+    lightbox.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'IMG' || e.target.classList.contains('close-btn')) {
+        lightbox.classList.remove('active');
+        setTimeout(() => { lightboxImg.src = ''; }, 300);
+      }
+    });
+    
+    // 4. Klavyeden ESC tuşuna basınca -> KAPAT
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        lightbox.classList.remove('active');
+        setTimeout(() => { lightboxImg.src = ''; }, 300);
+      }
+    });
+  }
+}, 1000); // Router.js'nin DOM'u oluşturmasına zaman tanımak için 1 saniyelik güvenli gecikme
