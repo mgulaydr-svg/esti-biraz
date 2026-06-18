@@ -181,7 +181,9 @@ async function showArticleForm(articleId = null) {
      <button type="button" class="toolbar-btn" title="Alt Başlık" onmousedown="event.preventDefault(); document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'h3');">H3</button>
      
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); addLink();">🔗 Link</button>
+     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); window.addLink();">🔗 Link</button>
+
+<button type="button" class="ghost-button" style="padding: 4px 8px;" title="Video/PDF Göm" onmousedown="event.preventDefault(); window.addEmbed();">📺 Embed</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('articleContent'));">🖼️ Görsel</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
