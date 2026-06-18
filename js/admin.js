@@ -674,7 +674,7 @@ async function showLessonForm(courseId, lessonId = null) {
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertMatching" title="Eşleştirme Modülü" onmousedown="event.preventDefault();">🔄 Eşleştir</button>
               </div>
               
-              <div class="editor-content" id="courseContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${course.content || ''}</div>         
+              <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${course.content || ''}</div>         
           </div>
         </div>
 
