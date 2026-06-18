@@ -788,9 +788,25 @@ html[data-theme='dark'] .pill {
   user-select: none;
 }
 
-/* Ders (rich-content) okuma ekranındaki paragraf aralarını editördeki gibi daralt */
-.rich-content p {
+/* Ders (rich-content) okuma ekranındaki HER TÜRLÜ metin bloğunu editörle aynı yap */
+.rich-content p, 
+.rich-content div, 
+.rich-content ul, 
+.rich-content ol {
   margin-top: 0 !important;
-  margin-bottom: 16px !important; /* İdeal okuma boşluğu */
+  margin-bottom: 1rem !important; /* Tam kararında bir alt boşluk */
   line-height: 1.6 !important;
+  font-size: inherit !important;
+}
+
+/* Editörde bilerek boş bırakılan satırları (Enter ile açılan araları) ön yüzde de koru */
+.rich-content p:empty, 
+.rich-content div:empty {
+  min-height: 1.6rem; 
+}
+
+.rich-content br {
+  display: block !important;
+  content: "" !important;
+  margin-bottom: 0.5rem !important;
 }
