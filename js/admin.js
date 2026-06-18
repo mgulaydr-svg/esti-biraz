@@ -96,19 +96,12 @@ window.addLink = function() {
 
 // Video/PDF Embed Fonksiyonu (Global)
 window.addEmbed = function() {
-const code = prompt('YouTube veya PDF iframe (embed) kodunu buraya yapıştırın:');
-if (code) {
-   / Kodu güvenli bir şekilde editöre HTML olarak basar
-   document.execCommand('insertHTML', false, code); 
+   const code = prompt('YouTube veya PDF iframe (embed) kodunu buraya yapıştırın:');
+   if (code) {
+      // Kodu güvenli bir şekilde editöre HTML olarak basar (EKSİK ÇİZGİ EKLENDİ)
+      document.execCommand('insertHTML', false, code); 
    }
 };
-
-function addLink() {
-  const url = prompt('Bağlantı adresini girin (Örn: https://...):', 'https://');
-  if (url) {
-    document.execCommand('createLink', false, url);
-  }
-}
 
 async function showArticleForm(articleId = null) {
   const container = document.getElementById('articleFormContainer');
