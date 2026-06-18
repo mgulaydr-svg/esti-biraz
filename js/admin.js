@@ -115,7 +115,7 @@ window.addYouTube = function() {
   }
 };
 
-// 2. CLOUDINARY'E PDF YÜKLEME VE GÖMME
+// CLOUDINARY'E PDF YÜKLEME VE GÖMME (Güncel ve Kesintisiz)
 window.insertPdf = function() {
   const input = document.createElement('input');
   input.setAttribute('type', 'file');
@@ -126,8 +126,11 @@ window.insertPdf = function() {
     const file = input.files[0];
     if (!file) return;
 
-    const loadingText = prompt('PDF Cloudinary\'ye yükleniyor, lütfen bekleyin...', 'Yükleniyor...');
-    if (loadingText === null) return;
+    // Ekranda bloke eden kutu yerine, fare imlecini "yükleniyor" (kum saati) yapıyoruz
+    document.body.style.cursor = 'wait';
+    
+    // Kullanıcıyı bilgilendirmek için editörün içine geçici bir metin ekleyebiliriz
+    alert("PDF yükleniyor, lütfen tamamlandı uyarısı gelene kadar bekleyin...");
 
     try {
       const formData = new FormData();
@@ -135,24 +138,29 @@ window.insertPdf = function() {
       formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
       formData.append('folder', CLOUDINARY_CONFIG.folder);
 
-      // Cloudinary 'auto' upload özelliği PDF'leri de kabul eder
+      // PDF'ler Cloudinary'de belge (raw/image) formatındadır. 'auto' en güvenlisidir.
       const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`, {
         method: 'POST',
         body: formData
       });
 
-      if (!response.ok) throw new Error('PDF Yükleme başarısız');
+      if (!response.ok) throw new Error('Cloudinary PDF yüklemesini reddetti.');
       
       const data = await response.json();
       const pdfUrl = data.secure_url;
       
-      // PDF'i sayfada 600px yüksekliğinde okunabilir bir çerçeve (iframe) olarak basar
+      // PDF'i sayfada 600px yüksekliğinde okunabilir bir çerçeve olarak basar
       const pdfHTML = `<iframe src="${pdfUrl}" width="100%" height="600px" style="border: 1px solid var(--line); border-radius: 8px; margin: 16px 0;"></iframe><p><br></p>`;
       document.execCommand('insertHTML', false, pdfHTML);
       
+      alert("✅ PDF başarıyla eklendi!");
+      
     } catch (error) {
       console.error(error);
-      alert('PDF yüklenirken hata oluştu.');
+      alert('PDF yüklenirken hata oluştu. Cloudinary "Upload Preset" ayarlarınızda PDF yüklemelerine izin verildiğinden emin olun.');
+    } finally {
+      // Yükleme bitince veya hata verince fare imlecini normale döndür
+      document.body.style.cursor = 'default';
     }
   };
 };
