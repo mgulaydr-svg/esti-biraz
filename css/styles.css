@@ -705,3 +705,10 @@ html[data-theme='dark'] .pill {
   border: 1px solid var(--line);
   padding: 12px 10px;
 }
+
+/* Editör içindeki linkleri belirginleştir */
+.editor-content a {
+  color: #0d6efd !important; /* Klasik belirgin mavi */
+  text-decoration: underline !important; /* Altı her zaman çizili olsun */
+  font-weight: 600;
+}
