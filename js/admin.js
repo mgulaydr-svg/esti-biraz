@@ -642,7 +642,8 @@ async function showLessonForm(courseId, lessonId = null) {
           <div class="form-group">
             <label>Ders İçeriği (Zengin Metin Editörü) *</label>
             <div class="block-editor" style="margin-top: 8px;">
-              <div class="block-editor__tools" id="courseEditorToolbar">
+              
+              <div class="block-editor__tools" id="lessonEditorToolbar">
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="bold" title="Kalın" onmousedown="event.preventDefault();"><b>B</b></button>
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic" title="İtalik" onmousedown="event.preventDefault();"><i>I</i></button>
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline" title="Altı Çizili" onmousedown="event.preventDefault();"><u>U</u></button>
@@ -661,7 +662,7 @@ async function showLessonForm(courseId, lessonId = null) {
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
                 
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); window.addLink();">🔗 Link</button>
-                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('courseContent'));">🖼️ Görsel</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('lessonContent'));">🖼️ Görsel</button>
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" title="YouTube Ekle" onmousedown="event.preventDefault(); window.addYouTube();">▶️ YouTube</button>
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" title="PDF Yükle" onmousedown="event.preventDefault(); window.insertPdf();">📄 PDF</button>
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊 Tablo</button>
@@ -674,8 +675,8 @@ async function showLessonForm(courseId, lessonId = null) {
                 <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertMatching" title="Eşleştirme Modülü" onmousedown="event.preventDefault();">🔄 Eşleştir</button>
               </div>
               
-              <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${course.content || ''}</div>         
-          </div>
+              <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${lesson ? lesson.content : ''}</div>
+            </div>
         </div>
 
         <label class="checkbox-label" style="display: flex; gap: 8px; align-items: center; font-weight: 700;">
