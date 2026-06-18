@@ -788,25 +788,22 @@ html[data-theme='dark'] .pill {
   user-select: none;
 }
 
-/* Ders (rich-content) okuma ekranındaki HER TÜRLÜ metin bloğunu editörle aynı yap */
+/* Ders ve Editör Metin Blokları (Tam Uyumlu ve Sade) */
 .rich-content p, 
 .rich-content div, 
 .rich-content ul, 
-.rich-content ol {
+.rich-content ol,
+.editor-content p,
+.editor-content div {
   margin-top: 0 !important;
-  margin-bottom: 1rem !important; /* Tam kararında bir alt boşluk */
+  margin-bottom: 14px !important; /* Gözü yormayan, tam kararında bir boşluk */
   line-height: 1.6 !important;
-  font-size: inherit !important;
 }
 
-/* Editörde bilerek boş bırakılan satırları (Enter ile açılan araları) ön yüzde de koru */
-.rich-content p:empty, 
-.rich-content div:empty {
-  min-height: 1.6rem; 
-}
-
-.rich-content br {
-  display: block !important;
-  content: "" !important;
-  margin-bottom: 0.5rem !important;
+/* Yanlışlıkla bozulan alt satıra geçme (br) etiketlerini fabrika ayarlarına döndür */
+.rich-content br, 
+.editor-content br {
+  display: inline !important;
+  margin: 0 !important;
+  content: normal !important;
 }
