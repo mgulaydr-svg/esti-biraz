@@ -642,27 +642,39 @@ async function showLessonForm(courseId, lessonId = null) {
           <div class="form-group">
             <label>Ders İçeriği (Zengin Metin Editörü) *</label>
             <div class="block-editor" style="margin-top: 8px;">
-              <div class="block-editor__tools" id="lessonEditorToolbar">
-                <button type="button" class="toolbar-btn" data-command="bold" title="Kalın"><b>B</b></button>
-                <button type="button" class="toolbar-btn" data-command="italic" title="İtalik"><i>I</i></button>
-                <button type="button" class="toolbar-btn" data-command="underline" title="Altı Çizili"><u>U</u></button>
+              <div class="block-editor__tools" id="courseEditorToolbar">
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="bold" title="Kalın" onmousedown="event.preventDefault();"><b>B</b></button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="italic" title="İtalik" onmousedown="event.preventDefault();"><i>I</i></button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="underline" title="Altı Çizili" onmousedown="event.preventDefault();"><u>U</u></button>
+                
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="P" title="Normal Düz Metin">P</button>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H2" title="Ana Başlık">H2</button>
-                <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="H3" title="Alt Başlık">H3</button>
+                
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertUnorderedList" title="Madde İşaretli Liste" onmousedown="event.preventDefault();">📝 Madde</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertOrderedList" title="Numaralı Liste" onmousedown="event.preventDefault();">🔢 Sayı</button>
+                
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-                <button type="button" class="toolbar-btn" data-command="createLink" title="Link Ekle">🔗</button>
-                <button type="button" class="toolbar-btn" data-command="insertImage" title="Görsel Ekle">🖼️</button>
-                <button type="button" class="toolbar-btn" data-command="insertTable" title="Tablo Ekle">📊</button>
-                <button type="button" class="toolbar-btn" data-command="insertCode" title="Kod Bloğu">&lt;/&gt;</button>
+                
+                <button type="button" class="toolbar-btn" title="Normal Düz Metin" onmousedown="event.preventDefault(); document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'p');">P</button>
+                <button type="button" class="toolbar-btn" title="Ana Başlık" onmousedown="event.preventDefault(); document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'h2');">H2</button>
+                <button type="button" class="toolbar-btn" title="Alt Başlık" onmousedown="event.preventDefault(); document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'h3');">H3</button>
+                
                 <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-                <button type="button" class="toolbar-btn" data-command="insertCallout" title="Vurgu Kutusu">💡 Kutu</button>
-                <button type="button" class="toolbar-btn" data-command="insertQuiz" title="Çoktan Seçmeli Soru">❓ Soru</button>
-                <button type="button" class="toolbar-btn" data-command="insertMatching" title="Eşleştirme Modülü">🔄 Eşleştir</button>
-                <button type="button" class="toolbar-btn" data-command="insertEmbed" title="PDF veya YouTube Embed">🎥 Embed</button>
+                
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); window.addLink();">🔗 Link</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('courseContent'));">🖼️ Görsel</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="YouTube Ekle" onmousedown="event.preventDefault(); window.addYouTube();">▶️ YouTube</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" title="PDF Yükle" onmousedown="event.preventDefault(); window.insertPdf();">📄 PDF</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊 Tablo</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
+                
+                <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
+                
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCallout" title="Vurgu Kutusu (Uyarı/Bilgi)" onmousedown="event.preventDefault();">💡 Kutu</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertQuiz" title="Çoktan Seçmeli Soru" onmousedown="event.preventDefault();">❓ Soru</button>
+                <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertMatching" title="Eşleştirme Modülü" onmousedown="event.preventDefault();">🔄 Eşleştir</button>
               </div>
-              <div class="editor-content" id="lessonContent" contenteditable="true" style="min-height: 300px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none; margin-top: 8px;">${lesson.content || ''}</div>
-            </div>
+              
+              <div class="editor-content" id="courseContent" contenteditable="true" style="min-height: 250px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; outline: none;">${course.content || ''}</div>         
           </div>
         </div>
 
