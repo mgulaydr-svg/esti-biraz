@@ -68,8 +68,8 @@ async function loadAdminArticles() {
                     <td>${article.author || '—'}</td>
                     <td>${article.featured ? '⭐ Öne Çıkan' : '—'}</td>
                     <td style="display: flex; gap: 8px;">
-                      <button class="ghost-button" style="padding: 6px 10px; font-size: 0.85rem;" onclick="editArticle('${article.id}')">Düzenle</button>
-                      <button class="ghost-button danger-button" style="padding: 6px 10px; font-size: 0.85rem;" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')">Sil</button>
+                      < class="ghost-" style="padding: 6px 10px; font-size: 0.85rem;" onclick="editArticle('${article.id}')">Düzenle</>
+                      < class="ghost- danger-" style="padding: 6px 10px; font-size: 0.85rem;" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')">Sil</button>
                     </td>
                   </tr>
                 `).join('')}
@@ -94,6 +94,13 @@ async function showArticleForm(articleId = null) {
     const doc = await db.collection('articles').doc(articleId).get();
     article = doc.exists ? { id: doc.id, ...doc.data() } : {};
   }
+
+   function addLink() {
+  const url = prompt('Bağlantı adresini girin (Örn: https://...):', 'https://');
+  if (url) {
+    document.execCommand('createLink', false, url);
+  }
+}
 
   container.innerHTML = `
     <div class="admin-panel" style="margin-bottom: 24px; border-color: var(--brand-teal);">
@@ -163,7 +170,7 @@ async function showArticleForm(articleId = null) {
      <button type="button" class="toolbar-btn" title="Alt Başlık" onmousedown="event.preventDefault(); document.execCommand('removeFormat', false, null); document.execCommand('formatBlock', false, 'h3');">H3</button>
      
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
-     <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="createLink" title="Bağlantı Ekle" onmousedown="event.preventDefault();">🔗</button>
+     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); addLink();">🔗 Link</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('articleContent'));">🖼️ Görsel</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
@@ -185,7 +192,7 @@ async function showArticleForm(articleId = null) {
 
         <div class="admin-inline-actions" style="margin-top: 14px; display: flex; gap: 12px;">
           <button type="submit" class="primary-button">${articleId ? 'Güncelle' : 'Yayınla'}</button>
-          <button type="button" class="ghost-button" onclick="document.getElementById('articleFormContainer').innerHTML=''">İptal</button>
+          <button type="button" class="ghost-button" onclick="if(confirm('Kaydetmediğiniz tüm değişiklikler silinecek. Çıkmak istediğinize emin misiniz?')) { document.getElementById('articleFormContainer').innerHTML=''; }">İptal</button>
         </div>
       </form>
     </div>
