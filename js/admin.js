@@ -86,6 +86,30 @@ async function loadAdminArticles() {
   }
 }
 
+// Link Ekleme Fonksiyonu (Global)
+window.addLink = function() {
+   const url = prompt('Bağlantı adresini girin (Örn: https://www.saglik.gov.tr):', 'https://');
+   if (url) {
+      document.execCommand('createLink', false, url);
+   }
+};
+
+// Video/PDF Embed Fonksiyonu (Global)
+window.addEmbed = function() {
+const code = prompt('YouTube veya PDF iframe (embed) kodunu buraya yapıştırın:');
+if (code) {
+   / Kodu güvenli bir şekilde editöre HTML olarak basar
+   document.execCommand('insertHTML', false, code); 
+   }
+};
+
+function addLink() {
+  const url = prompt('Bağlantı adresini girin (Örn: https://...):', 'https://');
+  if (url) {
+    document.execCommand('createLink', false, url);
+  }
+}
+
 async function showArticleForm(articleId = null) {
   const container = document.getElementById('articleFormContainer');
   let article = {};
@@ -95,14 +119,8 @@ async function showArticleForm(articleId = null) {
     article = doc.exists ? { id: doc.id, ...doc.data() } : {};
   }
 
-   function addLink() {
-  const url = prompt('Bağlantı adresini girin (Örn: https://...):', 'https://');
-  if (url) {
-    document.execCommand('createLink', false, url);
-  }
-}
 
-  container.innerHTML = `
+   container.innerHTML = `
     <div class="admin-panel" style="margin-bottom: 24px; border-color: var(--brand-teal);">
       <div class="admin-panel__head">
         <h3 style="margin:0;">${articleId ? 'Makaleyi Düzenle' : 'Yeni Makale'}</h3>
