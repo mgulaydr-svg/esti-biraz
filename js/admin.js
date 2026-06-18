@@ -818,3 +818,13 @@ function insertImageWithCloudinary(editor) {
     }
   };
 }
+
+// Yanlışlıkla sayfadan çıkmayı veya yenilemeyi önleyen güvenlik kilidi
+window.addEventListener('beforeunload', function (e) {
+  const editor = document.getElementById('articleContent');
+  // Eğer editör ekrandaysa ve içi boş değilse uyarı ver
+  if (editor && editor.innerHTML.trim() !== '') {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
