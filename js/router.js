@@ -277,7 +277,7 @@ setTimeout(() => {
     // 2. Sayfadaki herhangi bir yere tıklandığında ne olacağını dinle
     document.body.addEventListener('click', (e) => {
       // A) Tıklanan şey bir görsele aitse ve makale/ders içeriğinin içindeyse -> BÜYÜT
-      if (e.target.tagName === 'IMG' && e.target.closest('.editor-content, .article-detail__content, #courseContent, #lessonContent')) {
+      if (e.target.tagName === 'IMG' && e.target.closest('.editor-content, .article-detail__content, #courseContent, #lessonContent, .rich-content')) {
         lightboxImg.src = e.target.src;
         lightbox.classList.add('active');
       }
