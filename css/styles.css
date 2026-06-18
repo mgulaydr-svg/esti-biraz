@@ -681,24 +681,27 @@ html[data-theme='dark'] .pill {
   display: block; /* Alt kısımdaki gizli boşlukları yok eder */
 }
 
-/* Editör içindeki TÜM tablolar için otomatik Esti Biraz tasarımı */
+/* Tablo Genel Yapısı */
 .editor-content table {
   width: 100% !important;
   border-collapse: collapse;
   margin: 1.5em 0;
-  background-color: var(--paper-soft);
+  background-color: transparent; /* Bütün tablonun gri olmasını engeller */
 }
 
-.editor-content table th, 
-.editor-content table td {
-  border: 1px solid var(--line);
-  padding: 12px 10px;
-  font-size: 0.95rem;
-}
-
+/* Sadece Üst Satır (Başlıklar) */
 .editor-content table th {
-  background-color: var(--paper);
+  background-color: var(--paper-soft); /* Sadece üst satır gri */
   color: var(--guardian-blue);
   font-weight: 700;
   text-align: left;
+  border: 1px solid var(--line);
+  padding: 12px 10px;
+}
+
+/* Tablonun Geri Kalanı (Veriler) */
+.editor-content table td {
+  background-color: transparent; /* Geri kalanı düz / temanın rengi */
+  border: 1px solid var(--line);
+  padding: 12px 10px;
 }
