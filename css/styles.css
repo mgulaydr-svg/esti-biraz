@@ -680,3 +680,25 @@ html[data-theme='dark'] .pill {
   width: 100%;
   display: block; /* Alt kısımdaki gizli boşlukları yok eder */
 }
+
+/* Editör içindeki TÜM tablolar için otomatik Esti Biraz tasarımı */
+.editor-content table {
+  width: 100% !important;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  background-color: var(--paper-soft);
+}
+
+.editor-content table th, 
+.editor-content table td {
+  border: 1px solid var(--line);
+  padding: 12px 10px;
+  font-size: 0.95rem;
+}
+
+.editor-content table th {
+  background-color: var(--paper);
+  color: var(--guardian-blue);
+  font-weight: 700;
+  text-align: left;
+}
