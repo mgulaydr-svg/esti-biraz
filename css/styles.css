@@ -718,3 +718,70 @@ html[data-theme='dark'] .pill {
 #relatedArticles {
   margin-bottom: 80px;
 }
+
+/* =========================================
+   RESİM BÜYÜTME (LIGHTBOX) STİLLERİ
+   ========================================= */
+
+/* Okuma alanındaki görsellerin tıklanabilir olduğunu göster */
+.editor-content img, 
+.article-detail__content img,
+#courseContent img,
+#lessonContent img {
+  cursor: zoom-in;
+  transition: transform 0.2s ease-in-out;
+  border-radius: 8px; /* Şık köşeler */
+}
+
+.editor-content img:hover, 
+.article-detail__content img:hover,
+#courseContent img:hover,
+#lessonContent img:hover {
+  transform: scale(1.02); /* Üzerine gelince çok hafif büyür */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Arka planı karartan ana kutu */
+.image-lightbox {
+  display: none; /* Başlangıçta gizli */
+  position: fixed;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(6, 26, 24, 0.9); /* Guardian Blue renginin yarı saydamı */
+  backdrop-filter: blur(5px);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Kutu aktif olduğunda */
+.image-lightbox.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* Büyüyen resmin kendisi */
+.image-lightbox img {
+  max-width: 90%;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+  cursor: zoom-out;
+}
+
+/* Sağ üstteki X kapatma butonu */
+.image-lightbox .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: var(--ink, #fff);
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
