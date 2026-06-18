@@ -94,14 +94,70 @@ window.addLink = function() {
    }
 };
 
-// Video/PDF Embed Fonksiyonu (Global)
-window.addEmbed = function() {
-   const code = prompt('YouTube veya PDF iframe (embed) kodunu buraya yapıştırın:');
-   if (code) {
-      // Kodu güvenli bir şekilde editöre HTML olarak basar (EKSİK ÇİZGİ EKLENDİ)
-      document.execCommand('insertHTML', false, code); 
-   }
+// 1. SADECE LİNK İLE YOUTUBE GÖMME
+window.addYouTube = function() {
+  const url = prompt('YouTube video linkini yapıştırın (Örn: https://www.youtube.com/watch?v=...):');
+  if (!url) return;
+  
+  let videoId = '';
+  if (url.includes('youtube.com/watch?v=')) {
+    videoId = url.split('v=')[1].split('&')[0];
+  } else if (url.includes('youtu.be/')) {
+    videoId = url.split('youtu.be/')[1].split('?')[0];
+  }
+
+  if (videoId) {
+    // Videoyu mobil uyumlu (responsive) bir şekilde ekler
+    const iframeHTML = `<div style="position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 16px;"><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div><p><br></p>`;
+    document.execCommand('insertHTML', false, iframeHTML);
+  } else {
+    alert('Geçerli bir YouTube linki bulunamadı.');
+  }
 };
+
+// 2. CLOUDINARY'E PDF YÜKLEME VE GÖMME
+window.insertPdf = function() {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'application/pdf');
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const loadingText = prompt('PDF Cloudinary\'ye yükleniyor, lütfen bekleyin...', 'Yükleniyor...');
+    if (loadingText === null) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+      formData.append('folder', CLOUDINARY_CONFIG.folder);
+
+      // Cloudinary 'auto' upload özelliği PDF'leri de kabul eder
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('PDF Yükleme başarısız');
+      
+      const data = await response.json();
+      const pdfUrl = data.secure_url;
+      
+      // PDF'i sayfada 600px yüksekliğinde okunabilir bir çerçeve (iframe) olarak basar
+      const pdfHTML = `<iframe src="${pdfUrl}" width="100%" height="600px" style="border: 1px solid var(--line); border-radius: 8px; margin: 16px 0;"></iframe><p><br></p>`;
+      document.execCommand('insertHTML', false, pdfHTML);
+      
+    } catch (error) {
+      console.error(error);
+      alert('PDF yüklenirken hata oluştu.');
+    }
+  };
+};
+
+
 
 async function showArticleForm(articleId = null) {
   const container = document.getElementById('articleFormContainer');
@@ -183,7 +239,9 @@ async function showArticleForm(articleId = null) {
      <span class="toolbar-divider" style="width: 1px; background: var(--line); margin: 0 4px;"></span>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Bağlantı Ekle" onmousedown="event.preventDefault(); window.addLink();">🔗 Link</button>
 
-<button type="button" class="ghost-button" style="padding: 4px 8px;" title="Video/PDF Göm" onmousedown="event.preventDefault(); window.addEmbed();">📺 Embed</button>
+     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="YouTube Ekle" onmousedown="event.preventDefault(); window.addYouTube();">▶️ YouTube</button>
+
+     <button type="button" class="ghost-button" style="padding: 4px 8px;" title="PDF Yükle" onmousedown="event.preventDefault(); window.insertPdf();">📄 PDF</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" title="Görsel Ekle (Cloudinary)" onmousedown="event.preventDefault(); insertImageWithCloudinary(document.getElementById('articleContent'));">🖼️ Görsel</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertTable" title="Tablo Ekle" onmousedown="event.preventDefault();">📊</button>
      <button type="button" class="ghost-button" style="padding: 4px 8px;" data-command="insertCode" title="Kod Bloğu" onmousedown="event.preventDefault();">&lt;/&gt;</button>
