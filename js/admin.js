@@ -68,9 +68,9 @@ async function loadAdminArticles() {
                     <td>${article.author || '—'}</td>
                     <td>${article.featured ? '⭐ Öne Çıkan' : '—'}</td>
                     <td style="display: flex; gap: 8px;">
-                      < class="ghost-" style="padding: 6px 10px; font-size: 0.85rem;" onclick="editArticle('${article.id}')">Düzenle</>
-                      < class="ghost- danger-" style="padding: 6px 10px; font-size: 0.85rem;" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')">Sil</button>
-                    </td>
+                       <button type="button" class="ghost-button" style="padding: 6px 10px; font-size: 0.85rem;" onclick="editArticle('${article.id}')">Düzenle</button>
+                       <button type="button" class="ghost-button" style="padding: 6px 10px; font-size: 0.85rem; color: #dc3545;" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')">Sil</button>
+                     </td>
                   </tr>
                 `).join('')}
               </tbody>
