@@ -715,6 +715,9 @@ function toggleLessonFields() {
 }
 
 async function saveLesson(courseId, lessonId) {
+  // GÜVENLİK KİLİDİ: Formun sayfayı yenilemesini ve Firebase bağlantısını koparmasını kesin olarak durdurur.
+  if (window.event) { window.event.preventDefault(); }
+
   const title = document.getElementById('lessonTitle').value.trim();
   const type = document.getElementById('lessonType').value;
   
@@ -728,13 +731,13 @@ async function saveLesson(courseId, lessonId) {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // saveLesson içindeki type === 'text' bloğunu bununla değiştir:
   if (type === 'text') {
-    lessonData.content = document.getElementById('lessonContent').innerHTML; // .value.trim() olan kısım .innerHTML yapıldı
+    lessonData.content = document.getElementById('lessonContent').innerHTML;
     lessonData.mediaUrl = '';
     lessonData.duration = 0;
   } else {
-    lessonData.videoUrl = document.getElementById('lessonMediaUrl').value.trim();
+    // DÜZELTME: Ön yüz 'mediaUrl' beklediği için 'videoUrl' ifadesi 'mediaUrl' olarak değiştirildi!
+    lessonData.mediaUrl = document.getElementById('lessonMediaUrl').value.trim();
     lessonData.content = '';
   }
 
@@ -757,7 +760,6 @@ async function saveLesson(courseId, lessonId) {
     alert("Ders kaydedilirken hata oluştu: " + err.message);
   }
 }
-
 async function editLesson(courseId, lessonId) {
   await showLessonForm(courseId, lessonId);
   document.getElementById('lessonFormContainer').scrollIntoView({ behavior: 'smooth' });
