@@ -283,12 +283,11 @@ setTimeout(() => {
       }
     });
 
-    // 3. Arka plandaki karanlık alana veya çarpı (X) işaretine tıklayınca -> KAPAT
-    lightbox.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'IMG' || e.target.classList.contains('close-btn')) {
-        lightbox.classList.remove('active');
-        setTimeout(() => { lightboxImg.src = ''; }, 300);
-      }
+    // 3. Arka plandaki karanlık alana, X işaretine VEYA resmin tam üstüne tıklayınca -> KAPAT
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('active');
+      // Kapanış animasyonunun pürüzsüz olması için küçük bir gecikme:
+      setTimeout(() => { lightboxImg.src = ''; }, 300);
     });
     
     // 4. Klavyeden ESC tuşuna basınca -> KAPAT
