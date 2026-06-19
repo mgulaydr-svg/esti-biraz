@@ -594,10 +594,7 @@ async function loadLesson(courseSlug, lessonOrder) {
       if (!enrollSnapshot.empty) enrollment = { id: enrollSnapshot.docs[0].id, ...enrollSnapshot.docs[0].data() };
     }
 
-    if (!enrollment && !currentLesson.isFree) {
-      container.innerHTML = `<div class="container" style="padding: 60px 0; text-align: center;"><h2>🔒 Kilitli Ders</h2><button class="primary-button" onclick="window.location.hash='#/kurs/${courseSlug}'">Kursa Git ve Kayıt Ol</button></div>`;
-      return;
-    }
+    // 🔒 KİLİT EKRANI BURADAN TAMAMEN KALDIRILDI - ARTIK HERKES GÖREBİLİR
 
     const isCompleted = enrollment ? enrollment.completedLessons.includes(currentLesson.order) : false;
     const nextLesson = lessons.find(l => l.order === lessonOrder + 1);
