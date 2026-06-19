@@ -520,11 +520,11 @@ async function loadCourse(slug) {
         <button class="ghost-button" style="margin-bottom: 24px;" onclick="window.location.hash='#/akademi'">← Akademiye Dön</button>
         
         <div class="briefing-card" style="margin-bottom: 32px; background: var(--paper-soft);">
-          <span class="course-card__topline">${getLevelLabel(course.level)}</span>
+          <span class="course-card__topline">${course.category ? getCategoryLabel(course.category) : 'Kurs'}</span>
           <h2>${course.title}</h2>
           <p>${course.description || ''}</p>
           <div style="margin-top: 16px; font-weight: 800; color: var(--muted); display: flex; gap: 16px;">
-            <span>👨‍🏫 ${course.instructor}</span>
+            <span>👨‍🏫 ${course.instructor || 'Eğitmen'}</span>
             <span>📚 ${lessons.length} Ders</span>
           </div>
 
@@ -535,10 +535,10 @@ async function loadCourse(slug) {
                 <span>${completedLessons.length} / ${lessons.length} Tamamlandı</span>
               </div>
               <progress value="${progressPercent}" max="100"></progress>
-              <button class="primary-button" onclick="window.location.hash='#/ders/${course.slug}/1'">▶️ Devam Et</button>
+              <button class="primary-button" onclick="window.location.hash='#/ders/${course.slug}/${completedLessons.length > 0 ? Math.min(completedLessons.length + 1, lessons.length) : 1}'">▶️ Devam Et</button>
             </div>
           ` : `
-            <button class="primary-button" style="margin-top: 24px;" onclick="enrollCourse('${courseId}', '${course.slug}')">🎓 Kursa Kayıt Ol (Ücretsiz)</button>
+            <button class="primary-button" style="margin-top: 24px;" onclick="window.location.hash='#/ders/${course.slug}/1'">▶️ Eğitime Başla</button>
           `}
         </div>
 
@@ -546,15 +546,15 @@ async function loadCourse(slug) {
         <ul class="lesson-list">
           ${lessons.map((lesson) => {
             const isCompleted = completedLessons.includes(lesson.order);
-            const isLocked = !enrollment && !lesson.isFree;
+            // Kilit mantığı tamamen kaldırıldı, tüm dersler doğrudan erişilebilir
             return `
-              <li class="lesson-item" style="${isLocked ? 'opacity: 0.6;' : ''}">
-                <div>${isCompleted ? '✅' : isLocked ? '🔒' : '▶️'}</div>
+              <li class="lesson-item">
+                <div>${isCompleted ? '✅' : '▶️'}</div>
                 <div class="lesson-item__main">
                   <label>${lesson.order}. ${lesson.title}</label>
                 </div>
                 <div class="lesson-item__actions">
-                  ${isLocked ? 'Kayıt Gerekli' : `<button class="ghost-button" onclick="window.location.hash='#/ders/${course.slug}/${lesson.order}'">Başla</button>`}
+                  <button class="ghost-button" onclick="window.location.hash='#/ders/${course.slug}/${lesson.order}'">Başla</button>
                 </div>
               </li>
             `;
