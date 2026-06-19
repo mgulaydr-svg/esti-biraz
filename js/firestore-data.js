@@ -587,14 +587,29 @@ async function enrollCourse(courseId, courseSlug) {
 async function loadLesson(courseSlug, lessonOrder) {
   const container = document.getElementById('app');
   try {
-    const courseSnapshot = await db.collection('courses').where('slug', '==', courseSlug).limit(1).get();
-    if (courseSnapshot.empty) return;
+    // 1. GÜVENLİK DUVARI AŞILDI: Misafirlerin erişebilmesi için "status == published" şartı eklendi!
+    const courseSnapshot = await db.collection('courses')
+      .where('slug', '==', courseSlug)
+      .where('status', '==', 'published')
+      .limit(1).get();
+      
+    if (courseSnapshot.empty) {
+      container.innerHTML = '<div class="container" style="padding: 60px 0; text-align: center;"><h3>Kurs bulunamadı veya yayından kaldırılmış.</h3><button class="ghost-button" onclick="window.location.hash=\'#/akademi\'">Akademiye Dön</button></div>';
+      return;
+    }
+    
     const courseId = courseSnapshot.docs[0].id;
     const courseTitle = courseSnapshot.docs[0].data().title;
 
     const lessonsSnapshot = await db.collection('courses').doc(courseId).collection('lessons').orderBy('order', 'asc').get();
     const lessons = lessonsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const currentLesson = lessons.find(l => l.order === lessonOrder);
+
+    // 2. GÜVENLİK AĞI: Olmayan bir derse tıklanırsa ekranın donmasını engeller
+    if (!currentLesson) {
+      container.innerHTML = '<div class="container" style="padding: 60px 0; text-align: center;"><h3>Bu ders henüz hazırlanıyor...</h3><button class="ghost-button" onclick="window.history.back()">Geri Dön</button></div>';
+      return;
+    }
 
     let enrollment = null;
     const user = firebase.auth().currentUser;
@@ -603,9 +618,7 @@ async function loadLesson(courseSlug, lessonOrder) {
       if (!enrollSnapshot.empty) enrollment = { id: enrollSnapshot.docs[0].id, ...enrollSnapshot.docs[0].data() };
     }
 
-    // 🔒 KİLİT EKRANI BURADAN TAMAMEN KALDIRILDI - ARTIK HERKES GÖREBİLİR
-
-    const isCompleted = enrollment ? enrollment.completedLessons.includes(currentLesson.order) : false;
+    const isCompleted = enrollment && enrollment.completedLessons ? enrollment.completedLessons.includes(currentLesson.order) : false;
     const nextLesson = lessons.find(l => l.order === lessonOrder + 1);
     const prevLesson = lessons.find(l => l.order === lessonOrder - 1);
 
@@ -648,7 +661,7 @@ async function loadLesson(courseSlug, lessonOrder) {
               <h3 style="margin-top: 0; font-family: var(--serif);">Müfredat</h3>
               <ul class="lesson-list">
                 ${lessons.map(l => {
-                  const done = enrollment ? enrollment.completedLessons.includes(l.order) : false;
+                  const done = enrollment && enrollment.completedLessons ? enrollment.completedLessons.includes(l.order) : false;
                   const active = l.order === lessonOrder;
                   return `
                     <li class="lesson-item" style="cursor: pointer; ${active ? 'border-color: var(--brand-teal); background: var(--paper);' : ''}" onclick="window.location.hash='#/ders/${courseSlug}/${l.order}'">
@@ -664,7 +677,10 @@ async function loadLesson(courseSlug, lessonOrder) {
       </div>
     `;
     window.scrollTo(0, 0);
-  } catch (error) { console.error(error); }
+  } catch (error) { 
+    console.error(error); 
+    container.innerHTML = '<div class="container" style="padding: 60px 0; text-align: center;"><h3>İçerik yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.</h3></div>';
+  }
 }
 
 function convertToEmbedUrl(url) {
