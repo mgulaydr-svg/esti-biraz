@@ -7,7 +7,7 @@
 // ══════════════════════════════════════════════
 
 function getCategoryLabel(category) {
-  const labels = { saglik: 'Sağlık', bilim: 'Bilim', egitim: 'Eğitim', teknoloji: 'Teknoloji', yasam: 'Yaşam', kultur: 'Kültür', diger: 'Diğer' };
+  const labels = { saglik: 'Sağlık', bilim: 'Bilim', egitim: 'Eğitim', teknoloji: 'Teknoloji', yasam: 'Yaşam', kultur: 'Kültür', yazilim: 'Yazılım', diger: 'Diğer' };
   return labels[category] || category || 'Genel';
 }
 
@@ -226,7 +226,7 @@ function getCategoryLabel(cat) {
     'egitim': 'Eğitim',
     'teknoloji': 'Teknoloji',
     'beslenme': 'Beslenme',
-    'gebelik': 'Gebelik'
+    'gebelik': 'Gebelik',
     'yazilim': 'Yazılım'
   };
   return map[cat] || (cat ? cat.toUpperCase() : 'GENEL');
