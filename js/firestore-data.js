@@ -169,9 +169,9 @@ async function loadFeaturedCourses(limit = 3) {
   if (!container) return;
 
   try {
+    // 1. GÜVENLİK DUVARINI GEÇ: Sadece yayınlanmış kursları çek (Misafirler için zorunlu)
     const snapshot = await db.collection('courses')
-      .where('featured', '==', true)
-      .limit(limit)
+      .where('status', '==', 'published')
       .get();
 
     if (snapshot.empty) {
@@ -179,7 +179,17 @@ async function loadFeaturedCourses(limit = 3) {
       return;
     }
 
-    const coursesHtml = snapshot.docs
+    // 2. JavaScript ile öne çıkanları süz (İndeks hatası almamak için pratik yöntem)
+    const featuredDocs = snapshot.docs
+      .filter(doc => doc.data().featured === true)
+      .slice(0, limit);
+
+    if (featuredDocs.length === 0) {
+      container.innerHTML = '<p class="empty-state">Henüz öne çıkan kurs bulunmuyor.</p>';
+      return;
+    }
+
+    const coursesHtml = featuredDocs
       .map(doc => createCourseCard(doc.id, doc.data()))
       .join('');
 
@@ -193,8 +203,7 @@ async function loadFeaturedCourses(limit = 3) {
             </div>
             <a href="#/akademi" style="font-weight: 800; color: var(--brand-teal);">Tümünü Gör →</a>
           </div>
-          <div class="course-grid"> ${coursesHtml}
-          </div>
+          <div class="course-grid"> ${coursesHtml} </div>
         </div>
       </section>
     `;
@@ -202,7 +211,6 @@ async function loadFeaturedCourses(limit = 3) {
     console.error('❌ Kurslar yüklenemedi:', error);
   }
 }
-
 // ══════════════════════════════════════════════
 //  TÜM MAKALELER (MAGAZİN SAYFASI)
 // ══════════════════════════════════════════════
@@ -219,6 +227,7 @@ function getCategoryLabel(cat) {
     'teknoloji': 'Teknoloji',
     'beslenme': 'Beslenme',
     'gebelik': 'Gebelik'
+    'yazilim': 'Yazılım'
   };
   return map[cat] || (cat ? cat.toUpperCase() : 'GENEL');
 }
@@ -430,7 +439,7 @@ async function loadAllCourses(category = 'all') {
   const container = document.getElementById('app');
   if (!container) return;
   
-  const categories = ['saglik', 'bilim', 'egitim', 'beslenme', 'gebelik'];
+  const categories = ['saglik', 'bilim', 'egitim', 'beslenme', 'gebelik', 'yazilim'];
 
   container.innerHTML = `
     <section class="akademi-page">
